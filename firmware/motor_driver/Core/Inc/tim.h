@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
  ******************************************************************************
- * @file    gpio.h
+ * @file    tim.h
  * @brief   This file contains all the function prototypes for
- *          the gpio.c file
+ *          the tim.c file
  ******************************************************************************
  * @attention
  *
@@ -18,8 +18,8 @@
  */
 /* USER CODE END Header */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __GPIO_H__
-#define __GPIO_H__
+#ifndef __TIM_H__
+#define __TIM_H__
 
 #ifdef __cplusplus
 extern "C"
@@ -33,45 +33,40 @@ extern "C"
 
   /* USER CODE END Includes */
 
+  extern TIM_HandleTypeDef htim4;
+
+  extern TIM_HandleTypeDef htim15;
+
   /* USER CODE BEGIN Private defines */
-  typedef struct _GPIO_Value
-  {
-    GPIO_TypeDef *GPIOx;
-    uint16_t GPIO_PIN_x;
-  } GPIO_Value;
-
-  extern GPIO_Value LED1;
-  extern GPIO_Value LED2;
-  extern GPIO_Value LED3;
-  extern GPIO_Value LED4;
-  extern GPIO_Value LED_CAN_TX;
-  extern GPIO_Value LED_CAN_RX;
-
-  extern GPIO_Value USER_SW;
-  extern GPIO_Value SPI1_CS_DRV;
-  extern GPIO_Value SPI1_CS_ENC;
-
-  extern GPIO_Value HALL_U;
-  extern GPIO_Value HALL_V;
-  extern GPIO_Value HALL_W;
-
-  extern GPIO_Value DRV_nFAULT;
-  extern GPIO_Value DRV_ENABLE;
-  extern GPIO_Value DRV_CAL;
-  extern GPIO_Value DRV_INLx;
 
   /* USER CODE END Private defines */
 
-  void
-  MX_GPIO_Init(void);
+  void MX_TIM4_Init(void);
+  void MX_TIM15_Init(void);
+
+  void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
   /* USER CODE BEGIN Prototypes */
-  GPIO_PinState Read_GPIO(GPIO_Value GPIO);
-  void Toggle_GPIO(GPIO_Value GPIO);
-  void Write_GPIO(GPIO_Value GPIO, GPIO_PinState PinState);
+  typedef struct _BLDC_PWM
+  {
+    FunctionalState OutputPWM;
+    TIM_HandleTypeDef *htim;
+    uint32_t Channel_U;
+    uint32_t Channel_V;
+    uint32_t Channel_W;
+  } BLDC_PWM;
+
+  void Blmd_TIM_Init(void);
+  void PWM_Start(BLDC_PWM *bldc_pwm);
+  void PWM_Stop(BLDC_PWM *bldc_pwm);
+  void PWM_Set(BLDC_PWM *bldc_pwm, float CHu, float CHv, float CHw);
+  void PWM_Update(BLDC_PWM *bldc_pwm, float Duty_u, float Duty_v, float Duty_w);
+
+  extern BLDC_PWM blcd_pwm;
   /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
-#endif /*__ GPIO_H__ */
+
+#endif /* __TIM_H__ */
