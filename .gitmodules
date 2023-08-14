@@ -1,0 +1,3 @@
+[submodule "firmware/main_board/lib/eigen"]
+	path = firmware/main_board/lib/eigen
+	url = git@gitlab.com:libeigen/eigen.git

@@ -322,32 +322,16 @@
       ""
     ],
     [
-      "1e1bd8fb-9572-4b52-8645-0431429c6ad3",
-      "can1"
-    ],
-    [
       "99868341-3fcd-422d-afe6-e3750b4ef7c0",
       "drv8323"
     ],
     [
-      "0f7a6f77-864e-4862-8e65-6ef958852d1b",
-      "can"
-    ],
-    [
-      "4ebb5f4e-eb23-4cb6-9c95-1956a71603fc",
-      "half_bridge1"
-    ],
-    [
-      "7f2dddb8-9d5a-4fd4-a30d-07dcf0d31b55",
-      "user_interface"
-    ],
-    [
-      "cc50d1d2-e458-4f24-86d5-4decc24afc6a",
-      "COM"
-    ],
-    [
       "51484c10-a339-47e4-a28f-1fe6df54aaa5",
       "power"
+    ],
+    [
+      "1bfc5921-cf85-4de6-a016-ca357e556864",
+      "stm32g431cb"
     ]
   ],
   "text_variables": {}
