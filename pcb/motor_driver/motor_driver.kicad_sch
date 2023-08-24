@@ -327,7 +327,7 @@
     (uuid fbfdd99d-8079-4968-88cb-ff84defd7944)
     (property "Reference" "J1" (id 0) (at 86.36 72.39 0))
     (property "Value" "XT60PW-M" (id 1) (at 86.36 74.93 0))
-    (property "Footprint" "bldc_lib:XT60PWM" (id 2) (at 76.2 80.01 0)
+    (property "Footprint" "Connector_AMASS:AMASS_XT60-M_1x02_P7.20mm_Vertical" (id 2) (at 76.2 80.01 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (id 3) (at 76.2 80.01 0)
@@ -931,23 +931,14 @@
     (path "/1bfc5921-cf85-4de6-a016-ca357e556864/d17ef810-be4f-4d71-b37a-c39a3690a7f0"
       (reference "C30") (unit 1) (value "0.1u") (footprint "Capacitor_SMD:C_0201_0603Metric")
     )
-    (path "/1bfc5921-cf85-4de6-a016-ca357e556864/c1c4533e-120d-4824-964a-a347c663c13e"
-      (reference "C31") (unit 1) (value "0.1u") (footprint "Capacitor_SMD:C_0201_0603Metric")
-    )
-    (path "/1bfc5921-cf85-4de6-a016-ca357e556864/5d6eb83b-ad05-4a82-ba02-33d920b6ce53"
-      (reference "C32") (unit 1) (value "0.1u") (footprint "Capacitor_SMD:C_0201_0603Metric")
-    )
     (path "/1bfc5921-cf85-4de6-a016-ca357e556864/b1529761-3313-4524-b7fd-63bd5b02efb6"
       (reference "C33") (unit 1) (value "0.1u") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
     )
     (path "/1bfc5921-cf85-4de6-a016-ca357e556864/8fb4f730-ee42-4237-9a8d-e3a3cee955eb"
-      (reference "C34") (unit 1) (value "0.01u") (footprint "Capacitor_SMD:C_0402_1005Metric")
-    )
-    (path "/1bfc5921-cf85-4de6-a016-ca357e556864/7a573b00-a11b-46eb-bfc9-add9107c6f47"
-      (reference "C35") (unit 1) (value "1u") (footprint "Capacitor_SMD:C_0201_0603Metric")
+      (reference "C34") (unit 1) (value "0.1u") (footprint "Capacitor_SMD:C_0402_1005Metric")
     )
     (path "/1bfc5921-cf85-4de6-a016-ca357e556864/7ba63036-3e3f-4395-bc39-ac84271a494f"
-      (reference "C36") (unit 1) (value "0.1u") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
+      (reference "C36") (unit 1) (value "0.1u") (footprint "Capacitor_SMD:C_0201_0603Metric")
     )
     (path "/99868341-3fcd-422d-afe6-e3750b4ef7c0/399c42df-e1bd-4dbb-84c7-161cbdbd03c4"
       (reference "D1") (unit 1) (value "LED") (footprint "LED_SMD:LED_0603_1608Metric_Pad1.05x0.95mm_HandSolder")
@@ -980,7 +971,7 @@
       (reference "D10") (unit 1) (value "LED6") (footprint "LED_SMD:LED_0402_1005Metric")
     )
     (path "/fbfdd99d-8079-4968-88cb-ff84defd7944"
-      (reference "J1") (unit 1) (value "XT60PW-M") (footprint "bldc_lib:XT60PWM")
+      (reference "J1") (unit 1) (value "XT60PW-M") (footprint "Connector_AMASS:AMASS_XT60-M_1x02_P7.20mm_Vertical")
     )
     (path "/99868341-3fcd-422d-afe6-e3750b4ef7c0/dea1dc94-a988-4d20-b1f0-a54ceb254ec6"
       (reference "J2") (unit 1) (value "1-84953-1") (footprint "bldc_lib:1-84953-1")
@@ -996,6 +987,15 @@
     )
     (path "/1bfc5921-cf85-4de6-a016-ca357e556864/d0a8ae90-2164-49ef-8a3f-61b79a065fb6"
       (reference "Q1") (unit 1) (value "BSS138") (footprint "Package_TO_SOT_SMD:SOT-23")
+    )
+    (path "/99868341-3fcd-422d-afe6-e3750b4ef7c0/c1d3f6fe-6174-4e55-ae26-b83d40fd6fd8"
+      (reference "Q2") (unit 1) (value "HP8K22TB") (footprint "bldc_lib:HP8K24TB")
+    )
+    (path "/99868341-3fcd-422d-afe6-e3750b4ef7c0/39c0be35-2c00-45ee-909c-14e12b3a55a5"
+      (reference "Q3") (unit 1) (value "HP8K22TB") (footprint "bldc_lib:HP8K24TB")
+    )
+    (path "/99868341-3fcd-422d-afe6-e3750b4ef7c0/8bc932f4-fa5d-4500-8309-6fb0c39b14c6"
+      (reference "Q4") (unit 1) (value "HP8K22TB") (footprint "bldc_lib:HP8K24TB")
     )
     (path "/99868341-3fcd-422d-afe6-e3750b4ef7c0/b926b0e4-c3c8-4a72-b4ed-727b1ddbc7f9"
       (reference "R1") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0402_1005Metric_Pad0.72x0.64mm_HandSolder")
@@ -1098,15 +1098,6 @@
     )
     (path "/99868341-3fcd-422d-afe6-e3750b4ef7c0/93f63767-3b9a-4797-818d-091fed66c18d"
       (reference "U4") (unit 1) (value "a1333") (footprint "Package_SO:HTSSOP-14-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask3x3.1mm")
-    )
-    (path "/99868341-3fcd-422d-afe6-e3750b4ef7c0/c1d3f6fe-6174-4e55-ae26-b83d40fd6fd8"
-      (reference "U5") (unit 1) (value "HP8K22TB") (footprint "bldc_lib:HP8K24TB")
-    )
-    (path "/99868341-3fcd-422d-afe6-e3750b4ef7c0/39c0be35-2c00-45ee-909c-14e12b3a55a5"
-      (reference "U6") (unit 1) (value "HP8K22TB") (footprint "bldc_lib:HP8K24TB")
-    )
-    (path "/99868341-3fcd-422d-afe6-e3750b4ef7c0/8bc932f4-fa5d-4500-8309-6fb0c39b14c6"
-      (reference "U7") (unit 1) (value "HP8K22TB") (footprint "bldc_lib:HP8K24TB")
     )
     (path "/51484c10-a339-47e4-a28f-1fe6df54aaa5/9f440fdd-5449-4ac7-b342-8aa552208d75"
       (reference "U8") (unit 1) (value "ADP151AUJZ-3.3-R7") (footprint "Package_TO_SOT_SMD:SOT-23-5_HandSoldering")
