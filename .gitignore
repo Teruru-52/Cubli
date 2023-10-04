@@ -1,1 +1,2 @@
-firmware/build/*
+firmware/main_board/build/*
+firmware/motor_driver/build/*
