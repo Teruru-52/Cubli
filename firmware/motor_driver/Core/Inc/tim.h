@@ -22,31 +22,33 @@
 #define __TIM_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-  /* USER CODE BEGIN Includes */
+/* USER CODE BEGIN Includes */
 
-  /* USER CODE END Includes */
+/* USER CODE END Includes */
 
-  extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim1;
 
-  extern TIM_HandleTypeDef htim15;
+extern TIM_HandleTypeDef htim4;
 
-  /* USER CODE BEGIN Private defines */
+extern TIM_HandleTypeDef htim15;
 
-  /* USER CODE END Private defines */
+/* USER CODE BEGIN Private defines */
 
-  void MX_TIM4_Init(void);
-  void MX_TIM15_Init(void);
+/* USER CODE END Private defines */
 
-  void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+void MX_TIM1_Init(void);
+void MX_TIM4_Init(void);
+void MX_TIM15_Init(void);
 
-  /* USER CODE BEGIN Prototypes */
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+
+/* USER CODE BEGIN Prototypes */
   typedef struct _BLDC_PWM
   {
     FunctionalState OutputPWM;
@@ -63,10 +65,11 @@ extern "C"
   void PWM_Update(BLDC_PWM *bldc_pwm, float Duty_u, float Duty_v, float Duty_w);
 
   extern BLDC_PWM blcd_pwm;
-  /* USER CODE END Prototypes */
+/* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* __TIM_H__ */
+

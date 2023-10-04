@@ -7,13 +7,15 @@
 
 #include "drv8323.h"
 
-DRV8323::DRV8323(SPI_TypeDef *spi, GPIO_Value SPI_CS_DRV, GPIO_Value nFault, GPIO_Value DRV_ENABLE, GPIO_Value DRV_CAL, GPIO_Value INLx)
+DRV8323::DRV8323(SPI_HandleTypeDef *spi, GPIO_Value SPI_CS_DRV, GPIO_Value nFault, GPIO_Value DRV_ENABLE, GPIO_Value DRV_CAL, GPIO_Value INLx)
     : spi(spi),
       SPI_CS_DRV(SPI_CS_DRV),
       nFault(nFault),
       DRV_ENABLE(DRV_ENABLE),
       DRV_CAL(DRV_CAL),
-      INLx(INLx) {}
+      INLx(INLx)
+{
+}
 
 uint8_t DRV8323::read_byte(uint8_t reg)
 {
@@ -24,7 +26,7 @@ uint8_t DRV8323::read_byte(uint8_t reg)
     tx_data[1] = 0x00; // dummy
 
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_RESET);
-    HAL_SPI_TransmitReceive(&hspi1, tx_data, rx_data, 2, 10);
+    HAL_SPI_TransmitReceive(spi, tx_data, rx_data, 2, 10);
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_SET);
 
     return rx_data[1];
@@ -40,7 +42,7 @@ void DRV8323::write_byte(uint8_t reg, uint8_t data)
     tx_data[1] = data; // write data
 
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_RESET);
-    HAL_SPI_TransmitReceive(&hspi1, tx_data, rx_data, 2, 10);
+    HAL_SPI_TransmitReceive(spi, tx_data, rx_data, 2, 10);
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_SET);
 }
 

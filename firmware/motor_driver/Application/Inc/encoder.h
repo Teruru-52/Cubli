@@ -9,25 +9,30 @@
 #define ENCODER_H_
 
 #include "main.h"
+#include "spi.h"
 
 class A1333
 {
 protected:
-    SPI_TypeDef *spi;
+    SPI_HandleTypeDef *spi;
     GPIO_Value SPI_CS_ENC;
     float angle;
+    int16_t angle_raw;
     float velocity;
+    uint16_t flag_err;
 
 public:
-    A1333(SPI_TypeDef *spi, GPIO_Value SPI_CS_ENC);
+    A1333(SPI_HandleTypeDef *spi, GPIO_Value SPI_CS_ENC);
 
-    uint8_t read_byte(uint8_t reg);
+    uint16_t read_byte(uint8_t reg1, uint8_t reg2);
     void write_byte(uint8_t reg, uint8_t data);
 
     void Initialize();
     void Update();
-    float GetAngle();
-    float GetVelocity();
+    uint16_t GetErrFlag() { return read_byte(0x24, 0x25); };
+    float GetAngle() { return angle; };
+    uint16_t GetRawAngle() { return angle_raw; };
+    float GetVelocity() { return velocity; };
 };
 
 #endif // ENCODER_H_
