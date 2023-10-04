@@ -5,15 +5,14 @@
             "cwd": "${workspaceRoot}",
             "executable": "./build/${workspaceFolderBasename}.elf",
             "request": "launch",
-            "preLaunchTask": "Cubli Build",
+            "preLaunchTask": "BLMD Build",
             "type": "cortex-debug",
             "showDevDebugOutput": "raw",
             "armToolchainPath": "/opt/gcc-arm-none-eabi/bin",
             "servertype": "jlink",
             "serverpath": "JLinkGDBServerCLExe",
-            "device": "STM32F405RG",
+            "device": "STM32G431CB",
             "interface": "swd",
-            // "svdFile": "${workspaceRoot}/STM32F411.svd"
         }
     ]
 }

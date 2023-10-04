@@ -65,7 +65,44 @@
         "ctime": "cpp",
         "ratio": "cpp",
         "iomanip": "cpp",
-        "freertos.h": "c"
+        "freertos.h": "c",
+        "core": "cpp",
+        "superlusupport": "cpp",
+        "*.evaluator": "cpp",
+        "*.traits": "cpp",
+        "adolcforward": "cpp",
+        "alignedvector3": "cpp",
+        "autodiff": "cpp",
+        "bvh": "cpp",
+        "eulerangles": "cpp",
+        "fft": "cpp",
+        "kroneckerproduct": "cpp",
+        "mprealsupport": "cpp",
+        "nnls": "cpp",
+        "numericaldiff": "cpp",
+        "openglsupport": "cpp",
+        "specialfunctions": "cpp",
+        "splines": "cpp",
+        "complex": "cpp",
+        "condition_variable": "cpp",
+        "cstring": "cpp",
+        "unordered_set": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "hash_map": "cpp",
+        "future": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp",
+        "valarray": "cpp",
+        "main_exec.h": "c",
+        "arm_math.h": "c"
     },
-    "C_Cpp.errorSquiggles": "EnabledIfIncludesResolve"
+    // "C_Cpp.errorSquiggles": "EnabledIfIncludesResolve",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/reiji/Documents/Robots/Cubli/firmware/main_board/build",
+            "binaryPath": "/home/reiji/Documents/Robots/Cubli/firmware/main_board/build/main_board.elf",
+            "binaryArgs": []
+        }
+    ],
 }
