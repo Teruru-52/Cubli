@@ -14,7 +14,10 @@ extern "C"
 #endif
 #include "main.h"
 
+    void Initialize();
     void UpdateControl();
+    void UpdateIMUs();
+    void LogPrint();
 
 #ifdef __cplusplus
 };

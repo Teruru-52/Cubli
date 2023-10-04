@@ -1,24 +1,26 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2023 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2023 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "can.h"
+#include "fatfs.h"
+#include "sdio.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -26,7 +28,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "main_exec.h"
+#include "LCD_Test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,13 +61,137 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+int cnt1kHz = 0;
 
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if (htim == &htim1) // interruption 1kHz
+  {
+    cnt1kHz = (cnt1kHz + 1) % 1000;
+
+    if (cnt1kHz % 10 == 0) // interruption 100Hz
+    {
+      UpdateIMUs();
+    }
+
+    if (cnt1kHz % 200 == 0) // interruption 5Hz
+    {
+      LogPrint();
+    }
+
+    if (cnt1kHz == 0) // interruption 1Hz
+    {
+      Write_GPIO(LED_WHITE, GPIO_PIN_SET);
+    }
+    else
+    {
+      Write_GPIO(LED_WHITE, GPIO_PIN_RESET);
+    }
+  }
+}
+
+void SDIO_Test()
+{
+  FATFS SDFatFs;                  /* File system object for SD disk logical drive */
+  FIL MyFile;                     /* File object */
+  char SDPath[4];                 /* SD disk logical drive path */
+  static uint8_t buffer[_MAX_SS]; /* a work buffer for the f_mkfs() */
+
+  FRESULT res;                                              /* FatFs function common result code */
+  uint32_t byteswritten, bytesread;                         /* File write/read counts */
+  uint8_t wtext[] = "Hi, this is STM32 working with FatFs"; /* File write buffer */
+  uint8_t rtext[100];                                       /* File read buffer */
+
+  /*##-1- Link the SD disk I/O driver ########################################*/
+  if (FATFS_LinkDriver(&SD_Driver, SDPath) == 0)
+  {
+    /*##-2- Register the file system object to the FatFs module ##############*/
+    if (f_mount(&SDFatFs, (TCHAR const *)SDPath, 0) != FR_OK)
+    {
+      /* FatFs Initialization Error */
+      Error_Handler();
+    }
+    else
+    {
+      /*##-3- Create a FAT file system (format) on the logical drive #########*/
+
+      FRESULT fr;
+      fr = f_mkfs((TCHAR const *)SDPath, FM_ANY, 0, buffer, sizeof(buffer));
+      if (fr != FR_OK)
+      {
+        Error_Handler();
+      }
+      else
+      {
+        /*##-4- Create and Open a new text file object with write access #####*/
+        if (f_open(&MyFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
+        {
+          /* 'STM32.TXT' file Open for write Error */
+          Error_Handler();
+        }
+        else
+        {
+          /*##-5- Write data to the text file ################################*/
+          res = f_write(&MyFile, wtext, sizeof(wtext), (void *)&byteswritten);
+
+          if ((byteswritten == 0) || (res != FR_OK))
+          {
+            /* 'STM32.TXT' file Write or EOF Error */
+            Error_Handler();
+          }
+          else
+          {
+            /*##-6- Close the open text file #################################*/
+            f_close(&MyFile);
+
+            /*##-7- Open the text file object with read access ###############*/
+            if (f_open(&MyFile, "STM32.TXT", FA_READ) != FR_OK)
+            {
+              /* 'STM32.TXT' file Open for read Error */
+              Error_Handler();
+            }
+            else
+            {
+              /*##-8- Read data from the text file ###########################*/
+              res = f_read(&MyFile, rtext, sizeof(rtext), (UINT *)&bytesread);
+
+              if ((bytesread == 0) || (res != FR_OK)) /* EOF or Error */
+              {
+                /* 'STM32.TXT' file Read or EOF Error */
+                Error_Handler();
+              }
+              else
+              {
+                /*##-9- Close the open text file #############################*/
+                f_close(&MyFile);
+
+                /*##-10- Compare read data with the expected data ############*/
+                if ((bytesread != byteswritten))
+                {
+                  /* Read data is different from the expected data */
+                  Error_Handler();
+                }
+                else
+                {
+                  /* Success of the demo: no error occurrence */
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /*##-11- Unlink the SD disk I/O driver ####################################*/
+  FATFS_UnLinkDriver(SDPath);
+}
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
+ * @brief  The application entry point.
+ * @retval int
+ */
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -90,10 +217,32 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_CAN1_Init();
-  MX_SPI3_Init();
   MX_TIM1_Init();
   MX_USART1_UART_Init();
+  MX_SPI1_Init();
+  MX_SDIO_SD_Init();
+  MX_SPI2_Init();
+  MX_TIM3_Init();
+  MX_TIM12_Init();
+  MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
+  SEGGER_RTT_Init();
+  // HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
+
+  // SDIO_Test();
+
+  // __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
+
+  __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, 20);
+  HAL_Delay(50);
+  __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, 0);
+
+  // LCD_1in28_test();
+
+  Initialize();
+
+  HAL_TIM_Base_Start_IT(&htim1);
 
   /* USER CODE END 2 */
 
@@ -104,27 +253,35 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    if (Read_GPIO(USER_SW) == 0)
+    {
+      Write_GPIO(LED_BLUE, GPIO_PIN_SET);
+    }
+    else
+    {
+      Write_GPIO(LED_BLUE, GPIO_PIN_RESET);
+    }
   }
   /* USER CODE END 3 */
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+ * @brief System Clock Configuration
+ * @retval None
+ */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
-  */
+   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
+   * in the RCC_OscInitTypeDef structure.
+   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -133,16 +290,15 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLM = 8;
   RCC_OscInitStruct.PLL.PLLN = 168;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 4;
+  RCC_OscInitStruct.PLL.PLLQ = 7;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+   */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
@@ -159,30 +315,9 @@ void SystemClock_Config(void)
 /* USER CODE END 4 */
 
 /**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM6 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  /* USER CODE BEGIN Callback 0 */
-
-  /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM6) {
-    HAL_IncTick();
-  }
-  /* USER CODE BEGIN Callback 1 */
-
-  /* USER CODE END Callback 1 */
-}
-
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
@@ -194,14 +329,14 @@ void Error_Handler(void)
   /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */

@@ -7,40 +7,28 @@
 
 #include "hardware/imu.h"
 
+#define WHO_AM_I 0x75
+#define CONFIG 0x1A
+#define GYRO_CONFIG 0x1B
+#define ACCEL_CONFIG 0x1C
+#define PWR_MGMT_1 0x6B
+
+#define ACCEL_XOUT_H 0x3B
+#define ACCEL_XOUT_L 0x3C
+#define ACCEL_YOUT_H 0x3D
+#define ACCEL_YOUT_L 0x3E
+#define ACCEL_ZOUT_H 0x3F
+#define ACCEL_ZOUT_L 0x40
+
+#define GYRO_XOUT_H 0x43
+#define GYRO_XOUT_L 0x44
+#define GYRO_YOUT_H 0x45
+#define GYRO_YOUT_L 0x46
+#define GYRO_ZOUT_H 0x47
+#define GYRO_ZOUT_L 0x48
+
 namespace hardware
 {
-    // explicit IMUBase::IMUBase()
-    //     :
-
-    uint8_t IMUBase::read_byte(uint8_t reg)
-    {
-        uint8_t rx_data[2];
-        uint8_t tx_data[2];
-
-        tx_data[0] = reg | 0x80;
-        tx_data[1] = 0x00; // dummy
-
-        // Write_GPIO(SPI_CS, GPIO_PIN_RESET);
-        // HAL_SPI_TransmitReceive(&hspi1, tx_data, rx_data, 2, 10);
-        // Write_GPIO(SPI_CS, GPIO_PIN_SET);
-
-        return rx_data[1];
-    }
-
-    void IMUBase::write_byte(uint8_t reg, uint8_t data)
-    {
-        uint8_t rx_data[2];
-        uint8_t tx_data[2];
-
-        tx_data[0] = reg & 0x7F;
-        //   tx_data[0] = reg | 0x00;
-        tx_data[1] = data; // write data
-
-        // Write_GPIO(SPI_CS, GPIO_PIN_RESET);
-        // HAL_SPI_TransmitReceive(&hspi1, tx_data, rx_data, 2, 10);
-        // Write_GPIO(SPI_CS, GPIO_PIN_SET);
-    }
-
     void IMUBase::Update()
     {
         UpdateGyro();
@@ -52,15 +40,15 @@ namespace hardware
         int16_t gyro_raw;
 
         // H:8bit shift, Link h and l
-        gyro_raw = (int16_t)((int16_t)(read_byte(0x47) << 8) | read_byte(0x48));
+        gyro_raw = (int16_t)((int16_t)(Read_1byte(spi_imu, GYRO_XOUT_H) << 8) | Read_1byte(spi_imu, GYRO_XOUT_L));
         gyro.x = (float)(gyro_raw) / gyro_factor * M_PI / 180.0f - gyro_offset.x; // dps to deg/sec
 
         // H:8bit shift, Link h and l
-        gyro_raw = (int16_t)((int16_t)(read_byte(0x47) << 8) | read_byte(0x48));
+        gyro_raw = (int16_t)((int16_t)(Read_1byte(spi_imu, GYRO_YOUT_H) << 8) | Read_1byte(spi_imu, GYRO_YOUT_L));
         gyro.y = (float)(gyro_raw) / gyro_factor * M_PI / 180.0f - gyro_offset.y; // dps to deg/sec
 
         // H:8bit shift, Link h and l
-        gyro_raw = (int16_t)((int16_t)(read_byte(0x47) << 8) | read_byte(0x48));
+        gyro_raw = (int16_t)((int16_t)(Read_1byte(spi_imu, GYRO_ZOUT_H) << 8) | Read_1byte(spi_imu, GYRO_ZOUT_L));
         gyro.z = (float)(gyro_raw) / gyro_factor * M_PI / 180.0f - gyro_offset.z; // dps to deg/sec
     }
 
@@ -69,15 +57,15 @@ namespace hardware
         int16_t acc_raw;
 
         // H:8bit shift, Link h and l
-        acc_raw = (int16_t)((int16_t)(read_byte(0x3D) << 8) | read_byte(0x3E));
+        acc_raw = (int16_t)((int16_t)(Read_1byte(spi_imu, ACCEL_XOUT_H) << 8) | Read_1byte(spi_imu, ACCEL_XOUT_L));
         acc.x = (float)(acc_raw) / acc_factor - acc_offset.x;
 
         // H:8bit shift, Link h and l
-        acc_raw = (int16_t)((int16_t)(read_byte(0x3D) << 8) | read_byte(0x3E));
+        acc_raw = (int16_t)((int16_t)(Read_1byte(spi_imu, ACCEL_YOUT_H) << 8) | Read_1byte(spi_imu, ACCEL_YOUT_L));
         acc.y = (float)(acc_raw) / acc_factor - acc_offset.y;
 
         // H:8bit shift, Link h and l
-        acc_raw = (int16_t)((int16_t)(read_byte(0x3D) << 8) | read_byte(0x3E));
+        acc_raw = (int16_t)((int16_t)(Read_1byte(spi_imu, ACCEL_ZOUT_H) << 8) | Read_1byte(spi_imu, ACCEL_ZOUT_L));
         acc.z = (float)(acc_raw) / acc_factor - acc_offset.z;
     }
 
@@ -108,43 +96,35 @@ namespace hardware
         acc_offset.x = data_sum.x / static_cast<float>(cali_count);
         acc_offset.y = data_sum.y / static_cast<float>(cali_count);
         acc_offset.z = data_sum.z / static_cast<float>(cali_count);
+
+        printf("%.3f, %.3f, %.3f\n", gyro_offset.x, gyro_offset.y, gyro_offset.z);
     }
-
-    // float IMUBase::GetAngularVelocity() const
-    // {
-    //     return gz;
-    // }
-
-    // float IMUBase::GetAcceleration() const
-    // {
-    //     return ax;
-    // }
 
     void MPU6500::Initialize()
     {
         uint8_t who_am_i;
-        // Write_GPIO(SPI_CS, GPIO_PIN_SET);
-        // __HAL_SPI_ENABLE(&hspi1); // clockが動かないように、あらかじめEnableにしておく
+        Write_GPIO(*(spi_imu->SPI_CS), GPIO_PIN_SET);
+        __HAL_SPI_ENABLE(spi_imu->hspi); // clockが動かないように、あらかじめEnableにしておく
 
-        HAL_Delay(100);                          // wait start up
-        who_am_i = read_byte(0x75);              // read who am i
-        printf("who_am_i = 0x%x\r\n", who_am_i); // check who am i value
+        HAL_Delay(100);                           // wait start up
+        who_am_i = Read_1byte(spi_imu, WHO_AM_I); // read who am i
+        printf("who_am_i = 0x%x\r\n", who_am_i);  // check who am i value
         HAL_Delay(10);
         while (who_am_i != 0x70)
         {
-            who_am_i = read_byte(0x75);
+            who_am_i = Read_1byte(spi_imu, WHO_AM_I);
             printf("who_am_i = 0x%x\r\n", who_am_i);
-            HAL_Delay(20);
+            pwr_might
         }
 
         HAL_Delay(50);
-        write_byte(0x6B, 0x00); // set pwr_might (20MHz)
+        Write_1byte(spi_imu, PWR_MGMT_1, 0x88); // set clock (20MHz) & device reset & disable temp sensor
         HAL_Delay(50);
-        write_byte(0x1A, 0x00); // set config (FSYNCはNC)
+        Write_1byte(spi_imu, CONFIG, 0x00); // set config (FSYNCはNC)
         HAL_Delay(50);
-        write_byte(0x1B, 0x18); // set gyro config (2000dps)
+        Write_1byte(spi_imu, GYRO_CONFIG, 0x18); // set gyro config (2000dps)
         HAL_Delay(50);
-        write_byte(0x1C, 0x08); // set acc config (4g)
+        Write_1byte(spi_imu, ACCEL_CONFIG, 0x08); // set acc config (4g)
         HAL_Delay(50);
         // write_byte(0x1D, 0x00); // LPF (Accelerometer, Bandwidth460 Hz)
         // HAL_Delay(50);

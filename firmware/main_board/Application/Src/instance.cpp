@@ -10,12 +10,12 @@
 const float sampling_period = 0.01;
 const float control_period = 0.01;
 
-hardware::MPU6500 mpu6500_1;
-hardware::MPU6500 mpu6500_2;
-hardware::MPU6500 mpu6500_3;
-hardware::MPU6500 mpu6500_4;
-hardware::MPU6500 mpu6500_5;
-hardware::MPU6500 mpu6500_6;
+hardware::MPU6500 mpu6500_1(&spi_imu1);
+hardware::MPU6500 mpu6500_2(&spi_imu2);
+hardware::MPU6500 mpu6500_3(&spi_imu3);
+hardware::MPU6500 mpu6500_4(&spi_imu4);
+hardware::MPU6500 mpu6500_5(&spi_imu5);
+hardware::MPU6500 mpu6500_6(&spi_imu6);
 
 hardware::IMUBase *imu1{&mpu6500_1};
 hardware::IMUBase *imu2{&mpu6500_2};

@@ -9,8 +9,23 @@
 #include "instance.h"
 #include "controller/controller.h"
 
+void Initialize()
+{
+    state->Initialize();
+}
+
 void UpdateControl()
 {
-    state->Update();
-    controller->CalcInput(state->vec_x);
+    // state->Update();
+    // controller->CalcInput(state->vec_x);
+}
+
+void UpdateIMUs()
+{
+    state->UpdateIMUs();
+}
+
+void LogPrint()
+{
+    state->LogPrint();
 }
