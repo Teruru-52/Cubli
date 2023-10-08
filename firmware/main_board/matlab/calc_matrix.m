@@ -3,7 +3,7 @@ close all
 
 %% Matrix for Gravity Vector Estimation
 l = 0.15; % [m]
-px1 = 0.0025;
+px1 = 0.0025 + 0.00157;
 py1 = 0.033;
 pz1 = 0.0115;
 
@@ -23,7 +23,7 @@ p6 = [l - px1; l - py1; l - pz1];
 
 P = cat(1, ones(1, 6), [p1 p2 p3 p4 p5 p6]);
 X = pinv(P);
-X(:, 1)
+X(:, 1)'
 
 %% plot
 vertices = l * [
