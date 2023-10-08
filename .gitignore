@@ -1,2 +1,3 @@
 firmware/main_board/build/*
 firmware/motor_driver/build/*
+pcb/motor_driver/motor_driver-backups/*
