@@ -15,7 +15,7 @@ A1333::A1333(SPI_HandleTypeDef *spi, GPIO_Value SPI_CS_ENC)
 {
 }
 
-uint16_t A1333::read_byte(uint8_t reg1, uint8_t reg2)
+uint16_t A1333::Read_byte(uint8_t reg1, uint8_t reg2)
 {
     uint8_t rx_data[2];
     uint8_t tx_data[2];
@@ -31,23 +31,9 @@ uint16_t A1333::read_byte(uint8_t reg1, uint8_t reg2)
     return data;
 }
 
-void A1333::write_byte(uint8_t reg, uint8_t data)
-{
-    uint8_t rx_data[2];
-    uint8_t tx_data[2];
-
-    tx_data[0] = reg & 0x7F;
-    //   tx_data[0] = reg | 0x00;
-    tx_data[1] = data; // write data
-
-    Write_GPIO(SPI1_CS_ENC, GPIO_PIN_RESET);
-    HAL_SPI_TransmitReceive(&hspi1, tx_data, rx_data, 2, 10);
-    Write_GPIO(SPI1_CS_ENC, GPIO_PIN_SET);
-}
-
 void A1333::Update()
 {
-    angle_raw = read_byte(0x20, 0x21) & 0x0FFF;
+    angle_raw = Read_byte(0x20, 0x21) & 0x0FFF;
     // printf("angle_raw = %d\n", angle_raw);
     angle = (2.0 * M_PI) * static_cast<float>(angle_raw) / 4095.0;
 }

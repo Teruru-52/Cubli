@@ -18,7 +18,10 @@ extern "C"
     void UpdateControl();
     void UpdateEncoder();
     void LogPrint();
-    void FDCANReceiveCallback();
+    void FDCANReceiveCallback(uint8_t *pRxData);
+
+    void TestHallSensor();
+    void TestADC();
 
 #ifdef __cplusplus
 };
@@ -30,7 +33,8 @@ extern bool ADC_calibration;
 extern bool can_received;
 extern uint32_t can_receive_interval;
 
+uint8_t TxData[8];
+
 void LEDUpdate(void);
-uint8_t BLMDFDCANReceive(uint32_t *id, uint8_t *buffer);
 
 #endif // MAIN_EXEC_H_

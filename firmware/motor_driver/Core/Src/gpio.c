@@ -22,10 +22,10 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
-GPIO_Value LED1 = {LED1_GPIO_Port, LED1_Pin};
-GPIO_Value LED2 = {LED2_GPIO_Port, LED2_Pin};
-GPIO_Value LED3 = {LED3_GPIO_Port, LED3_Pin};
-GPIO_Value LED4 = {LED4_GPIO_Port, LED4_Pin};
+GPIO_Value LED_WHITE = {LED1_GPIO_Port, LED1_Pin};
+GPIO_Value LED_BLUE = {LED2_GPIO_Port, LED2_Pin};
+GPIO_Value LED_GREEN = {LED3_GPIO_Port, LED3_Pin};
+GPIO_Value LED_YELLOW = {LED4_GPIO_Port, LED4_Pin};
 GPIO_Value LED_CAN_TX = {LED_CAN_TX_GPIO_Port, LED_CAN_TX_Pin};
 GPIO_Value LED_CAN_RX = {LED_CAN_RX_GPIO_Port, LED_CAN_RX_Pin};
 
@@ -71,7 +71,7 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, nFAULT_Pin|SPI_CS_DRV_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(SPI_CS_DRV_GPIO_Port, SPI_CS_DRV_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, CAL_Pin|INLx_Pin|LED_CAN_TX_Pin, GPIO_PIN_RESET);
@@ -86,12 +86,18 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(ENABLE_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PCPin PCPin */
-  GPIO_InitStruct.Pin = nFAULT_Pin|SPI_CS_DRV_Pin;
+  /*Configure GPIO pin : PtPin */
+  GPIO_InitStruct.Pin = nFAULT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(nFAULT_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PtPin */
+  GPIO_InitStruct.Pin = SPI_CS_DRV_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(SPI_CS_DRV_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PAPin PAPin PAPin */
   GPIO_InitStruct.Pin = CAL_Pin|INLx_Pin|LED_CAN_TX_Pin;
@@ -137,5 +143,41 @@ void Toggle_GPIO(GPIO_Value GPIO)
 void Write_GPIO(GPIO_Value GPIO, GPIO_PinState PinState)
 {
   HAL_GPIO_WritePin(GPIO.GPIOx, GPIO.GPIO_PIN_x, PinState);
+}
+
+void SetTxLED(GPIO_PinState PinState)
+{
+  Write_GPIO(LED_CAN_TX, PinState);
+}
+
+void ActivateTxLED(void)
+{
+  if (BLMD_Access_Lamp.FDCAN_TX == ENABLE)
+  {
+    Write_GPIO(LED_CAN_TX, GPIO_PIN_SET);
+  }
+}
+
+void ResetTxLED(void)
+{
+  BLMD_Access_Lamp.FDCAN_TX = DISABLE;
+}
+
+void SetRxLED(GPIO_PinState PinState)
+{
+  Write_GPIO(LED_CAN_RX, PinState);
+}
+
+void ActivateRxLED(void)
+{
+  if (BLMD_Access_Lamp.FDCAN_RX == ENABLE)
+  {
+    Write_GPIO(LED_CAN_RX, GPIO_PIN_SET);
+  }
+}
+
+void ResetRxLED(void)
+{
+  BLMD_Access_Lamp.FDCAN_RX = DISABLE;
 }
 /* USER CODE END 2 */

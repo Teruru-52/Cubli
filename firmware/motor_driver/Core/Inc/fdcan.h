@@ -29,30 +29,23 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-#define BLMD_Serial_Number 1
-// #define BLMD_Serial_Number 2
-// #define BLMD_Serial_Number 3
-/* MB -> BLMD */
-#define CAN_ID_TX (BLMD_Serial_Number + 10)
-/* Lightning5 -> MB */
-#define CAN_ID_RX (CAN_ID_TX + 100)
-/* S/N */
-#define SerialNumber (BLMD_Serial_Number + 500)
 /* USER CODE END Includes */
 
 extern FDCAN_HandleTypeDef hfdcan1;
 
 /* USER CODE BEGIN Private defines */
-
+/* MB -> BLMD */
+#define CAN_ID_TX 0x101
+/* BLMD -> MB */
+#define CAN_ID_RX 0x100
+  FDCAN_RxHeaderTypeDef RxHeader;
 /* USER CODE END Private defines */
 
 void MX_FDCAN1_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-  void FDCAN_Send(uint8_t *pTxData, uint8_t Size);
-  uint8_t FDCAN_Receive(uint32_t *id, uint8_t *pRxData);
-  uint32_t FDCAN_Get_data_length_code(uint8_t length);
-  uint8_t FDCAN_Get_data_length(uint32_t code);
+  void FDCAN_Send(uint8_t *pTxData);
+  uint8_t RxData[8];
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

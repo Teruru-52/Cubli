@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "main_exec.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,6 +48,7 @@
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
+osThreadId LEDTaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -55,6 +56,7 @@ osThreadId defaultTaskHandle;
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
+void StartLEDTask(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -89,6 +91,10 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
+  /* definition and creation of LEDTask */
+  osThreadDef(LEDTask, StartLEDTask, osPriorityNormal, 0, 128);
+  LEDTaskHandle = osThreadCreate(osThread(LEDTask), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -108,18 +114,36 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for (;;)
   {
-    if (Read_GPIO(USER_SW) == 0)
-    {
-      Write_GPIO(LED_CAN_TX, GPIO_PIN_SET);
-      Write_GPIO(LED_CAN_RX, GPIO_PIN_SET);
-    }
-    else
-    {
-      Write_GPIO(LED_CAN_TX, GPIO_PIN_RESET);
-      Write_GPIO(LED_CAN_RX, GPIO_PIN_RESET);
-    }
+    TestHallSensor();
+    // TestADC();
   }
   /* USER CODE END StartDefaultTask */
+}
+
+/* USER CODE BEGIN Header_StartLEDTask */
+/**
+ * @brief Function implementing the LEDTask thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_StartLEDTask */
+void StartLEDTask(void const * argument)
+{
+  /* USER CODE BEGIN StartLEDTask */
+  /* Infinite loop */
+  for (;;)
+  {
+    ActivateTxLED();
+    ResetTxLED();
+    osDelay(100);
+    SetTxLED(GPIO_PIN_RESET);
+
+    ActivateRxLED();
+    ResetRxLED();
+    osDelay(100);
+    SetRxLED(GPIO_PIN_RESET);
+  }
+  /* USER CODE END StartLEDTask */
 }
 
 /* Private application code --------------------------------------------------*/

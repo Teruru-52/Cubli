@@ -10,6 +10,7 @@
 #include "main_exec.h"
 #include "instance.h"
 #include "driver_controller.h"
+#include "fdcan.h"
 #include "SEGGER_RTT.h"
 
 bool initialized = false;
@@ -33,47 +34,51 @@ LEDState led_state = LEDState::yet_inited;
 
 void TIMUpdate()
 {
-    TIM_rising_edge = !TIM_rising_edge;
-    if (TIM_rising_edge)
-    {
-        Write_GPIO(LED4, GPIO_PIN_SET);
-        LEDUpdate();
-        can_receive_interval++;
-        if (can_receive_interval > FDCAN_RECEIVE_INTERVAL_TIMEOUT_VALUE)
-        {
-            led_state = LEDState::yet_inited;
-            can_received = false;
-            if (driver_controller != nullptr)
-                driver_controller->Reset();
-            driver_controller = nullptr;
-            initialized = false;
-        }
-        if (driver_controller == nullptr || !initialized)
-            return;
-        else
-            period_count++;
+    // TIM_rising_edge = !TIM_rising_edge;
+    // if (TIM_rising_edge)
+    // {
+    //     Write_GPIO(LED_YELLOW, GPIO_PIN_SET);
+    //     LEDUpdate();
+    //     can_receive_interval++;
+    //     if (can_receive_interval > FDCAN_RECEIVE_INTERVAL_TIMEOUT_VALUE)
+    //     {
+    //         led_state = LEDState::yet_inited;
+    //         can_received = false;
+    //         if (driver_controller != nullptr)
+    //             driver_controller->Reset();
+    //         driver_controller = nullptr;
+    //         initialized = false;
+    //     }
+    //     if (driver_controller == nullptr || !initialized)
+    //         return;
+    //     else
+    //         period_count++;
 
-        // if (period_count % driver_controller->GetPeriod() == 0)
-        // {
-        // Update_and_send = true;
-        // driver_controller->UpdateInTimerCallback(TIM_rising_edge);
-        // }
-        // else
-        // {
-        //     Update_and_send = false;
-        // }
-        Write_GPIO(LED4, GPIO_PIN_RESET);
-    }
-    else
-    {
-        if (driver_controller == nullptr || !initialized)
-            return;
-        if (Update_and_send)
-        {
-            // driver_controller->UpdateInTimerCallback(TIM_rising_edge);
-            // driver_controller->SendData();
-        }
-    }
+    //     // if (period_count % driver_controller->GetPeriod() == 0)
+    //     // {
+    //     // Update_and_send = true;
+    //     // driver_controller->UpdateInTimerCallback(TIM_rising_edge);
+    //     // }
+    //     // else
+    //     // {
+    //     //     Update_and_send = false;
+    //     // }
+    //     Write_GPIO(LED_YELLOW, GPIO_PIN_RESET);
+    // }
+    // else
+    // {
+    //     if (driver_controller == nullptr || !initialized)
+    //         return;
+    //     if (Update_and_send)
+    //     {
+    //         // driver_controller->UpdateInTimerCallback(TIM_rising_edge);
+    //         // driver_controller->SendData();
+    //     }
+    // }
+
+    BLMD_Access_Lamp.FDCAN_TX = ENABLE;
+    TxData[0] = 3;
+    FDCAN_Send(TxData);
 }
 
 void UpdateControl()
@@ -106,17 +111,14 @@ void UpdateEncoder()
 
 void LogPrint()
 {
-    // float angle = encoder.GetAngle();
-    // printf("angle = %.3f\n", angle);
-
-    uint16_t angle = encoder.GetRawAngle();
-    printf("angle = %d\n", angle);
+    float angle = encoder.GetAngle();
+    printf("angle = %.3f\n", angle);
 
     // uint16_t flag_err = encoder.GetErrFlag();
     // printf("flag_err = %x\n", flag_err);
 }
 
-void FDCANReceiveCallback()
+void FDCANReceiveCallback(uint8_t *pRxData)
 {
     // Buffer<64> can_buf;
     // uint8_t DataSize = 0;
@@ -183,6 +185,31 @@ void FDCANReceiveCallback()
     //     }
     // }
     // }
+
+    BLMD_Access_Lamp.FDCAN_RX = ENABLE;
+    printf("data=%d\r\n", pRxData[0]);
+}
+
+void TestHallSensor()
+{
+    hall.ReadHallValue();
+
+    // uint8_t hall_value = hall.GetHallValue();
+    // static int cnt = 0;
+    // if (cnt == 0)
+    //     printf("hall = %d\n", hall_value);
+    // cnt = (cnt + 1) % 10000;
+}
+
+void TestADC()
+{
+    uint32_t ADC_Data[3];
+    ADC_Get_Value(ADC_Data);
+
+    // static int cnt = 0;
+    // if (cnt == 0)
+    //     printf("%ld, %ld, %ld\n", ADC_Data[0], ADC_Data[1], ADC_Data[2]);
+    // cnt = (cnt + 1) % 10000;
 }
 
 void LEDUpdate()
@@ -190,16 +217,16 @@ void LEDUpdate()
     switch (led_state)
     {
     case LEDState::yet_inited:
-        Write_GPIO(LED1, GPIO_PIN_SET);
-        Write_GPIO(LED2, GPIO_PIN_RESET);
+        Write_GPIO(LED_WHITE, GPIO_PIN_SET);
+        Write_GPIO(LED_BLUE, GPIO_PIN_RESET);
         break;
     case LEDState::inited:
-        Write_GPIO(LED1, GPIO_PIN_RESET);
-        Write_GPIO(LED2, GPIO_PIN_SET);
+        Write_GPIO(LED_WHITE, GPIO_PIN_RESET);
+        Write_GPIO(LED_BLUE, GPIO_PIN_SET);
         break;
     case LEDState::stop:
-        Write_GPIO(LED1, GPIO_PIN_SET);
-        Write_GPIO(LED2, GPIO_PIN_SET);
+        Write_GPIO(LED_WHITE, GPIO_PIN_SET);
+        Write_GPIO(LED_BLUE, GPIO_PIN_SET);
         break;
     }
 }

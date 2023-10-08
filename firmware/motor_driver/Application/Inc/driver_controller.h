@@ -69,7 +69,7 @@ protected:
     bool adc_calibration{true};
     const float Vref{3.3};     // [V]
     const float Rsense{0.005}; // [Ω]
-    const float Gcsa{5.0};
+    const float Gcsa{20.0};
 
     // coefficient of Park and Clarke transform
     const float zet{sqrt(2.0 / 3.0)};

@@ -1,6 +1,9 @@
 {
     "files.associations": {
-        "compare": "cpp"
+        "compare": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp"
     },
     "C_Cpp.errorSquiggles": "EnabledIfIncludesResolve",
     "makefile.launchConfigurations": [

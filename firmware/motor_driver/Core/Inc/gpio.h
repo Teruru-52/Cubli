@@ -39,10 +39,10 @@ extern "C" {
     uint16_t GPIO_PIN_x;
   } GPIO_Value;
 
-  extern GPIO_Value LED1;
-  extern GPIO_Value LED2;
-  extern GPIO_Value LED3;
-  extern GPIO_Value LED4;
+  extern GPIO_Value LED_WHITE;
+  extern GPIO_Value LED_BLUE;
+  extern GPIO_Value LED_GREEN;
+  extern GPIO_Value LED_YELLOW;
   extern GPIO_Value LED_CAN_TX;
   extern GPIO_Value LED_CAN_RX;
 
@@ -74,6 +74,14 @@ void MX_GPIO_Init(void);
   GPIO_PinState Read_GPIO(GPIO_Value GPIO);
   void Toggle_GPIO(GPIO_Value GPIO);
   void Write_GPIO(GPIO_Value GPIO, GPIO_PinState PinState);
+
+  void SetTxLED(GPIO_PinState PinState);
+  void ActivateTxLED(void);
+  void ResetTxLED(void);
+
+  void SetRxLED(GPIO_PinState PinState);
+  void ActivateRxLED(void);
+  void ResetRxLED(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

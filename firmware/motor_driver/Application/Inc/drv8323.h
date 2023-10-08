@@ -19,15 +19,15 @@ private:
     GPIO_Value DRV_ENABLE;
     GPIO_Value DRV_CAL;
     GPIO_Value INLx;
-    // 10bitなので修正する
-    uint8_t fault_status1;
-    uint8_t fault_status2;
+
+    uint16_t fault_status1;
+    uint16_t fault_status2;
 
 public:
     DRV8323(SPI_HandleTypeDef *spi, GPIO_Value SPI_CS_DRV, GPIO_Value nFault, GPIO_Value DRV_ENABLE, GPIO_Value DRV_CAL, GPIO_Value INLx);
 
-    uint8_t read_byte(uint8_t reg);
-    void write_byte(uint8_t reg, uint8_t data);
+    uint16_t Read_byte(uint8_t reg);
+    void Write_byte(uint8_t reg, uint16_t data);
 
     void Initialize();
     void CheckFaultStatus();

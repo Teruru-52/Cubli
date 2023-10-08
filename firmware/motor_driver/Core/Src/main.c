@@ -103,14 +103,27 @@ int main(void)
   SEGGER_RTT_Init();
   setbuf(stdout, NULL);
   HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+  HAL_FDCAN_Start(&hfdcan1);
+  if (HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  Reset_CS_Pin();
 
-  Write_GPIO(LED2, GPIO_PIN_SET);
-  Write_GPIO(LED3, GPIO_PIN_SET);
-  Write_GPIO(LED4, GPIO_PIN_SET);
+  Write_GPIO(LED_BLUE, GPIO_PIN_SET);
+  Write_GPIO(LED_GREEN, GPIO_PIN_SET);
+  Write_GPIO(LED_YELLOW, GPIO_PIN_SET);
 
   __HAL_TIM_SET_COMPARE(&htim15, TIM_CHANNEL_1, 20);
   HAL_Delay(50);
   __HAL_TIM_SET_COMPARE(&htim15, TIM_CHANNEL_1, 0);
+
+  // __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 2000);
+  // __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 2000);
+  // __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 2000);
 
   HAL_TIM_Base_Start_IT(&htim1);
   /* USER CODE END 2 */
@@ -183,7 +196,7 @@ int cnt1kHz = 0;
 
 /**
  * @brief  Period elapsed callback in non blocking mode
- * @note   This function is called  when TIM6 interrupt took place, inside
+ * @note   This function is called  when TIM8 interrupt took place, inside
  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
  * a global variable "uwTick" used as application time base.
  * @param  htim : TIM handle
@@ -194,7 +207,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM6)
+  if (htim->Instance == TIM8)
   {
     HAL_IncTick();
   }
@@ -203,11 +216,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   {
     cnt1kHz = (cnt1kHz + 1) % 1000;
     UpdateEncoder();
+    TIMUpdate();
 
     if (cnt1kHz == 0)
-      Write_GPIO(LED1, GPIO_PIN_SET);
+      Write_GPIO(LED_WHITE, GPIO_PIN_SET);
     else
-      Write_GPIO(LED1, GPIO_PIN_RESET);
+      Write_GPIO(LED_WHITE, GPIO_PIN_RESET);
 
     if (cnt1kHz % 200 == 0)
     {
