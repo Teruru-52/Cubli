@@ -38,7 +38,6 @@
 #include "spi.h"
 #include "tim.h"
 #include "Debug.h"
-#include "main.h"
 
 #define UBYTE uint8_t
 #define UWORD uint16_t
@@ -50,6 +49,9 @@
 #define DEV_RST_PIN LCD_RST_GPIO_Port, LCD_RST_Pin
 #define DEV_DC_PIN LCD_DC_GPIO_Port, LCD_DC_Pin
 #define DEV_CS_PIN SPI_CS_LCD_GPIO_Port, SPI_CS_LCD_Pin
+// #define DEV_RST_PIN GPIOA, GPIO_PIN_1
+// #define DEV_DC_PIN GPIOA, GPIO_PIN_3
+// #define DEV_CS_PIN GPIOA, GPIO_PIN_0
 #define DEV_BL_PIN TIM3->CCR1
 
 /**S

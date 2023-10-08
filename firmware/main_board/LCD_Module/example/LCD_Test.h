@@ -35,6 +35,7 @@
 #include "Debug.h"
 #include <stdlib.h> // malloc() free()
 
+void LCD_1in14_test(void);
 void LCD_1in28_test(void);
 
 #endif
