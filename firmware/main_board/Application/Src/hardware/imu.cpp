@@ -57,15 +57,15 @@ namespace hardware
         int16_t acc_raw;
 
         // H:8bit shift, Link h and l
-        acc_raw = (int16_t)((int16_t)(Read_1byte(spi_imu, ACCEL_XOUT_H) << 8) | Read_1byte(spi_imu, ACCEL_XOUT_L));
+        acc_raw = -(int16_t)((int16_t)(Read_1byte(spi_imu, ACCEL_XOUT_H) << 8) | Read_1byte(spi_imu, ACCEL_XOUT_L));
         acc.x = (float)(acc_raw) / acc_factor - acc_offset.x;
 
         // H:8bit shift, Link h and l
-        acc_raw = (int16_t)((int16_t)(Read_1byte(spi_imu, ACCEL_YOUT_H) << 8) | Read_1byte(spi_imu, ACCEL_YOUT_L));
+        acc_raw = -(int16_t)((int16_t)(Read_1byte(spi_imu, ACCEL_YOUT_H) << 8) | Read_1byte(spi_imu, ACCEL_YOUT_L));
         acc.y = (float)(acc_raw) / acc_factor - acc_offset.y;
 
         // H:8bit shift, Link h and l
-        acc_raw = (int16_t)((int16_t)(Read_1byte(spi_imu, ACCEL_ZOUT_H) << 8) | Read_1byte(spi_imu, ACCEL_ZOUT_L));
+        acc_raw = -(int16_t)((int16_t)(Read_1byte(spi_imu, ACCEL_ZOUT_H) << 8) | Read_1byte(spi_imu, ACCEL_ZOUT_L));
         acc.z = (float)(acc_raw) / acc_factor - acc_offset.z;
     }
 
@@ -84,20 +84,22 @@ namespace hardware
         gyro_offset.y = data_sum.y / static_cast<float>(cali_count);
         gyro_offset.z = data_sum.z / static_cast<float>(cali_count);
 
-        data_sum.clear();
-        for (int i = 0; i < cali_count; i++)
-        {
-            UpdateAcc();
-            data_sum.x += acc.x;
-            data_sum.y += acc.y;
-            data_sum.z += acc.z;
-            HAL_Delay(1);
-        }
-        acc_offset.x = data_sum.x / static_cast<float>(cali_count);
-        acc_offset.y = data_sum.y / static_cast<float>(cali_count);
-        acc_offset.z = data_sum.z / static_cast<float>(cali_count);
+        // printf("%.3f, %.3f, %.3f\n", gyro_offset.x, gyro_offset.y, gyro_offset.z);
 
-        printf("%.3f, %.3f, %.3f\n", gyro_offset.x, gyro_offset.y, gyro_offset.z);
+        // data_sum.clear();
+        // for (int i = 0; i < cali_count; i++)
+        // {
+        //     UpdateAcc();
+        //     data_sum.x += acc.x;
+        //     data_sum.y += acc.y;
+        //     data_sum.z += acc.z;
+        //     HAL_Delay(1);
+        // }
+        // acc_offset.x = data_sum.x / static_cast<float>(cali_count);
+        // acc_offset.y = data_sum.y / static_cast<float>(cali_count);
+        // acc_offset.z = data_sum.z / static_cast<float>(cali_count);
+
+        // printf("%.3f, %.3f, %.3f\n", acc_offset.x, acc_offset.y, acc_offset.z);
     }
 
     void MPU6500::Initialize()
@@ -114,11 +116,11 @@ namespace hardware
         {
             who_am_i = Read_1byte(spi_imu, WHO_AM_I);
             printf("who_am_i = 0x%x\r\n", who_am_i);
-            pwr_might
         }
 
         HAL_Delay(50);
-        Write_1byte(spi_imu, PWR_MGMT_1, 0x88); // set clock (20MHz) & device reset & disable temp sensor
+        Write_1byte(spi_imu, PWR_MGMT_1, 0x00); // set clock (20MHz)
+        // Write_1byte(spi_imu, PWR_MGMT_1, 0x88); // set clock (20MHz) & device reset & disable temp sensor
         HAL_Delay(50);
         Write_1byte(spi_imu, CONFIG, 0x00); // set config (FSYNCはNC)
         HAL_Delay(50);

@@ -16,4 +16,7 @@ void LQR::Initialize()
 void LQR::CalcInput(arm_matrix_instance_f32 vec_x)
 {
     arm_mat_mult_f32(&mat_K, &vec_x, &vec_u);
+    u_torque.x = coeff_u[0];
+    u_torque.y = coeff_u[1];
+    u_torque.z = coeff_u[2];
 }

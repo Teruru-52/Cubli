@@ -59,6 +59,7 @@ void MX_SPI2_Init(void);
 /* USER CODE BEGIN Prototypes */
   uint8_t Read_1byte(SPI_Value *spi_value, uint8_t reg);
   void Write_1byte(SPI_Value *spi_value, uint8_t reg, uint8_t data);
+  void Reset_CS_Pin();
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

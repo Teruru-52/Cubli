@@ -15,6 +15,7 @@ class ControllerBase
 {
 protected:
     float coeff_u[3]; // input
+    Pose u_torque;
 
 public:
     arm_matrix_instance_f32 vec_u;
@@ -22,6 +23,8 @@ public:
     explicit ControllerBase() {}
     virtual void Initialize() = 0;
     virtual void CalcInput(arm_matrix_instance_f32 vec_x) = 0;
+    void ResetInput() { u_torque.clear(); };
+    Pose GetInput() { return u_torque; };
     virtual ~ControllerBase() {}
 };
 

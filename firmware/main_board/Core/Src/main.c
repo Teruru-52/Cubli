@@ -18,7 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 #include "can.h"
+#include "dma.h"
 #include "fatfs.h"
 #include "sdio.h"
 #include "spi.h"
@@ -55,6 +57,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -62,33 +65,6 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 int cnt1kHz = 0;
-
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  if (htim == &htim1) // interruption 1kHz
-  {
-    cnt1kHz = (cnt1kHz + 1) % 1000;
-
-    if (cnt1kHz % 10 == 0) // interruption 100Hz
-    {
-      UpdateIMUs();
-    }
-
-    if (cnt1kHz % 200 == 0) // interruption 5Hz
-    {
-      LogPrint();
-    }
-
-    if (cnt1kHz == 0) // interruption 1Hz
-    {
-      Write_GPIO(LED_WHITE, GPIO_PIN_SET);
-    }
-    else
-    {
-      Write_GPIO(LED_WHITE, GPIO_PIN_RESET);
-    }
-  }
-}
 
 void SDIO_Test()
 {
@@ -216,6 +192,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_CAN1_Init();
   MX_TIM1_Init();
   MX_USART1_UART_Init();
@@ -227,17 +204,22 @@ int main(void)
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
   SEGGER_RTT_Init();
-  // HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
+  HAL_UART_Receive_DMA(&huart1, RdBuff, RCV_BUFF_SIZE);
+  HAL_CAN_Start(&hcan1);
+  if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  Reset_CS_Pin();
 
-  // SDIO_Test();
-
-  // __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
+  SDIO_Test();
 
   __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, 20);
   HAL_Delay(50);
   __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, 0);
 
+  // LCD_1in14_test();
   // LCD_1in28_test();
 
   Initialize();
@@ -246,6 +228,12 @@ int main(void)
 
   /* USER CODE END 2 */
 
+  /* Call init function for freertos objects (in freertos.c) */
+  MX_FREERTOS_Init();
+
+  /* Start scheduler */
+  osKernelStart();
+  /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -253,15 +241,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    if (Read_GPIO(USER_SW) == 0)
-    {
-      Write_GPIO(LED_BLUE, GPIO_PIN_SET);
     }
-    else
-    {
-      Write_GPIO(LED_BLUE, GPIO_PIN_RESET);
-    }
-  }
   /* USER CODE END 3 */
 }
 
@@ -313,6 +293,51 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/**
+ * @brief  Period elapsed callback in non blocking mode
+ * @note   This function is called  when TIM2 interrupt took place, inside
+ * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+ * a global variable "uwTick" used as application time base.
+ * @param  htim : TIM handle
+ * @retval None
+ */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM2)
+  {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+  if (htim->Instance == TIM1) // interruption 1kHz
+  {
+    cnt1kHz = (cnt1kHz + 1) % 1000;
+
+    if (cnt1kHz % 10 == 0) // interruption 100Hz
+    {
+      // UpdateIMUs();
+      CAN_Send();
+    }
+
+    if (cnt1kHz % 200 == 0) // interruption 5Hz
+    {
+      LogPrint();
+    }
+
+    if (cnt1kHz == 0) // interruption 1Hz
+    {
+      Write_GPIO(LED_WHITE, GPIO_PIN_SET);
+    }
+    else
+    {
+      Write_GPIO(LED_WHITE, GPIO_PIN_RESET);
+    }
+  }
+  /* USER CODE END Callback 1 */
+}
 
 /**
  * @brief  This function is executed in case of error occurrence.

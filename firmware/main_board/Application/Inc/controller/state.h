@@ -28,7 +28,7 @@ protected:
     // default
     // float coeff_X[6] = {0.8639, 0.3746, -0.2096, 0.0165, 0.2052, -0.2506};
     // original
-    float coeff_X[6] = {0.6708, 0.3034, 0.0613, 0.2721, 0.0299, -0.3375};
+    float coeff_X[6] = {0.6790, 0.2997, 0.0604, 0.2729, 0.0337, -0.3456};
     float coeff_x[8];
     arm_matrix_instance_f32 vec_g;
     arm_matrix_instance_f32 mat_M;
@@ -36,12 +36,14 @@ protected:
 
     Pose euler; // ZYX euler
     Pose angular_vel;
+    Pose wheel_vel;
 
     void ConvertAxes();
     void MeanAngularVelocity();
     void CalcGravityVector();
     void CalcEulerAngle();
     void UpdateStateVector();
+    void UpdateWheelVels(float wheel_vel_x, float wheel_vel_y, float wheel_vel_z);
 
 public:
     float dt;
@@ -59,7 +61,7 @@ public:
 class StateComplimantaryFilter : public StateBase
 {
 private:
-    float kappa;
+    const float kappa = 0.5;
     Pose filt_euler;
 
 public:
