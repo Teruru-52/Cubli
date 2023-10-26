@@ -54,9 +54,9 @@ extern "C" {
   extern GPIO_Value SPI_CS_IMU5;
   extern GPIO_Value SPI_CS_IMU6;
 
-  extern GPIO_Value SPI_CS_LCD;
-  extern GPIO_Value LCD_DC;
-  extern GPIO_Value LCD_RST;
+  // extern GPIO_Value SPI_CS_LCD;
+  // extern GPIO_Value LCD_DC;
+  // extern GPIO_Value LCD_RST;
 
   typedef struct _Access_Lamp
   {

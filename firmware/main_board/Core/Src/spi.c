@@ -45,7 +45,7 @@ void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -244,6 +244,6 @@ void Reset_CS_Pin()
   Write_GPIO(SPI_CS_IMU5, GPIO_PIN_SET);
   Write_GPIO(SPI_CS_IMU6, GPIO_PIN_SET);
 
-  Write_GPIO(SPI_CS_LCD, GPIO_PIN_SET);
+  // Write_GPIO(SPI_CS_LCD, GPIO_PIN_SET);
 }
 /* USER CODE END 1 */

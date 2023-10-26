@@ -95,7 +95,8 @@
         "thread": "cpp",
         "valarray": "cpp",
         "main_exec.h": "c",
-        "arm_math.h": "c"
+        "arm_math.h": "c",
+        "dev_config.h": "c"
     },
     // "C_Cpp.errorSquiggles": "EnabledIfIncludesResolve",
     "makefile.launchConfigurations": [

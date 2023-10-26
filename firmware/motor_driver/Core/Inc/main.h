@@ -38,7 +38,6 @@ extern "C" {
 #include <math.h>
 #include "arm_math.h"
 
-#include "cmsis_os.h"
 #include "adc.h"
 // #include "fdcan.h"
 #include "spi.h"

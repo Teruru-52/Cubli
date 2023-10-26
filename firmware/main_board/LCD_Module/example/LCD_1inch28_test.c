@@ -24,6 +24,9 @@ void LCD_1in28_test()
 	Paint_Clear(BLACK);
 	DEV_Delay_ms(100);
 
+	// Paint_Clear(WHITE);
+	// DEV_Delay_ms(1000);
+
 	printf("drawing...\r\n");
 
 	Paint_DrawCircle(120, 120, 120, BLUE, DOT_PIXEL_2X2, DRAW_FILL_EMPTY);
