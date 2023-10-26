@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "main_exec.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -114,7 +114,6 @@ void StartDefaultTask(void const *argument)
   /* Infinite loop */
   for (;;)
   {
-    TestHallSensor();
     // TestADC();
   }
   /* USER CODE END StartDefaultTask */

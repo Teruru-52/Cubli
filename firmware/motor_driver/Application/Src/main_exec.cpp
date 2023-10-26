@@ -32,6 +32,28 @@ enum class LEDState
 };
 LEDState led_state = LEDState::yet_inited;
 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == Hall_U_Pin)
+        hall.SetHallValueU(Read_GPIO(HALL_U));
+    if (GPIO_Pin == Hall_V_Pin)
+        hall.SetHallValueV(Read_GPIO(HALL_V));
+    if (GPIO_Pin == Hall_W_Pin)
+        hall.SetHallValueW(Read_GPIO(HALL_W));
+}
+
+void ReadHallSensor()
+{
+    hall.SetHallValueU(Read_GPIO(HALL_U));
+    hall.SetHallValueV(Read_GPIO(HALL_V));
+    hall.SetHallValueW(Read_GPIO(HALL_W));
+    // uint8_t hall_value = hall.GetHallValue();
+    // static int cnt = 0;
+    // if (cnt == 0)
+    //     printf("hall = %d\n", hall_value);
+    // cnt = (cnt + 1) % 10000;
+}
+
 void TIMUpdate()
 {
     // TIM_rising_edge = !TIM_rising_edge;
@@ -188,17 +210,6 @@ void FDCANReceiveCallback(uint8_t *pRxData)
 
     BLMD_Access_Lamp.FDCAN_RX = ENABLE;
     printf("data=%d\r\n", pRxData[0]);
-}
-
-void TestHallSensor()
-{
-    hall.ReadHallValue();
-
-    // uint8_t hall_value = hall.GetHallValue();
-    // static int cnt = 0;
-    // if (cnt == 0)
-    //     printf("hall = %d\n", hall_value);
-    // cnt = (cnt + 1) % 10000;
 }
 
 void TestADC()

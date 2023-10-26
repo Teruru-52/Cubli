@@ -14,13 +14,13 @@ extern "C"
 #endif
 #include "main.h"
 
+    void ReadHallSensor();
     void TIMUpdate();
     void UpdateControl();
     void UpdateEncoder();
     void LogPrint();
     void FDCANReceiveCallback(uint8_t *pRxData);
 
-    void TestHallSensor();
     void TestADC();
 
 #ifdef __cplusplus

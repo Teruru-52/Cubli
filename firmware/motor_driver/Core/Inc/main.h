@@ -97,10 +97,13 @@ void Error_Handler(void);
 #define LED_CAN_TX_GPIO_Port GPIOA
 #define Hall_W_Pin GPIO_PIN_15
 #define Hall_W_GPIO_Port GPIOA
+#define Hall_W_EXTI_IRQn EXTI15_10_IRQn
 #define Hall_U_Pin GPIO_PIN_3
 #define Hall_U_GPIO_Port GPIOB
+#define Hall_U_EXTI_IRQn EXTI3_IRQn
 #define Hall_V_Pin GPIO_PIN_4
 #define Hall_V_GPIO_Port GPIOB
+#define Hall_V_EXTI_IRQn EXTI4_IRQn
 #define SPI_CS_ENC_Pin GPIO_PIN_5
 #define SPI_CS_ENC_GPIO_Port GPIOB
 

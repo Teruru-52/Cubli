@@ -112,10 +112,7 @@ int main(void)
     Error_Handler();
   }
   // Reset_CS_Pin();
-
-  Write_GPIO(LED_BLUE, GPIO_PIN_SET);
-  Write_GPIO(LED_GREEN, GPIO_PIN_SET);
-  Write_GPIO(LED_YELLOW, GPIO_PIN_SET);
+  ReadHallSensor();
 
   __HAL_TIM_SET_COMPARE(&htim15, TIM_CHANNEL_1, 20);
   HAL_Delay(50);

@@ -14,20 +14,12 @@ HallSensor::HallSensor(GPIO_Value HALL_U, GPIO_Value HALL_V, GPIO_Value HALL_W)
 
 uint8_t HallSensor::GetHallValue()
 {
-    ReadHallValue();
     return hallstate;
 }
 
-void HallSensor::ReadHallValue()
+void HallSensor::SetHallValueU(GPIO_PinState PinState)
 {
-    ReadHallValueU();
-    ReadHallValueV();
-    ReadHallValueW();
-}
-
-void HallSensor::ReadHallValueU()
-{
-    if (Read_GPIO(HALL_U) == 1)
+    if (PinState == GPIO_PIN_SET)
     {
         hallstate |= 0x01 << 2;
         Write_GPIO(LED_BLUE, GPIO_PIN_SET);
@@ -39,9 +31,9 @@ void HallSensor::ReadHallValueU()
     }
 }
 
-void HallSensor::ReadHallValueV()
+void HallSensor::SetHallValueV(GPIO_PinState PinState)
 {
-    if (Read_GPIO(HALL_V) == 1)
+    if (PinState == GPIO_PIN_SET)
     {
         hallstate |= 0x01 << 1;
         Write_GPIO(LED_GREEN, GPIO_PIN_SET);
@@ -53,9 +45,9 @@ void HallSensor::ReadHallValueV()
     }
 }
 
-void HallSensor::ReadHallValueW()
+void HallSensor::SetHallValueW(GPIO_PinState PinState)
 {
-    if (Read_GPIO(HALL_W) == 1)
+    if (PinState == GPIO_PIN_SET)
     {
         hallstate |= 0x01;
         Write_GPIO(LED_YELLOW, GPIO_PIN_SET);
