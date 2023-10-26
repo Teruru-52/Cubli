@@ -32,21 +32,20 @@ enum class LEDState
 };
 LEDState led_state = LEDState::yet_inited;
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-    if (GPIO_Pin == Hall_U_Pin)
-        hall.SetHallValueU(Read_GPIO(HALL_U));
-    if (GPIO_Pin == Hall_V_Pin)
-        hall.SetHallValueV(Read_GPIO(HALL_V));
-    if (GPIO_Pin == Hall_W_Pin)
-        hall.SetHallValueW(Read_GPIO(HALL_W));
-}
+// void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+// {
+//     if (GPIO_Pin == Hall_U_Pin)
+//         hall.SetHallValueU(Read_GPIO(HALL_U));
+//     if (GPIO_Pin == Hall_V_Pin)
+//         hall.SetHallValueV(Read_GPIO(HALL_V));
+//     if (GPIO_Pin == Hall_W_Pin)
+//         hall.SetHallValueW(Read_GPIO(HALL_W));
+// }
 
 void ReadHallSensor()
 {
-    hall.SetHallValueU(Read_GPIO(HALL_U));
-    hall.SetHallValueV(Read_GPIO(HALL_V));
-    hall.SetHallValueW(Read_GPIO(HALL_W));
+    hall.ReadHallValue();
+
     // uint8_t hall_value = hall.GetHallValue();
     // static int cnt = 0;
     // if (cnt == 0)

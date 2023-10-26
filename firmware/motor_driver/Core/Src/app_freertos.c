@@ -55,18 +55,17 @@ osThreadId LEDTaskHandle;
 
 /* USER CODE END FunctionPrototypes */
 
-void StartDefaultTask(void const *argument);
-void StartLEDTask(void const *argument);
+void StartDefaultTask(void const * argument);
+void StartLEDTask(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
- * @brief  FreeRTOS initialization
- * @param  None
- * @retval None
- */
-void MX_FREERTOS_Init(void)
-{
+  * @brief  FreeRTOS initialization
+  * @param  None
+  * @retval None
+  */
+void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
@@ -99,6 +98,7 @@ void MX_FREERTOS_Init(void)
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
+
 }
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -108,12 +108,13 @@ void MX_FREERTOS_Init(void)
  * @retval None
  */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const *argument)
+void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for (;;)
   {
+    ReadHallSensor();
     // TestADC();
   }
   /* USER CODE END StartDefaultTask */
@@ -126,7 +127,7 @@ void StartDefaultTask(void const *argument)
  * @retval None
  */
 /* USER CODE END Header_StartLEDTask */
-void StartLEDTask(void const *argument)
+void StartLEDTask(void const * argument)
 {
   /* USER CODE BEGIN StartLEDTask */
   /* Infinite loop */
@@ -149,3 +150,4 @@ void StartLEDTask(void const *argument)
 /* USER CODE BEGIN Application */
 
 /* USER CODE END Application */
+

@@ -17,6 +17,13 @@ uint8_t HallSensor::GetHallValue()
     return hallstate;
 }
 
+void HallSensor::ReadHallValue()
+{
+    SetHallValueU(Read_GPIO(HALL_U));
+    SetHallValueV(Read_GPIO(HALL_V));
+    SetHallValueW(Read_GPIO(HALL_W));
+}
+
 void HallSensor::SetHallValueU(GPIO_PinState PinState)
 {
     if (PinState == GPIO_PIN_SET)
