@@ -32,12 +32,13 @@ uint16_t DRV8323::Read_byte(uint8_t reg)
 
     tx_data[0] = (reg << 3) | 0x80;
     tx_data[1] = 0x00; // dummy
+    // printf("%x\n", ((uint16_t)(tx_data[0] << 8) | tx_data[1]));
 
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_RESET);
     HAL_SPI_TransmitReceive(spi, tx_data, rx_data, 2, 10);
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_SET);
 
-    uint16_t data = (int16_t)((int16_t)(rx_data[0] << 8) | rx_data[1]);
+    uint16_t data = (int16_t)((int16_t)((rx_data[0] & 0x03) << 8) | rx_data[1]);
     return data;
 }
 
@@ -54,10 +55,13 @@ void DRV8323::Write_byte(uint8_t reg, uint16_t data)
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_RESET);
     HAL_SPI_TransmitReceive(spi, tx_data, rx_data, 2, 10);
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_SET);
+
+    // printf("%x\n", ((uint16_t)(tx_data[0] << 8) | tx_data[1]));
 }
 
 void DRV8323::Initialize()
 {
+    Write_GPIO(DRV_ENABLE, GPIO_PIN_SET); // Set gate driver enable
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_SET);
     __HAL_SPI_ENABLE(spi); // clockが動かないように、あらかじめEnableにしておく
 
@@ -72,8 +76,18 @@ void DRV8323::Initialize()
     HAL_Delay(50);
     Write_byte(CSA_CONTROL, 0x0283); // VREF_DIV = unidirectional mode, CSA_GAIN = 20, SEN_LVL = 1V
 
-    Write_GPIO(DRV_ENABLE, GPIO_PIN_SET); // Set gate driver enable
-    Write_GPIO(DRV_CAL, GPIO_PIN_SET);    // Perform auto offset calbration (amplifier)
+    Write_GPIO(DRV_CAL, GPIO_PIN_SET); // Perform auto offset calbration (amplifier)
+
+    uint16_t test = Read_byte(DRIVER_CONTROL);
+    printf("%x\n", test);
+    test = Read_byte(GATE_DRIVE_HS);
+    printf("%x\n", test);
+    test = Read_byte(GATE_DRIVE_LS);
+    printf("%x\n", test);
+    test = Read_byte(OCP_CONTROL);
+    printf("%x\n", test);
+    test = Read_byte(CSA_CONTROL);
+    printf("%x\n", test);
 }
 
 void DRV8323::CheckFaultStatus()

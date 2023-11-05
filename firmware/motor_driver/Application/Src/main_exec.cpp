@@ -222,6 +222,11 @@ void TestADC()
     // cnt = (cnt + 1) % 10000;
 }
 
+void InitializeDRV()
+{
+    drv.Initialize();
+}
+
 void LEDUpdate()
 {
     switch (led_state)

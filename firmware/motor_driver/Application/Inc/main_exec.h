@@ -22,6 +22,7 @@ extern "C"
     void FDCANReceiveCallback(uint8_t *pRxData);
 
     void TestADC();
+    void InitializeDRV();
 
 #ifdef __cplusplus
 };

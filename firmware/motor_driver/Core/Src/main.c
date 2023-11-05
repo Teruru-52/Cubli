@@ -111,8 +111,14 @@ int main(void)
   {
     Error_Handler();
   }
+  // Write_GPIO(DRV_ENABLE, GPIO_PIN_RESET);
+  // if (Read_GPIO(DRV_nFAULT) == GPIO_PIN_SET)
+  //   Write_GPIO(LED_WHITE, GPIO_PIN_SET);
   // Reset_CS_Pin();
-  ReadHallSensor();
+  InitializeDRV();
+  Write_GPIO(DRV_ENABLE, GPIO_PIN_RESET);
+  Write_GPIO(DRV_ENABLE, GPIO_PIN_SET);
+  // ReadHallSensor();
 
   __HAL_TIM_SET_COMPARE(&htim15, TIM_CHANNEL_1, 20);
   HAL_Delay(50);
@@ -211,7 +217,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM1)
   {
     cnt1kHz = (cnt1kHz + 1) % 1000;
-    UpdateEncoder();
+    // UpdateEncoder();
     TIMUpdate();
 
     if (cnt1kHz == 0)
