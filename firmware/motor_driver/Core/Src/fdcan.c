@@ -206,7 +206,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
       switch (RxHeader.Identifier)
       {
       case CAN_ID_RX:
-        printf("id=%d, data=%d\r\n", RxHeader.Identifier, RxData[0]);
+        printf("id=%ld, data=%d\r\n", RxHeader.Identifier, RxData[0]);
         FDCANReceiveCallback(RxData);
         break;
       default:

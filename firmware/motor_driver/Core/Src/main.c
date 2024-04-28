@@ -23,7 +23,6 @@
 #include "fdcan.h"
 #include "spi.h"
 #include "tim.h"
-#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -95,10 +94,11 @@ int main(void)
   MX_ADC1_Init();
   MX_FDCAN1_Init();
   MX_SPI1_Init();
-  MX_USART1_UART_Init();
   MX_TIM4_Init();
   MX_TIM15_Init();
   MX_TIM1_Init();
+  MX_SPI2_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   SEGGER_RTT_Init();
   setbuf(stdout, NULL);
@@ -106,29 +106,26 @@ int main(void)
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
-  HAL_FDCAN_Start(&hfdcan1);
-  if (HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  // Write_GPIO(DRV_ENABLE, GPIO_PIN_RESET);
-  // if (Read_GPIO(DRV_nFAULT) == GPIO_PIN_SET)
-  //   Write_GPIO(LED_WHITE, GPIO_PIN_SET);
-  // Reset_CS_Pin();
-  InitializeDRV();
-  Write_GPIO(DRV_ENABLE, GPIO_PIN_RESET);
-  Write_GPIO(DRV_ENABLE, GPIO_PIN_SET);
-  // ReadHallSensor();
+
+  // HAL_FDCAN_Start(&hfdcan1);
+  // if (HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
+  // {
+  //   Error_Handler();
+  // }
+
+  Reset_CS_Pin();
+
+  HAL_Delay(100);
+  // HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
+  HAL_ADCEx_InjectedStart_IT(&hadc1);
+  InitializeDriver();
 
   __HAL_TIM_SET_COMPARE(&htim15, TIM_CHANNEL_1, 20);
   HAL_Delay(50);
   __HAL_TIM_SET_COMPARE(&htim15, TIM_CHANNEL_1, 0);
 
-  // __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 2000);
-  // __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, 2000);
-  // __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 2000);
-
   HAL_TIM_Base_Start_IT(&htim1);
+  HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
@@ -194,6 +191,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 int cnt1kHz = 0;
+int cnt30kHz = 0;
 /* USER CODE END 4 */
 
 /**
@@ -217,18 +215,24 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM1)
   {
     cnt1kHz = (cnt1kHz + 1) % 1000;
-    // UpdateEncoder();
+    // TestElectricAngle();
+    // TestADC();
+    // TestHallSensor();
     TIMUpdate();
 
-    if (cnt1kHz == 0)
-      Write_GPIO(LED_WHITE, GPIO_PIN_SET);
-    else
-      Write_GPIO(LED_WHITE, GPIO_PIN_RESET);
+    // if (cnt1kHz == 0)
+    //   Toggle_GPIO(LED_WHITE);
 
     if (cnt1kHz % 200 == 0)
-    {
       LogPrint();
-    }
+  }
+  else if (htim->Instance == TIM3)
+  {
+    cnt30kHz = (cnt30kHz + 1) % 30000;
+    ADCCpltCallback();
+
+    if (cnt30kHz == 0)
+      Toggle_GPIO(LED_WHITE);
   }
 
   /* USER CODE END Callback 1 */

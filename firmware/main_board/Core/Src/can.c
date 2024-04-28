@@ -142,7 +142,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
   {
     Error_Handler();
   }
-  printf("id=%d, data=%d\r\n", RxHeader.StdId, RxData[0]);
+  printf("id=%ld, data=%d\r\n", RxHeader.StdId, RxData[0]);
   CANReceiveCallback(RxData);
 }
 /* USER CODE END 1 */

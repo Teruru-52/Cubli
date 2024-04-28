@@ -114,8 +114,6 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for (;;)
   {
-    ReadHallSensor();
-    // TestADC();
   }
   /* USER CODE END StartDefaultTask */
 }

@@ -14,23 +14,21 @@ extern "C"
 #endif
 #include "main.h"
 
-    void ReadHallSensor();
+    void InitializeDriver();
     void TIMUpdate();
-    void UpdateControl();
-    void UpdateEncoder();
-    void LogPrint();
+    void ADCCpltCallback();
     void FDCANReceiveCallback(uint8_t *pRxData);
+    void LogPrint();
 
     void TestADC();
-    void InitializeDRV();
+    void TestHallSensor();
+    void TestEncoder();
+    void TestElectricAngle();
 
 #ifdef __cplusplus
 };
 #endif
 
-extern bool initialized;
-extern uint32_t cali_count;
-extern bool ADC_calibration;
 extern bool can_received;
 extern uint32_t can_receive_interval;
 

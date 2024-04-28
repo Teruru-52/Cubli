@@ -41,14 +41,14 @@ extern "C" {
 
   extern GPIO_Value LED_WHITE;
   extern GPIO_Value LED_BLUE;
-  extern GPIO_Value LED_GREEN;
   extern GPIO_Value LED_YELLOW;
+  extern GPIO_Value LED_RED;
   extern GPIO_Value LED_CAN_TX;
   extern GPIO_Value LED_CAN_RX;
 
   extern GPIO_Value USER_SW;
   extern GPIO_Value SPI1_CS_DRV;
-  extern GPIO_Value SPI1_CS_ENC;
+  extern GPIO_Value SPI2_CS_ENC;
 
   extern GPIO_Value HALL_U;
   extern GPIO_Value HALL_V;

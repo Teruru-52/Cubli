@@ -43,7 +43,6 @@ extern "C" {
 // #include "fdcan.h"
 #include "spi.h"
 #include "tim.h"
-#include "usart.h"
 #include "gpio.h"
 #include "SEGGER_RTT.h"
 /* USER CODE END Includes */
@@ -71,12 +70,12 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define ENABLE_Pin GPIO_PIN_13
-#define ENABLE_GPIO_Port GPIOC
-#define nFAULT_Pin GPIO_PIN_14
+#define nFAULT_Pin GPIO_PIN_13
 #define nFAULT_GPIO_Port GPIOC
-#define SPI_CS_DRV_Pin GPIO_PIN_15
+#define SPI_CS_DRV_Pin GPIO_PIN_14
 #define SPI_CS_DRV_GPIO_Port GPIOC
+#define ENABLE_Pin GPIO_PIN_15
+#define ENABLE_GPIO_Port GPIOC
 #define CAL_Pin GPIO_PIN_3
 #define CAL_GPIO_Port GPIOA
 #define INLx_Pin GPIO_PIN_4
@@ -91,16 +90,19 @@ void Error_Handler(void);
 #define LED3_GPIO_Port GPIOB
 #define LED4_Pin GPIO_PIN_11
 #define LED4_GPIO_Port GPIOB
-#define LED_CAN_RX_Pin GPIO_PIN_15
+#define LED_CAN_RX_Pin GPIO_PIN_12
 #define LED_CAN_RX_GPIO_Port GPIOB
 #define LED_CAN_TX_Pin GPIO_PIN_8
 #define LED_CAN_TX_GPIO_Port GPIOA
-#define Hall_W_Pin GPIO_PIN_15
-#define Hall_W_GPIO_Port GPIOA
+#define Hall_V_Pin GPIO_PIN_15
+#define Hall_V_GPIO_Port GPIOA
+#define Hall_V_EXTI_IRQn EXTI15_10_IRQn
 #define Hall_U_Pin GPIO_PIN_3
 #define Hall_U_GPIO_Port GPIOB
-#define Hall_V_Pin GPIO_PIN_4
-#define Hall_V_GPIO_Port GPIOB
+#define Hall_U_EXTI_IRQn EXTI3_IRQn
+#define Hall_W_Pin GPIO_PIN_4
+#define Hall_W_GPIO_Port GPIOB
+#define Hall_W_EXTI_IRQn EXTI4_IRQn
 #define SPI_CS_ENC_Pin GPIO_PIN_5
 #define SPI_CS_ENC_GPIO_Port GPIOB
 

@@ -7,7 +7,7 @@
             "command": "make",
             "args": [
                 "DEBUG=1",
-                "-j3",
+                "-j8",
                 "all",
             ],
             "problemMatcher": [
@@ -17,6 +17,25 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "type": "shell",
+            "label": "Flash program",
+            "command": "JLinkExe",
+            "args": [
+                "-device",
+                "STM32G431CB",
+                "-if",
+                "SWD",
+                "-speed",
+                "4000",
+                "-autoconnect",
+                "1",
+                "-CommanderScript",
+                "./load.jlink",
+            ],
+            "problemMatcher": [],
+            "group": "none"
         }
     ]
 }

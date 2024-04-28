@@ -18,9 +18,9 @@ namespace protocol
 
     // using IBuffer = etl::ideque<uint8_t>;
 
-    constexpr float max_duty = 1.0;
-    constexpr float max_pulsewidth = 1.0 / 34000.0; // [s], PWM frequency 34[kHz]
-    constexpr float max_voltage = 12.6;             // [V]
+    constexpr float max_duty = 1.0f;
+    constexpr float max_pulsewidth = 1.0f / 30000.0f; // [s], PWM frequency 30[kHz]
+    constexpr float max_voltage = 12.6f;              // [V]
 
     float PulseWidth2Duty(float pulsewidth);
     // float Voltage2Duty(float voltage);

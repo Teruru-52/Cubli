@@ -7,15 +7,7 @@
 
 #include "encoder.h"
 
-A1333::A1333(SPI_HandleTypeDef *spi, GPIO_Value SPI_CS_ENC)
-    : spi(spi),
-      SPI_CS_ENC(SPI_CS_ENC),
-      angle(0.0),
-      velocity(0.0)
-{
-}
-
-uint16_t A1333::Read_byte(uint8_t reg1, uint8_t reg2)
+uint16_t A1333::ReadByte(uint8_t reg1, uint8_t reg2)
 {
     uint8_t rx_data[2];
     uint8_t tx_data[2];
@@ -31,9 +23,43 @@ uint16_t A1333::Read_byte(uint8_t reg1, uint8_t reg2)
     return data;
 }
 
+// void A1333::Initialize()
+// {
+//     Update();
+//     angle_base = angle;
+// }
+
 void A1333::Update()
 {
-    angle_raw = Read_byte(0x20, 0x21) & 0x0FFF;
-    // printf("angle_raw = %d\n", angle_raw);
-    angle = (2.0 * M_PI) * static_cast<float>(angle_raw) / 4095.0;
+    int16_t angle_int16t = ReadByte(ANGLE_OUT_H, ANGLE_OUT_L) & 0x0FFF;
+    angle_raw = M_2PI * static_cast<float>(angle_int16t) / 4095.0;
+
+    // angle difference correction
+    angle_diff = angle_raw - pre_angle_raw;
+    if (angle_diff > angle_diff_max)
+    {
+        angle_diff -= M_2PI;
+        angle_offset -= M_2PI;
+    }
+    else if (angle_diff < -angle_diff_max)
+    {
+        angle_diff += M_2PI;
+        angle_offset += M_2PI;
+    }
+    if (abs(angle_diff) < angle_diff_min)
+        angle_diff = 0;
+
+    angle = angle_raw + angle_offset;         // angle correction [0~2pi) to (-inf~inf)
+    float velocity_raw = angle_diff * inv_dt; // differentiation by euler method
+    // velocity = vel_filt.Update(velocity_raw); // digital filter
+    velocity = velocity_raw; // no filter
+    pre_angle_raw = angle_raw;
+
+    // printf("angle_int16t = %d\n", angle_int16t);
+    // printf("angle_raw = %.3f\n", angle_raw);
+}
+
+void A1333::LogPrint()
+{
+    printf("angle = %.3f, angle_base = %.3f, angle_raw = %.3f, velocty = %.3f\n", angle, angle_base, angle_raw, velocity);
 }

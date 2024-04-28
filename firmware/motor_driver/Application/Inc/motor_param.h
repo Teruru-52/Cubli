@@ -13,9 +13,9 @@
 const float Ra = 64e-3f;
 const float Ld = 0.5e-3f;
 const float Lq = 0.5e-3f;
-const float Pn = 8.0; // number of poles
-const float Ke = 0.1;
-const float Ktau = 1.0;
+const float Pn = 8.0f; // Number of magnetic pole pairs
+const float Ke = 0.1f;
+const float Ktau = 1.0f;
 
 // Filter for observer
 // struct MotorCurrentControlParam

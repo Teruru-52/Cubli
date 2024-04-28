@@ -34,15 +34,22 @@ extern "C" {
 
 extern TIM_HandleTypeDef htim1;
 
+extern TIM_HandleTypeDef htim3;
+
 extern TIM_HandleTypeDef htim4;
 
 extern TIM_HandleTypeDef htim15;
 
 /* USER CODE BEGIN Private defines */
-
+#define TIM_CLOCK_DIVIDER 1
+#define ADV_TIM_CLK_MHz 150
+#define PWM_FREQUENCY 30000
+#define PWM_PERIOD_CYCLES (uint16_t)(ADV_TIM_CLK_MHz * \
+                                     (uint32_t)1000000u / ((uint32_t)(PWM_FREQUENCY)))
 /* USER CODE END Private defines */
 
 void MX_TIM1_Init(void);
+void MX_TIM3_Init(void);
 void MX_TIM4_Init(void);
 void MX_TIM15_Init(void);
 

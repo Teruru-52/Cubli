@@ -1,0 +1,4 @@
+r
+loadfile ./build/motor_driver.bin
+r
+q

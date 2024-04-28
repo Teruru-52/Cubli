@@ -13,9 +13,6 @@
 #include "fdcan.h"
 #include "SEGGER_RTT.h"
 
-bool initialized = false;
-uint32_t cali_count = 0;
-bool ADC_calibration = true;
 bool can_received = false;
 uint32_t can_receive_interval = 0;
 
@@ -32,25 +29,20 @@ enum class LEDState
 };
 LEDState led_state = LEDState::yet_inited;
 
-// void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-// {
-//     if (GPIO_Pin == Hall_U_Pin)
-//         hall.SetHallValueU(Read_GPIO(HALL_U));
-//     if (GPIO_Pin == Hall_V_Pin)
-//         hall.SetHallValueV(Read_GPIO(HALL_V));
-//     if (GPIO_Pin == Hall_W_Pin)
-//         hall.SetHallValueW(Read_GPIO(HALL_W));
-// }
-
-void ReadHallSensor()
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-    hall.ReadHallValue();
+    if (GPIO_Pin == Hall_U_Pin)
+        hall.SetHallValueU(Read_GPIO(HALL_U));
+    if (GPIO_Pin == Hall_V_Pin)
+        hall.SetHallValueV(Read_GPIO(HALL_V));
+    if (GPIO_Pin == Hall_W_Pin)
+        hall.SetHallValueW(Read_GPIO(HALL_W));
+    driver_controller->CorrectElectricAngle(hall.GetHallValue());
+}
 
-    // uint8_t hall_value = hall.GetHallValue();
-    // static int cnt = 0;
-    // if (cnt == 0)
-    //     printf("hall = %d\n", hall_value);
-    // cnt = (cnt + 1) % 10000;
+void InitializeDriver()
+{
+    driver_controller->Initialize();
 }
 
 void TIMUpdate()
@@ -58,7 +50,7 @@ void TIMUpdate()
     // TIM_rising_edge = !TIM_rising_edge;
     // if (TIM_rising_edge)
     // {
-    //     Write_GPIO(LED_YELLOW, GPIO_PIN_SET);
+    //     Write_GPIO(LED_RED, GPIO_PIN_SET);
     //     LEDUpdate();
     //     can_receive_interval++;
     //     if (can_receive_interval > FDCAN_RECEIVE_INTERVAL_TIMEOUT_VALUE)
@@ -84,7 +76,7 @@ void TIMUpdate()
     //     // {
     //     //     Update_and_send = false;
     //     // }
-    //     Write_GPIO(LED_YELLOW, GPIO_PIN_RESET);
+    //     Write_GPIO(LED_RED, GPIO_PIN_RESET);
     // }
     // else
     // {
@@ -97,46 +89,36 @@ void TIMUpdate()
     //     }
     // }
 
+    encoder.Update();
+
     BLMD_Access_Lamp.FDCAN_TX = ENABLE;
     TxData[0] = 3;
     FDCAN_Send(TxData);
 }
 
-void UpdateControl()
+void ADCCpltCallback()
 {
-    if (ADC_calibration == true)
-    {
-        driver_controller->SetCurrentoffset();
-    }
-    if (driver_controller == nullptr)
+    // if (driver_controller->GetCalibrationFlag() == false) // if calibration is needed
+    // {
+    //     driver_controller->SetCurrentoffset();
+    //     Write_GPIO(LED_RED, GPIO_PIN_RESET);
+    // }
+    if (driver_controller == nullptr) // if driver_controller is not initialized
     {
         PWM_Update(&blcd_pwm, 0.0, 0.0, 0.0);
         return;
     }
     else
     {
-        if (!can_received)
-            PWM_Update(&blcd_pwm, 0.0, 0.0, 0.0);
-        else
-        {
-            uvw_t input_duty = driver_controller->Control();
-            PWM_Update(&blcd_pwm, input_duty.u, input_duty.v, input_duty.w);
-        }
+        // Write_GPIO(LED_RED, GPIO_PIN_SET);
+        //     if (!can_received)
+        //         PWM_Update(&blcd_pwm, 0.0, 0.0, 0.0);
+        //     else
+        //     {
+        uvw_t input_duty = driver_controller->Control();
+        PWM_Update(&blcd_pwm, input_duty.u, input_duty.v, input_duty.w);
+        //     }
     }
-}
-
-void UpdateEncoder()
-{
-    encoder.Update();
-}
-
-void LogPrint()
-{
-    float angle = encoder.GetAngle();
-    printf("angle = %.3f\n", angle);
-
-    // uint16_t flag_err = encoder.GetErrFlag();
-    // printf("flag_err = %x\n", flag_err);
 }
 
 void FDCANReceiveCallback(uint8_t *pRxData)
@@ -211,20 +193,43 @@ void FDCANReceiveCallback(uint8_t *pRxData)
     printf("data=%d\r\n", pRxData[0]);
 }
 
+void LogPrint()
+{
+    // encoder.LogPrint();
+    // hall.LogPrint();
+
+    // uint16_t flag_err = encoder.GetErrFlag();
+    // printf("flag_err = %x\n", flag_err);
+
+    driver_controller->LogPrint();
+}
+
 void TestADC()
 {
     uint32_t ADC_Data[3];
     ADC_Get_Value(ADC_Data);
 
-    // static int cnt = 0;
-    // if (cnt == 0)
-    //     printf("%ld, %ld, %ld\n", ADC_Data[0], ADC_Data[1], ADC_Data[2]);
-    // cnt = (cnt + 1) % 10000;
+    static int cnt = 0;
+    if (cnt == 0)
+        printf("%ld, %ld, %ld\n", ADC_Data[0], ADC_Data[1], ADC_Data[2]);
+    cnt = (cnt + 1) % 1000;
 }
 
-void InitializeDRV()
+void TestHallSensor()
 {
-    drv.Initialize();
+    // hall.ReadHallValue();
+    hall.FlashLED();
+}
+
+void TestEncoder()
+{
+    encoder.Update();
+}
+
+void TestElectricAngle()
+{
+    driver_controller->UpdateSensorAngle();
+    hall.FlashLED();
 }
 
 void LEDUpdate()
