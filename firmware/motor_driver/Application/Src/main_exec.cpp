@@ -20,6 +20,8 @@ uint32_t period_count = 0;
 bool TIM_rising_edge = false;
 bool Update_and_send = false;
 
+uint8_t TxData[8];
+
 using namespace protocol;
 enum class LEDState
 {

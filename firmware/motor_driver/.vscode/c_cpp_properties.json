@@ -4,14 +4,17 @@
             "name": "STM32",
             "includePath": [
                 "${workspaceFolder}/**",
+                // "/lib/arm-none-eabi/include/**",
+                // "/lib/gcc/arm-none-eabi/13.2.1/include/**"
                 "/opt/gcc-arm-none-eabi/arm-none-eabi/include/**",
-                "/opt/gcc-arm-none-eabi/lib/gcc/arm-none-eabi/12.3.1/include/**"
+                "/opt/gcc-arm-none-eabi/lib/gcc/arm-none-eabi/13.2.1/include/**"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
                 "STM32G431CB",
                 "__weak=__attribute__((weak))"
             ],
+            // "compilerPath": "/bin/arm-none-eabi-gcc",
             "compilerPath": "/opt/gcc-arm-none-eabi/bin/arm-none-eabi-gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",

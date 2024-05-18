@@ -9,6 +9,7 @@
             "type": "cortex-debug",
             "showDevDebugOutput": "raw",
             "armToolchainPath": "/opt/gcc-arm-none-eabi/bin",
+            // "armToolchainPath": "/lib/gcc/arm-none-eabi/bin",
             "servertype": "jlink",
             "serverpath": "JLinkGDBServerCLExe",
             "device": "STM32G431CB",

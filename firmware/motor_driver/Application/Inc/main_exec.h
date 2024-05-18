@@ -32,7 +32,7 @@ extern "C"
 extern bool can_received;
 extern uint32_t can_receive_interval;
 
-uint8_t TxData[8];
+extern uint8_t TxData[8];
 
 void LEDUpdate(void);
 
