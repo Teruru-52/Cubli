@@ -1,409 +1,1085 @@
-(kicad_sch (version 20211123) (generator eeschema)
-
-  (uuid 712f5201-b1a9-4f04-856a-c86983b6dc3b)
-
-  (paper "A4")
-
-  (lib_symbols
-  )
-
-
-  (wire (pts (xy 173.99 102.87) (xy 185.42 102.87))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 1acb9a63-c2e3-4bae-83e0-728ff855be90)
-  )
-  (wire (pts (xy 173.99 86.36) (xy 185.42 86.36))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 369fa95a-4d21-4932-bbf5-02e2ceb3fc1e)
-  )
-  (wire (pts (xy 173.99 81.28) (xy 185.42 81.28))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 382396f8-f7dd-426b-8a0c-ff4b7b5702ab)
-  )
-  (wire (pts (xy 173.99 58.42) (xy 185.42 58.42))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 3f53f805-b260-4a84-b73a-7974b60e2616)
-  )
-  (wire (pts (xy 173.99 107.95) (xy 185.42 107.95))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 3fbeab32-41e2-4337-b779-0e30dcfafb99)
-  )
-  (wire (pts (xy 173.99 105.41) (xy 186.69 105.41))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 41502029-1615-4319-9b7e-0b44d82b7512)
-  )
-  (wire (pts (xy 118.11 88.9) (xy 129.54 88.9))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 42ff65fd-c056-49df-9168-0ae94dd32aaa)
-  )
-  (wire (pts (xy 173.99 110.49) (xy 185.42 110.49))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 51e7a2cc-6f34-420d-8061-7f90425d1791)
-  )
-  (wire (pts (xy 173.99 60.96) (xy 186.69 60.96))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 57d23608-1576-4326-928e-79a8ed93373e)
-  )
-  (wire (pts (xy 118.11 58.42) (xy 129.54 58.42))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 5d7d1141-c421-4670-a986-4e6c4c97957a)
-  )
-  (wire (pts (xy 118.11 86.36) (xy 129.54 86.36))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 6444c526-65fc-4fb0-bbb9-ce32db58edb3)
-  )
-  (wire (pts (xy 212.09 72.39) (xy 224.79 72.39))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 648b2660-f5cf-4b3b-af51-21f7a7039033)
-  )
-  (wire (pts (xy 118.11 60.96) (xy 129.54 60.96))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 6d2b0786-44d9-45e0-9cbe-fe88c7ed4b8a)
-  )
-  (wire (pts (xy 118.11 102.87) (xy 128.27 102.87))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 846502a6-5008-4fcf-bc1f-dcc54d6a5b37)
-  )
-  (wire (pts (xy 212.09 67.31) (xy 224.79 67.31))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 8fcdec02-04e6-4df7-b065-b990dc770693)
-  )
-  (wire (pts (xy 173.99 83.82) (xy 186.69 83.82))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 99f8bcce-5a8d-490b-9fb0-6f7158400a4b)
-  )
-  (wire (pts (xy 173.99 63.5) (xy 185.42 63.5))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid a25487bc-18dd-49ec-bf1a-cd051e06217e)
-  )
-  (wire (pts (xy 118.11 107.95) (xy 128.27 107.95))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid a58c568e-9932-4346-afba-a9581f258bcf)
-  )
-  (wire (pts (xy 212.09 69.85) (xy 224.79 69.85))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid b0ee94e3-7c46-4468-b998-d877f882ca53)
-  )
-  (wire (pts (xy 173.99 66.04) (xy 185.42 66.04))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid c562dee0-819a-4ab5-8624-139486379d1b)
-  )
-  (wire (pts (xy 118.11 110.49) (xy 128.27 110.49))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid cd337b67-0304-456d-a273-6ed7451f7446)
-  )
-  (wire (pts (xy 118.11 105.41) (xy 129.54 105.41))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid ce5ccbc3-19b7-4d08-9026-485ec1b5e38a)
-  )
-  (wire (pts (xy 118.11 66.04) (xy 129.54 66.04))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid d11c7d0e-110a-4524-b52e-ecfa2611cc9d)
-  )
-  (wire (pts (xy 118.11 83.82) (xy 129.54 83.82))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid e1a48cc8-2c1d-4dd5-a004-af86cacf03d5)
-  )
-  (wire (pts (xy 173.99 88.9) (xy 185.42 88.9))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid e1ab1094-620a-420d-8853-e5d015301ebd)
-  )
-  (wire (pts (xy 118.11 63.5) (xy 129.54 63.5))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid e97c8635-f178-4515-a237-e9b270ed5def)
-  )
-  (wire (pts (xy 118.11 81.28) (xy 129.54 81.28))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid f1af4b93-0f8b-4381-9ed4-9d9edf05c8ed)
-  )
-
-  (label "SPI_CLK" (at 128.27 107.95 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid 1185bd09-4143-4282-8f41-f48a64785e05)
-  )
-  (label "SPI_MOSI" (at 129.54 66.04 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid 24559d9d-078b-4fff-850b-cc6c4450bdb3)
-  )
-  (label "SPI_MOSI" (at 212.09 72.39 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid 29ac3ed1-cd2b-4291-9e24-746ef22b0498)
-  )
-  (label "SPI_MOSI" (at 185.42 66.04 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid 38d1d60f-bc89-4cc6-81f8-984a85158938)
-  )
-  (label "SPI_MOSI" (at 185.42 110.49 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid 45e85917-72b6-4d1f-a4c5-f0bed671dc55)
-  )
-  (label "SPI_MISO" (at 128.27 102.87 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid 4d95320b-1c0b-4f24-8bb6-20557a259271)
-  )
-  (label "SPI_MISO" (at 129.54 81.28 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid 566ea370-c836-41a6-b62d-26210b786078)
-  )
-  (label "SPI_CLK" (at 212.09 67.31 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid 58b2fcde-6589-4c40-800f-7c110a162301)
-  )
-  (label "SPI_MISO" (at 212.09 69.85 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid 59081c66-f25c-473e-b327-4302e1b85364)
-  )
-  (label "SPI_MISO" (at 185.42 81.28 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid 5bd61d92-7593-4862-a577-4db55a928cf0)
-  )
-  (label "SPI_CLK" (at 129.54 86.36 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid 6269463d-704b-4884-bdf7-3b498d2b528d)
-  )
-  (label "SPI_MOSI" (at 129.54 88.9 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid 63b2a24d-0e44-4a8d-ab3d-6e10f7316743)
-  )
-  (label "SPI_MISO" (at 129.54 58.42 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid 8ba6cba2-6b3b-4788-83e8-c7d03a6001ba)
-  )
-  (label "SPI_CLK" (at 185.42 63.5 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid 9bd1f284-fe69-4218-b826-890b37c5b52e)
-  )
-  (label "SPI_CLK" (at 129.54 63.5 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid a3b9898f-4ce8-4e26-bd9e-27018be2967d)
-  )
-  (label "SPI_MOSI" (at 185.42 88.9 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid b8b17594-3ab0-4d87-965e-9148fef44bd9)
-  )
-  (label "SPI_MISO" (at 185.42 102.87 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid c5d71f83-f06f-4c9b-a3a8-860ddf65e213)
-  )
-  (label "SPI_MOSI" (at 128.27 110.49 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid d9f0d4a5-376c-4b60-ae64-e2781e8a0cc4)
-  )
-  (label "SPI_MISO" (at 185.42 58.42 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid e53a6999-2383-497b-b6a3-86475acc54d5)
-  )
-  (label "SPI_CLK" (at 185.42 86.36 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid ea10f223-3e88-4157-ac5c-28beb33dd1e8)
-  )
-  (label "SPI_CLK" (at 185.42 107.95 180)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid ee452fc4-f7aa-4411-8969-7c61286c6d7f)
-  )
-
-  (hierarchical_label "CS_IMU3" (shape input) (at 129.54 105.41 0)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 1d1a4466-729b-4626-92bb-06dcaa4808e1)
-  )
-  (hierarchical_label "CS_IMU1" (shape input) (at 129.54 60.96 0)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 39d0dc4f-0938-4a40-9f4e-0519817cc358)
-  )
-  (hierarchical_label "CS_IMU2" (shape input) (at 129.54 83.82 0)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 50b44ac7-d2ac-44de-8db9-ba3e0a8393f4)
-  )
-  (hierarchical_label "CS_IMU5" (shape input) (at 186.69 83.82 0)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 510c5f41-e7e1-4c86-a338-12c20833d1d5)
-  )
-  (hierarchical_label "CS_IMU6" (shape input) (at 186.69 105.41 0)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 6b0abe5c-9de2-4dd0-bd44-fa03f2122b99)
-  )
-  (hierarchical_label "SPI_CLK" (shape input) (at 224.79 67.31 0)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 92f85323-dd5b-458c-856b-36decd48dc22)
-  )
-  (hierarchical_label "SPI_MOSI" (shape input) (at 224.79 72.39 0)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid a7560dd4-8c01-4f43-b1c7-49c7c6d835be)
-  )
-  (hierarchical_label "SPI_MISO" (shape input) (at 224.79 69.85 0)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid bb4ea27e-6fef-47d1-9d50-4d1d76bf2430)
-  )
-  (hierarchical_label "CS_IMU4" (shape input) (at 186.69 60.96 0)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid bed833f4-f49d-4328-9cf3-5b09d883ca9d)
-  )
-
-  (sheet (at 153.67 100.33) (size 20.32 12.7) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid) (color 0 0 0 0))
-    (fill (color 0 0 0 0.0000))
-    (uuid 21322ed3-4a09-4c3c-ac0a-15061c64b48d)
-    (property "Sheet name" "imu6" (id 0) (at 153.67 99.6184 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheet file" "imu_connector.kicad_sch" (id 1) (at 153.67 113.6146 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (pin "MOSI" input (at 173.99 110.49 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 9e99a5c4-9975-4519-b307-c314bcde0276)
-    )
-    (pin "CLK" input (at 173.99 107.95 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid b75afe5f-d9c1-4861-a84c-67766e0afcbd)
-    )
-    (pin "MISO" input (at 173.99 102.87 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 315c39d0-e427-4b10-a992-35ad67aa3e85)
-    )
-    (pin "CS" input (at 173.99 105.41 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 1fbd7b3e-d44a-419a-bffd-389cca5a1e24)
-    )
-  )
-
-  (sheet (at 97.79 100.33) (size 20.32 12.7) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid) (color 0 0 0 0))
-    (fill (color 0 0 0 0.0000))
-    (uuid 56456628-887c-46e7-ba77-a63e79eba72b)
-    (property "Sheet name" "imu3" (id 0) (at 97.79 99.6184 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheet file" "imu_connector.kicad_sch" (id 1) (at 97.79 113.6146 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (pin "MOSI" input (at 118.11 110.49 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid c3a08f89-c1f9-4ef5-b455-10c23b999bf9)
-    )
-    (pin "CLK" input (at 118.11 107.95 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 2e342e6e-0597-4866-acb2-cec769f7f49a)
-    )
-    (pin "MISO" input (at 118.11 102.87 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 7655e8bc-4f70-46e1-96d5-b67323a91e42)
-    )
-    (pin "CS" input (at 118.11 105.41 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid f1c5d4a4-7dc9-4e2f-90c6-5e2c72e3a564)
-    )
-  )
-
-  (sheet (at 97.79 78.74) (size 20.32 12.7) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid) (color 0 0 0 0))
-    (fill (color 0 0 0 0.0000))
-    (uuid c746b97e-8a96-43ad-b481-fe4fcf730b5c)
-    (property "Sheet name" "imu2" (id 0) (at 97.79 78.0284 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheet file" "imu_connector.kicad_sch" (id 1) (at 97.79 92.0246 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (pin "MOSI" input (at 118.11 88.9 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 41a6cd49-806f-422d-b6e7-2a578451c860)
-    )
-    (pin "CLK" input (at 118.11 86.36 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 10a16002-610c-449d-98d5-698e68b9e20e)
-    )
-    (pin "MISO" input (at 118.11 81.28 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid d354a725-4cda-4bce-a264-59fbdc1888d7)
-    )
-    (pin "CS" input (at 118.11 83.82 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid e91b2441-9e77-425b-a3ba-68c0f989e35f)
-    )
-  )
-
-  (sheet (at 153.67 55.88) (size 20.32 12.7) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid) (color 0 0 0 0))
-    (fill (color 0 0 0 0.0000))
-    (uuid e3351b92-e811-4a4d-a891-e0de287a01ad)
-    (property "Sheet name" "imu4" (id 0) (at 153.67 55.1684 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheet file" "imu_connector.kicad_sch" (id 1) (at 153.67 69.1646 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (pin "MOSI" input (at 173.99 66.04 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid da633814-c76a-4ac1-ad5d-85757fa6e1e0)
-    )
-    (pin "CLK" input (at 173.99 63.5 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 92b30c20-a052-4b10-ab71-2ed783de03aa)
-    )
-    (pin "MISO" input (at 173.99 58.42 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid c6795228-7f9d-400e-b06c-ae3df157920d)
-    )
-    (pin "CS" input (at 173.99 60.96 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 51eab8c6-5c7e-4d75-9501-0cce758f42b4)
-    )
-  )
-
-  (sheet (at 153.67 78.74) (size 20.32 12.7) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid) (color 0 0 0 0))
-    (fill (color 0 0 0 0.0000))
-    (uuid e3a850f9-f62d-43cc-8824-04ba726d37f6)
-    (property "Sheet name" "imu5" (id 0) (at 153.67 78.0284 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheet file" "imu_connector.kicad_sch" (id 1) (at 153.67 92.0246 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (pin "MOSI" input (at 173.99 88.9 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid b4fab5ca-8b93-484a-95fe-56831d61b55c)
-    )
-    (pin "CLK" input (at 173.99 86.36 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 6c05afab-4281-4856-aa3d-eb0d51013a80)
-    )
-    (pin "MISO" input (at 173.99 81.28 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 01826ffe-8f36-4ac1-a517-c97036889c62)
-    )
-    (pin "CS" input (at 173.99 83.82 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 372c1677-8963-48f7-9d21-aff838a73f96)
-    )
-  )
-
-  (sheet (at 97.79 55.88) (size 20.32 12.7) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid) (color 0 0 0 0))
-    (fill (color 0 0 0 0.0000))
-    (uuid f8bb4839-dccc-44a8-95ff-ba77a250ba96)
-    (property "Sheet name" "imu1" (id 0) (at 97.79 55.1684 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheet file" "imu_connector.kicad_sch" (id 1) (at 97.79 69.1646 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (pin "MOSI" input (at 118.11 66.04 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid e876bcca-1f4e-4cd4-9def-67e78365c2aa)
-    )
-    (pin "CLK" input (at 118.11 63.5 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 7b3fb860-d8d5-4930-96ba-698241afac59)
-    )
-    (pin "MISO" input (at 118.11 58.42 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 4e9b8b9d-78d3-470e-a8fb-cf2ba61e481b)
-    )
-    (pin "CS" input (at 118.11 60.96 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 94106fa2-994f-4caa-8193-075197efef15)
-    )
-  )
+(kicad_sch
+	(version 20231120)
+	(generator "eeschema")
+	(generator_version "8.0")
+	(uuid "712f5201-b1a9-4f04-856a-c86983b6dc3b")
+	(paper "A4")
+	(lib_symbols)
+	(wire
+		(pts
+			(xy 173.99 102.87) (xy 185.42 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1acb9a63-c2e3-4bae-83e0-728ff855be90")
+	)
+	(wire
+		(pts
+			(xy 173.99 86.36) (xy 185.42 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "369fa95a-4d21-4932-bbf5-02e2ceb3fc1e")
+	)
+	(wire
+		(pts
+			(xy 173.99 81.28) (xy 185.42 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "382396f8-f7dd-426b-8a0c-ff4b7b5702ab")
+	)
+	(wire
+		(pts
+			(xy 173.99 58.42) (xy 185.42 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3f53f805-b260-4a84-b73a-7974b60e2616")
+	)
+	(wire
+		(pts
+			(xy 173.99 107.95) (xy 185.42 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3fbeab32-41e2-4337-b779-0e30dcfafb99")
+	)
+	(wire
+		(pts
+			(xy 173.99 105.41) (xy 186.69 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "41502029-1615-4319-9b7e-0b44d82b7512")
+	)
+	(wire
+		(pts
+			(xy 118.11 88.9) (xy 129.54 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "42ff65fd-c056-49df-9168-0ae94dd32aaa")
+	)
+	(wire
+		(pts
+			(xy 173.99 110.49) (xy 185.42 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "51e7a2cc-6f34-420d-8061-7f90425d1791")
+	)
+	(wire
+		(pts
+			(xy 173.99 60.96) (xy 186.69 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "57d23608-1576-4326-928e-79a8ed93373e")
+	)
+	(wire
+		(pts
+			(xy 118.11 58.42) (xy 129.54 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5d7d1141-c421-4670-a986-4e6c4c97957a")
+	)
+	(wire
+		(pts
+			(xy 118.11 86.36) (xy 129.54 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6444c526-65fc-4fb0-bbb9-ce32db58edb3")
+	)
+	(wire
+		(pts
+			(xy 212.09 72.39) (xy 224.79 72.39)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "648b2660-f5cf-4b3b-af51-21f7a7039033")
+	)
+	(wire
+		(pts
+			(xy 118.11 60.96) (xy 129.54 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6d2b0786-44d9-45e0-9cbe-fe88c7ed4b8a")
+	)
+	(wire
+		(pts
+			(xy 118.11 102.87) (xy 128.27 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "846502a6-5008-4fcf-bc1f-dcc54d6a5b37")
+	)
+	(wire
+		(pts
+			(xy 212.09 67.31) (xy 224.79 67.31)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8fcdec02-04e6-4df7-b065-b990dc770693")
+	)
+	(wire
+		(pts
+			(xy 173.99 83.82) (xy 186.69 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "99f8bcce-5a8d-490b-9fb0-6f7158400a4b")
+	)
+	(wire
+		(pts
+			(xy 173.99 63.5) (xy 185.42 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a25487bc-18dd-49ec-bf1a-cd051e06217e")
+	)
+	(wire
+		(pts
+			(xy 118.11 107.95) (xy 128.27 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a58c568e-9932-4346-afba-a9581f258bcf")
+	)
+	(wire
+		(pts
+			(xy 212.09 69.85) (xy 224.79 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b0ee94e3-7c46-4468-b998-d877f882ca53")
+	)
+	(wire
+		(pts
+			(xy 173.99 66.04) (xy 185.42 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c562dee0-819a-4ab5-8624-139486379d1b")
+	)
+	(wire
+		(pts
+			(xy 118.11 110.49) (xy 128.27 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cd337b67-0304-456d-a273-6ed7451f7446")
+	)
+	(wire
+		(pts
+			(xy 118.11 105.41) (xy 129.54 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ce5ccbc3-19b7-4d08-9026-485ec1b5e38a")
+	)
+	(wire
+		(pts
+			(xy 118.11 66.04) (xy 129.54 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d11c7d0e-110a-4524-b52e-ecfa2611cc9d")
+	)
+	(wire
+		(pts
+			(xy 118.11 83.82) (xy 129.54 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e1a48cc8-2c1d-4dd5-a004-af86cacf03d5")
+	)
+	(wire
+		(pts
+			(xy 173.99 88.9) (xy 185.42 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e1ab1094-620a-420d-8853-e5d015301ebd")
+	)
+	(wire
+		(pts
+			(xy 118.11 63.5) (xy 129.54 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e97c8635-f178-4515-a237-e9b270ed5def")
+	)
+	(wire
+		(pts
+			(xy 118.11 81.28) (xy 129.54 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f1af4b93-0f8b-4381-9ed4-9d9edf05c8ed")
+	)
+	(label "SPI_CLK"
+		(at 128.27 107.95 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "1185bd09-4143-4282-8f41-f48a64785e05")
+	)
+	(label "SPI_MOSI"
+		(at 129.54 66.04 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "24559d9d-078b-4fff-850b-cc6c4450bdb3")
+	)
+	(label "SPI_MOSI"
+		(at 212.09 72.39 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "29ac3ed1-cd2b-4291-9e24-746ef22b0498")
+	)
+	(label "SPI_MOSI"
+		(at 185.42 66.04 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "38d1d60f-bc89-4cc6-81f8-984a85158938")
+	)
+	(label "SPI_MOSI"
+		(at 185.42 110.49 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "45e85917-72b6-4d1f-a4c5-f0bed671dc55")
+	)
+	(label "SPI_MISO"
+		(at 128.27 102.87 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "4d95320b-1c0b-4f24-8bb6-20557a259271")
+	)
+	(label "SPI_MISO"
+		(at 129.54 81.28 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "566ea370-c836-41a6-b62d-26210b786078")
+	)
+	(label "SPI_CLK"
+		(at 212.09 67.31 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "58b2fcde-6589-4c40-800f-7c110a162301")
+	)
+	(label "SPI_MISO"
+		(at 212.09 69.85 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "59081c66-f25c-473e-b327-4302e1b85364")
+	)
+	(label "SPI_MISO"
+		(at 185.42 81.28 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "5bd61d92-7593-4862-a577-4db55a928cf0")
+	)
+	(label "SPI_CLK"
+		(at 129.54 86.36 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "6269463d-704b-4884-bdf7-3b498d2b528d")
+	)
+	(label "SPI_MOSI"
+		(at 129.54 88.9 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "63b2a24d-0e44-4a8d-ab3d-6e10f7316743")
+	)
+	(label "SPI_MISO"
+		(at 129.54 58.42 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "8ba6cba2-6b3b-4788-83e8-c7d03a6001ba")
+	)
+	(label "SPI_CLK"
+		(at 185.42 63.5 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "9bd1f284-fe69-4218-b826-890b37c5b52e")
+	)
+	(label "SPI_CLK"
+		(at 129.54 63.5 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "a3b9898f-4ce8-4e26-bd9e-27018be2967d")
+	)
+	(label "SPI_MOSI"
+		(at 185.42 88.9 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "b8b17594-3ab0-4d87-965e-9148fef44bd9")
+	)
+	(label "SPI_MISO"
+		(at 185.42 102.87 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "c5d71f83-f06f-4c9b-a3a8-860ddf65e213")
+	)
+	(label "SPI_MOSI"
+		(at 128.27 110.49 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "d9f0d4a5-376c-4b60-ae64-e2781e8a0cc4")
+	)
+	(label "SPI_MISO"
+		(at 185.42 58.42 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "e53a6999-2383-497b-b6a3-86475acc54d5")
+	)
+	(label "SPI_CLK"
+		(at 185.42 86.36 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "ea10f223-3e88-4157-ac5c-28beb33dd1e8")
+	)
+	(label "SPI_CLK"
+		(at 185.42 107.95 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "ee452fc4-f7aa-4411-8969-7c61286c6d7f")
+	)
+	(hierarchical_label "CS_IMU3"
+		(shape input)
+		(at 129.54 105.41 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1d1a4466-729b-4626-92bb-06dcaa4808e1")
+	)
+	(hierarchical_label "CS_IMU1"
+		(shape input)
+		(at 129.54 60.96 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "39d0dc4f-0938-4a40-9f4e-0519817cc358")
+	)
+	(hierarchical_label "CS_IMU2"
+		(shape input)
+		(at 129.54 83.82 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "50b44ac7-d2ac-44de-8db9-ba3e0a8393f4")
+	)
+	(hierarchical_label "CS_IMU5"
+		(shape input)
+		(at 186.69 83.82 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "510c5f41-e7e1-4c86-a338-12c20833d1d5")
+	)
+	(hierarchical_label "CS_IMU6"
+		(shape input)
+		(at 186.69 105.41 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6b0abe5c-9de2-4dd0-bd44-fa03f2122b99")
+	)
+	(hierarchical_label "SPI_CLK"
+		(shape input)
+		(at 224.79 67.31 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "92f85323-dd5b-458c-856b-36decd48dc22")
+	)
+	(hierarchical_label "SPI_MOSI"
+		(shape input)
+		(at 224.79 72.39 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a7560dd4-8c01-4f43-b1c7-49c7c6d835be")
+	)
+	(hierarchical_label "SPI_MISO"
+		(shape input)
+		(at 224.79 69.85 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bb4ea27e-6fef-47d1-9d50-4d1d76bf2430")
+	)
+	(hierarchical_label "CS_IMU4"
+		(shape input)
+		(at 186.69 60.96 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bed833f4-f49d-4328-9cf3-5b09d883ca9d")
+	)
+	(sheet
+		(at 153.67 100.33)
+		(size 20.32 12.7)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "21322ed3-4a09-4c3c-ac0a-15061c64b48d")
+		(property "Sheetname" "imu6"
+			(at 153.67 99.6184 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "imu_connector.kicad_sch"
+			(at 153.67 113.6146 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "MOSI" input
+			(at 173.99 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "9e99a5c4-9975-4519-b307-c314bcde0276")
+		)
+		(pin "CLK" input
+			(at 173.99 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "b75afe5f-d9c1-4861-a84c-67766e0afcbd")
+		)
+		(pin "MISO" input
+			(at 173.99 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "315c39d0-e427-4b10-a992-35ad67aa3e85")
+		)
+		(pin "CS" input
+			(at 173.99 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "1fbd7b3e-d44a-419a-bffd-389cca5a1e24")
+		)
+		(instances
+			(project "main"
+				(path "/656d7f7e-2105-4d24-8d0a-93f423922a26/7f8eeee0-8d96-48bd-bf8c-46ab98168633"
+					(page "8")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 97.79 100.33)
+		(size 20.32 12.7)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "56456628-887c-46e7-ba77-a63e79eba72b")
+		(property "Sheetname" "imu3"
+			(at 97.79 99.6184 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "imu_connector.kicad_sch"
+			(at 97.79 113.6146 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "MOSI" input
+			(at 118.11 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "c3a08f89-c1f9-4ef5-b455-10c23b999bf9")
+		)
+		(pin "CLK" input
+			(at 118.11 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "2e342e6e-0597-4866-acb2-cec769f7f49a")
+		)
+		(pin "MISO" input
+			(at 118.11 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "7655e8bc-4f70-46e1-96d5-b67323a91e42")
+		)
+		(pin "CS" input
+			(at 118.11 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "f1c5d4a4-7dc9-4e2f-90c6-5e2c72e3a564")
+		)
+		(instances
+			(project "main"
+				(path "/656d7f7e-2105-4d24-8d0a-93f423922a26/7f8eeee0-8d96-48bd-bf8c-46ab98168633"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 97.79 78.74)
+		(size 20.32 12.7)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "c746b97e-8a96-43ad-b481-fe4fcf730b5c")
+		(property "Sheetname" "imu2"
+			(at 97.79 78.0284 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "imu_connector.kicad_sch"
+			(at 97.79 92.0246 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "MOSI" input
+			(at 118.11 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "41a6cd49-806f-422d-b6e7-2a578451c860")
+		)
+		(pin "CLK" input
+			(at 118.11 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "10a16002-610c-449d-98d5-698e68b9e20e")
+		)
+		(pin "MISO" input
+			(at 118.11 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "d354a725-4cda-4bce-a264-59fbdc1888d7")
+		)
+		(pin "CS" input
+			(at 118.11 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "e91b2441-9e77-425b-a3ba-68c0f989e35f")
+		)
+		(instances
+			(project "main"
+				(path "/656d7f7e-2105-4d24-8d0a-93f423922a26/7f8eeee0-8d96-48bd-bf8c-46ab98168633"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 153.67 55.88)
+		(size 20.32 12.7)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "e3351b92-e811-4a4d-a891-e0de287a01ad")
+		(property "Sheetname" "imu4"
+			(at 153.67 55.1684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "imu_connector.kicad_sch"
+			(at 153.67 69.1646 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "MOSI" input
+			(at 173.99 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "da633814-c76a-4ac1-ad5d-85757fa6e1e0")
+		)
+		(pin "CLK" input
+			(at 173.99 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "92b30c20-a052-4b10-ab71-2ed783de03aa")
+		)
+		(pin "MISO" input
+			(at 173.99 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "c6795228-7f9d-400e-b06c-ae3df157920d")
+		)
+		(pin "CS" input
+			(at 173.99 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "51eab8c6-5c7e-4d75-9501-0cce758f42b4")
+		)
+		(instances
+			(project "main"
+				(path "/656d7f7e-2105-4d24-8d0a-93f423922a26/7f8eeee0-8d96-48bd-bf8c-46ab98168633"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 153.67 78.74)
+		(size 20.32 12.7)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "e3a850f9-f62d-43cc-8824-04ba726d37f6")
+		(property "Sheetname" "imu5"
+			(at 153.67 78.0284 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "imu_connector.kicad_sch"
+			(at 153.67 92.0246 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "MOSI" input
+			(at 173.99 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "b4fab5ca-8b93-484a-95fe-56831d61b55c")
+		)
+		(pin "CLK" input
+			(at 173.99 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "6c05afab-4281-4856-aa3d-eb0d51013a80")
+		)
+		(pin "MISO" input
+			(at 173.99 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "01826ffe-8f36-4ac1-a517-c97036889c62")
+		)
+		(pin "CS" input
+			(at 173.99 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "372c1677-8963-48f7-9d21-aff838a73f96")
+		)
+		(instances
+			(project "main"
+				(path "/656d7f7e-2105-4d24-8d0a-93f423922a26/7f8eeee0-8d96-48bd-bf8c-46ab98168633"
+					(page "7")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 97.79 55.88)
+		(size 20.32 12.7)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "f8bb4839-dccc-44a8-95ff-ba77a250ba96")
+		(property "Sheetname" "imu1"
+			(at 97.79 55.1684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "imu_connector.kicad_sch"
+			(at 97.79 69.1646 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "MOSI" input
+			(at 118.11 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "e876bcca-1f4e-4cd4-9def-67e78365c2aa")
+		)
+		(pin "CLK" input
+			(at 118.11 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "7b3fb860-d8d5-4930-96ba-698241afac59")
+		)
+		(pin "MISO" input
+			(at 118.11 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "4e9b8b9d-78d3-470e-a8fb-cf2ba61e481b")
+		)
+		(pin "CS" input
+			(at 118.11 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "94106fa2-994f-4caa-8193-075197efef15")
+		)
+		(instances
+			(project "main"
+				(path "/656d7f7e-2105-4d24-8d0a-93f423922a26/7f8eeee0-8d96-48bd-bf8c-46ab98168633"
+					(page "3")
+				)
+			)
+		)
+	)
 )
