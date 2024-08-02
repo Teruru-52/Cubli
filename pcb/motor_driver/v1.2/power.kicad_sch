@@ -1426,16 +1426,6 @@
 	)
 	(wire
 		(pts
-			(xy 203.2 73.66) (xy 203.2 74.93)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "47284ae5-9105-4536-bc1c-f2312be515b7")
-	)
-	(wire
-		(pts
 			(xy 132.08 124.46) (xy 135.89 124.46)
 		)
 		(stroke
@@ -1453,6 +1443,16 @@
 			(type default)
 		)
 		(uuid "523c7e4f-df5c-49eb-943c-dbb6a2b348b3")
+	)
+	(wire
+		(pts
+			(xy 203.2 91.44) (xy 203.2 95.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "57620cef-6473-4ca3-8636-e99f4c9a7ae4")
 	)
 	(wire
 		(pts
@@ -1533,16 +1533,6 @@
 			(type default)
 		)
 		(uuid "707fcc34-ee0c-4a65-83ce-fa3a4d12f40c")
-	)
-	(wire
-		(pts
-			(xy 203.2 95.25) (xy 203.2 91.44)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "71beb298-e68e-437e-b601-afcac60198a6")
 	)
 	(wire
 		(pts
@@ -1656,13 +1646,13 @@
 	)
 	(wire
 		(pts
-			(xy 203.2 82.55) (xy 203.2 86.36)
+			(xy 203.2 113.03) (xy 203.2 118.11)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "c2706fad-e05a-4d05-8ca0-f640a019f663")
+		(uuid "c2bdf085-d08c-46d7-95e7-9942ed78bfac")
 	)
 	(wire
 		(pts
@@ -1683,6 +1673,16 @@
 			(type default)
 		)
 		(uuid "c57c49e9-32dd-41f7-85a7-8453144554cf")
+	)
+	(wire
+		(pts
+			(xy 203.2 73.66) (xy 203.2 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c5944dcd-a381-4d92-a595-2eff6b19df09")
 	)
 	(wire
 		(pts
@@ -1763,6 +1763,16 @@
 			(type default)
 		)
 		(uuid "e6175045-5f86-4cce-925a-d74ada5abc4d")
+	)
+	(wire
+		(pts
+			(xy 203.2 130.81) (xy 203.2 134.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e64d362e-b9b8-43b4-9a51-ceb277e62aff")
 	)
 	(wire
 		(pts
@@ -1931,6 +1941,138 @@
 			(project "motor_driver"
 				(path "/1ef6600e-ea1d-4a9a-8ae5-1c3f7136836c/51484c10-a339-47e4-a28f-1fe6df54aaa5"
 					(reference "#PWR028")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3.3VA")
+		(at 203.2 113.03 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "08d15984-ff8b-4d57-b41e-949aa5c57498")
+		(property "Reference" "#PWR075"
+			(at 203.2 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3.3VA"
+			(at 203.2 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 203.2 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 203.2 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 203.2 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "714ac22f-b563-4f00-8dfe-1871382a4560")
+		)
+		(instances
+			(project "motor_driver"
+				(path "/1ef6600e-ea1d-4a9a-8ae5-1c3f7136836c/51484c10-a339-47e4-a28f-1fe6df54aaa5"
+					(reference "#PWR075")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 203.2 134.62 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1f300582-1515-47bc-a6d0-ae34494e1af2")
+		(property "Reference" "#PWR077"
+			(at 203.2 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 203.2 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 203.2 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 203.2 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 203.2 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e1f7f9c9-9d2f-46a2-ba34-bdaf1717ca8f")
+		)
+		(instances
+			(project "motor_driver"
+				(path "/1ef6600e-ea1d-4a9a-8ae5-1c3f7136836c/51484c10-a339-47e4-a28f-1fe6df54aaa5"
+					(reference "#PWR077")
 					(unit 1)
 				)
 			)
@@ -2408,7 +2550,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 203.2 78.74 90)
+		(at 203.2 87.63 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2417,7 +2559,7 @@
 		(fields_autoplaced yes)
 		(uuid "3e2538eb-f75f-449e-a5dc-efb73785c83b")
 		(property "Reference" "D1"
-			(at 207.01 79.0574 90)
+			(at 207.01 87.9474 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2426,7 +2568,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 207.01 81.5974 90)
+			(at 207.01 90.4874 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2435,7 +2577,7 @@
 			)
 		)
 		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
-			(at 203.2 78.74 0)
+			(at 203.2 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2444,7 +2586,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 203.2 78.74 0)
+			(at 203.2 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2453,7 +2595,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 203.2 78.74 0)
+			(at 203.2 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3299,6 +3441,76 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:LED")
+		(at 203.2 127 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d38a12e7-82c2-4899-ad8f-f39dc844c5f4")
+		(property "Reference" "D8"
+			(at 207.01 127.3174 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "LED"
+			(at 207.01 129.8574 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
+			(at 203.2 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 203.2 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 203.2 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a403ffc5-3c41-4556-b6cf-f0821edad4a3")
+		)
+		(pin "2"
+			(uuid "78d3bab9-149d-431e-9c13-bc949b6c2dbc")
+		)
+		(instances
+			(project "motor_driver"
+				(path "/1ef6600e-ea1d-4a9a-8ae5-1c3f7136836c/51484c10-a339-47e4-a28f-1fe6df54aaa5"
+					(reference "D8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+5V")
 		(at 104.14 73.66 0)
 		(unit 1)
@@ -3432,16 +3644,16 @@
 	)
 	(symbol
 		(lib_id "Device:R_Small")
-		(at 203.2 88.9 0)
+		(at 203.2 120.65 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "e5782826-ea89-4a19-bb05-909ab5a8da6f")
-		(property "Reference" "R10"
-			(at 205.74 87.6299 0)
+		(uuid "e27f1c29-ab47-4d30-9e1a-d507fa754a60")
+		(property "Reference" "R24"
+			(at 205.74 119.3799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3450,7 +3662,7 @@
 			)
 		)
 		(property "Value" "1k"
-			(at 205.74 90.1699 0)
+			(at 205.74 121.9199 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3459,7 +3671,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
-			(at 203.2 88.9 0)
+			(at 203.2 120.65 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3468,7 +3680,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 203.2 88.9 0)
+			(at 203.2 120.65 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3477,7 +3689,77 @@
 			)
 		)
 		(property "Description" ""
-			(at 203.2 88.9 0)
+			(at 203.2 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4b8e05af-7bfc-4eb4-90a7-364bddf931d3")
+		)
+		(pin "2"
+			(uuid "34686601-7803-4862-9b5d-f207734bfb88")
+		)
+		(instances
+			(project "motor_driver"
+				(path "/1ef6600e-ea1d-4a9a-8ae5-1c3f7136836c/51484c10-a339-47e4-a28f-1fe6df54aaa5"
+					(reference "R24")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 203.2 81.28 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e5782826-ea89-4a19-bb05-909ab5a8da6f")
+		(property "Reference" "R10"
+			(at 205.74 80.0099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "1k"
+			(at 205.74 82.5499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
+			(at 203.2 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 203.2 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 203.2 81.28 0)
 			(effects
 				(font
 					(size 1.27 1.27)
