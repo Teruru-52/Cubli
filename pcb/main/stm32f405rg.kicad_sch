@@ -8810,7 +8810,7 @@
 				)
 			)
 		)
-		(property "Footprint" "bldc_lib:SKRPACE010"
+		(property "Footprint" "mylib:TVAF06A020BR"
 			(at 219.71 115.57 0)
 			(effects
 				(font
@@ -13887,7 +13887,7 @@
 				)
 			)
 		)
-		(property "Footprint" "bldc_lib:SKRPACE010"
+		(property "Footprint" "mylib:TVAF06A020BR"
 			(at 170.18 114.3 0)
 			(effects
 				(font
