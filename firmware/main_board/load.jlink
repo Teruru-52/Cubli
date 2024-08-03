@@ -1,0 +1,4 @@
+r
+loadfile ./build/main_board.bin
+r
+q
