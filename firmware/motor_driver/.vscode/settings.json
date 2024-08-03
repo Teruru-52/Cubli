@@ -46,11 +46,10 @@
         "main.h": "c"
     },
     "C_Cpp.errorSquiggles": "EnabledIfIncludesResolve",
-    "makefile.launchConfigurations": [
-        {
-            "cwd": "/home/reiji/Documents/Robots/Cubli/firmware/motor_driver/build",
-            "binaryPath": "/home/reiji/Documents/Robots/Cubli/firmware/motor_driver/build/motor_driver.elf",
-            "binaryArgs": []
-        }
-    ],
+    "makefile.launchConfigurations": {
+        "cwd": "/home/reiji/Documents/Robots/Cubli/firmware/motor_driver/build",
+        "binaryPath": "/home/reiji/Documents/Robots/Cubli/firmware/motor_driver/build/motor_driver.elf",
+        "binaryArgs": []
+    },
+    // "cortex-debug.JLinkGDBServerPath": "~/opt/SEGGER/JLink_Linux_V798a_x86_64/JLinkGDBServerCLExe",
 }

@@ -65,8 +65,8 @@ Core/Src/usart.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
 Core/Src/sdio.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_sdmmc.c \
-$(wildcard SEGGER_RTT_V790/RTT/*.c) \
-$(wildcard SEGGER_RTT_V790/Syscalls/*.c) \
+$(wildcard SEGGER_RTT_V796h/RTT/*.c) \
+$(wildcard SEGGER_RTT_V796h/Syscalls/*.c) \
 $(wildcard LCD_Module/Config/*.c) \
 $(wildcard LCD_Module/example/*.c) \
 $(wildcard LCD_Module/Fonts/*.c) \
@@ -171,9 +171,9 @@ C_INCLUDES =  \
 -IDrivers/CMSIS/Include \
 -IDrivers/CMSIS/DSP/Include \
 -IApplication/Inc \
--ISEGGER_RTT_V790/RTT \
--ISEGGER_RTT_V790/Config \
--ISEGGER_RTT_V790/Syscalls \
+-ISEGGER_RTT_V796h/RTT \
+-ISEGGER_RTT_V796h/Config \
+-ISEGGER_RTT_V796h/Syscalls \
 -ILCD_Module/Config \
 -ILCD_Module/example \
 -ILCD_Module/Fonts \

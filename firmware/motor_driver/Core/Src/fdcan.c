@@ -64,7 +64,7 @@ void MX_FDCAN1_Init(void)
   FDCAN1_sFilterConfig.FilterIndex = 0;
   FDCAN1_sFilterConfig.FilterType = FDCAN_FILTER_DUAL;
   FDCAN1_sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
-  FDCAN1_sFilterConfig.FilterID1 = CAN_ID_TX;
+  FDCAN1_sFilterConfig.FilterID1 = CAN_ID_TX1;
   FDCAN1_sFilterConfig.FilterID2 = 0;
   if (HAL_FDCAN_ConfigFilter(&hfdcan1, &FDCAN1_sFilterConfig) != HAL_OK)
   {
@@ -133,6 +133,8 @@ void HAL_FDCAN_MspInit(FDCAN_HandleTypeDef *fdcanHandle)
     /* FDCAN1 interrupt Init */
     HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
+    HAL_NVIC_SetPriority(FDCAN1_IT1_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(FDCAN1_IT1_IRQn);
     /* USER CODE BEGIN FDCAN1_MspInit 1 */
 
     /* USER CODE END FDCAN1_MspInit 1 */
@@ -158,6 +160,7 @@ void HAL_FDCAN_MspDeInit(FDCAN_HandleTypeDef *fdcanHandle)
 
     /* FDCAN1 interrupt Deinit */
     HAL_NVIC_DisableIRQ(FDCAN1_IT0_IRQn);
+    HAL_NVIC_DisableIRQ(FDCAN1_IT1_IRQn);
     /* USER CODE BEGIN FDCAN1_MspDeInit 1 */
 
     /* USER CODE END FDCAN1_MspDeInit 1 */

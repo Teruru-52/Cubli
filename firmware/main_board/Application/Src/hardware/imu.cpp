@@ -108,7 +108,7 @@ namespace hardware
         Write_GPIO(*(spi_imu->SPI_CS), GPIO_PIN_SET);
         __HAL_SPI_ENABLE(spi_imu->hspi); // clockが動かないように、あらかじめEnableにしておく
 
-        HAL_Delay(100);                           // wait start up
+        HAL_Delay(50);                            // wait start up
         who_am_i = Read_1byte(spi_imu, WHO_AM_I); // read who am i
         printf("who_am_i = 0x%x\r\n", who_am_i);  // check who am i value
         HAL_Delay(10);
@@ -118,16 +118,16 @@ namespace hardware
             printf("who_am_i = 0x%x\r\n", who_am_i);
         }
 
-        HAL_Delay(50);
+        HAL_Delay(10);
         Write_1byte(spi_imu, PWR_MGMT_1, 0x00); // set clock (20MHz)
         // Write_1byte(spi_imu, PWR_MGMT_1, 0x88); // set clock (20MHz) & device reset & disable temp sensor
-        HAL_Delay(50);
+        HAL_Delay(10);
         Write_1byte(spi_imu, CONFIG, 0x00); // set config (FSYNCはNC)
-        HAL_Delay(50);
+        HAL_Delay(10);
         Write_1byte(spi_imu, GYRO_CONFIG, 0x18); // set gyro config (2000dps)
-        HAL_Delay(50);
+        HAL_Delay(10);
         Write_1byte(spi_imu, ACCEL_CONFIG, 0x08); // set acc config (4g)
-        HAL_Delay(50);
+        HAL_Delay(10);
         // write_byte(0x1D, 0x00); // LPF (Accelerometer, Bandwidth460 Hz)
         // HAL_Delay(50);
     }

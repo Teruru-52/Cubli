@@ -23,8 +23,7 @@
 #define __MAIN_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -46,25 +45,25 @@ extern "C"
 #include "tim.h"
 #include "gpio.h"
 #include "SEGGER_RTT.h"
-    /* USER CODE END Includes */
+/* USER CODE END Includes */
 
-    /* Exported types ------------------------------------------------------------*/
-    /* USER CODE BEGIN ET */
+/* Exported types ------------------------------------------------------------*/
+/* USER CODE BEGIN ET */
 
-    /* USER CODE END ET */
+/* USER CODE END ET */
 
-    /* Exported constants --------------------------------------------------------*/
-    /* USER CODE BEGIN EC */
+/* Exported constants --------------------------------------------------------*/
+/* USER CODE BEGIN EC */
 
-    /* USER CODE END EC */
+/* USER CODE END EC */
 
-    /* Exported macro ------------------------------------------------------------*/
-    /* USER CODE BEGIN EM */
+/* Exported macro ------------------------------------------------------------*/
+/* USER CODE BEGIN EM */
 
-    /* USER CODE END EM */
+/* USER CODE END EM */
 
-    /* Exported functions prototypes ---------------------------------------------*/
-    void Error_Handler(void);
+/* Exported functions prototypes ---------------------------------------------*/
+void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
@@ -91,25 +90,25 @@ extern "C"
 #define LED3_GPIO_Port GPIOB
 #define LED4_Pin GPIO_PIN_11
 #define LED4_GPIO_Port GPIOB
-#define LED_CAN_RX_Pin GPIO_PIN_12
-#define LED_CAN_RX_GPIO_Port GPIOB
-#define LED_CAN_TX_Pin GPIO_PIN_8
-#define LED_CAN_TX_GPIO_Port GPIOA
-#define Hall_V_Pin GPIO_PIN_15
-#define Hall_V_GPIO_Port GPIOA
-#define Hall_V_EXTI_IRQn EXTI15_10_IRQn
+#define LED_CAN_TX_Pin GPIO_PIN_12
+#define LED_CAN_TX_GPIO_Port GPIOB
+#define LED_CAN_RX_Pin GPIO_PIN_8
+#define LED_CAN_RX_GPIO_Port GPIOA
+#define Hall_W_Pin GPIO_PIN_15
+#define Hall_W_GPIO_Port GPIOA
+#define Hall_W_EXTI_IRQn EXTI15_10_IRQn
 #define Hall_U_Pin GPIO_PIN_3
 #define Hall_U_GPIO_Port GPIOB
 #define Hall_U_EXTI_IRQn EXTI3_IRQn
-#define Hall_W_Pin GPIO_PIN_4
-#define Hall_W_GPIO_Port GPIOB
-#define Hall_W_EXTI_IRQn EXTI4_IRQn
+#define Hall_V_Pin GPIO_PIN_4
+#define Hall_V_GPIO_Port GPIOB
+#define Hall_V_EXTI_IRQn EXTI4_IRQn
 #define SPI_CS_ENC_Pin GPIO_PIN_5
 #define SPI_CS_ENC_GPIO_Port GPIOB
 
-    /* USER CODE BEGIN Private defines */
+/* USER CODE BEGIN Private defines */
 
-    /* USER CODE END Private defines */
+/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }

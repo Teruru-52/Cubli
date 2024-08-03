@@ -213,7 +213,7 @@ int main(void)
   }
   Reset_CS_Pin();
 
-  SDIO_Test();
+  // SDIO_Test();
 
   __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, 20);
   HAL_Delay(50);
@@ -241,7 +241,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    }
+  }
   /* USER CODE END 3 */
 }
 
@@ -328,13 +328,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     }
 
     if (cnt1kHz == 0) // interruption 1Hz
-    {
-      Write_GPIO(LED_WHITE, GPIO_PIN_SET);
-    }
-    else
-    {
-      Write_GPIO(LED_WHITE, GPIO_PIN_RESET);
-    }
+      Toggle_GPIO(LED_WHITE);
   }
   /* USER CODE END Callback 1 */
 }
