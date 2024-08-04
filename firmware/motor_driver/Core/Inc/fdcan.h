@@ -36,9 +36,11 @@ extern "C"
 
 /* USER CODE BEGIN Private defines */
 /* MB -> BLMD */
-#define CAN_ID_TX 0x101
+#define CAN_ID_MD1 0x101
+#define CAN_ID_MD2 0x102
+#define CAN_ID_MD3 0x103
 /* BLMD -> MB */
-#define CAN_ID_RX 0x100
+#define CAN_ID_MB 0x100
   // FDCAN_RxHeaderTypeDef RxHeader;
   /* USER CODE END Private defines */
 

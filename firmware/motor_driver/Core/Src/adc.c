@@ -187,10 +187,10 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
 // {
 // ADCCpltCallback();
 
-// static int cnt_30kHz = 0;
-// if (cnt_30kHz == 0)
+// static int cnt_36kHz = 0;
+// if (cnt_36kHz == 0)
 //   Toggle_GPIO(LED_WHITE);
-// cnt_30kHz = (cnt_30kHz + 1) % 30000;
+// cnt_36Hz = (cnt_36kHz + 1) % 36000;
 // }
 
 void ADC_Get_Value(uint32_t *Data)

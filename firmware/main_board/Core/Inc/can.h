@@ -30,11 +30,11 @@ extern "C" {
 
 /* USER CODE BEGIN Includes */
 /* MB -> BLMD */
-#define CAN_ID_TX 0x100
+#define CAN_ID_MB 0x100
 /* BLMD -> MB */
-#define CAN_ID_RX1 0x101
-#define CAN_ID_RX2 0x102
-#define CAN_ID_RX3 0x103
+#define CAN_ID_MD1 0x101
+#define CAN_ID_MD2 0x102
+#define CAN_ID_MD3 0x103
 /* USER CODE END Includes */
 
 extern CAN_HandleTypeDef hcan1;
