@@ -9421,7 +9421,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "dea1dc94-a988-4d20-b1f0-a54ceb254ec6")
-		(property "Reference" "J3"
+		(property "Reference" "J2"
 			(at 104.14 104.14 0)
 			(effects
 				(font
@@ -9616,7 +9616,7 @@
 		(instances
 			(project "motor_driver"
 				(path "/1ef6600e-ea1d-4a9a-8ae5-1c3f7136836c/99868341-3fcd-422d-afe6-e3750b4ef7c0"
-					(reference "J3")
+					(reference "J2")
 					(unit 1)
 				)
 			)
