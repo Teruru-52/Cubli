@@ -74,14 +74,14 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define SPI_CS_IMU2_Pin GPIO_PIN_13
 #define SPI_CS_IMU2_GPIO_Port GPIOC
-#define SPI_CS_LCD_Pin GPIO_PIN_0
-#define SPI_CS_LCD_GPIO_Port GPIOA
+#define SW1_Pin GPIO_PIN_0
+#define SW1_GPIO_Port GPIOA
 #define LCD_RST_Pin GPIO_PIN_1
 #define LCD_RST_GPIO_Port GPIOA
-#define SW_Pin GPIO_PIN_2
-#define SW_GPIO_Port GPIOA
-#define LCD_DC_Pin GPIO_PIN_3
+#define LCD_DC_Pin GPIO_PIN_2
 #define LCD_DC_GPIO_Port GPIOA
+#define SPI_CS_LCD_Pin GPIO_PIN_3
+#define SPI_CS_LCD_GPIO_Port GPIOA
 #define LED1_Pin GPIO_PIN_5
 #define LED1_GPIO_Port GPIOC
 #define LED2_Pin GPIO_PIN_0
@@ -90,10 +90,12 @@ void Error_Handler(void);
 #define LED3_GPIO_Port GPIOB
 #define LED4_Pin GPIO_PIN_11
 #define LED4_GPIO_Port GPIOB
-#define LED_CAN_TX_Pin GPIO_PIN_7
-#define LED_CAN_TX_GPIO_Port GPIOC
-#define LED_CAN_RX_Pin GPIO_PIN_8
-#define LED_CAN_RX_GPIO_Port GPIOA
+#define LED_CAN_RX_Pin GPIO_PIN_12
+#define LED_CAN_RX_GPIO_Port GPIOB
+#define LED_CAN_TX_Pin GPIO_PIN_15
+#define LED_CAN_TX_GPIO_Port GPIOB
+#define LED_CAN_TXC7_Pin GPIO_PIN_7
+#define LED_CAN_TXC7_GPIO_Port GPIOC
 #define SPI_CS_IMU5_Pin GPIO_PIN_3
 #define SPI_CS_IMU5_GPIO_Port GPIOB
 #define SPI_CS_IMU6_Pin GPIO_PIN_4

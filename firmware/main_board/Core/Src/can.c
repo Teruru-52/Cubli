@@ -75,17 +75,18 @@ void MX_CAN1_Init(void)
     Error_Handler();
   }
   /* USER CODE END CAN1_Init 2 */
+
 }
 
-void HAL_CAN_MspInit(CAN_HandleTypeDef *canHandle)
+void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
 {
 
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if (canHandle->Instance == CAN1)
+  if(canHandle->Instance==CAN1)
   {
-    /* USER CODE BEGIN CAN1_MspInit 0 */
+  /* USER CODE BEGIN CAN1_MspInit 0 */
 
-    /* USER CODE END CAN1_MspInit 0 */
+  /* USER CODE END CAN1_MspInit 0 */
     /* CAN1 clock enable */
     __HAL_RCC_CAN1_CLK_ENABLE();
 
@@ -94,7 +95,7 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef *canHandle)
     PA11     ------> CAN1_RX
     PA12     ------> CAN1_TX
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
+    GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -104,20 +105,20 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef *canHandle)
     /* CAN1 interrupt Init */
     HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
-    /* USER CODE BEGIN CAN1_MspInit 1 */
+  /* USER CODE BEGIN CAN1_MspInit 1 */
 
-    /* USER CODE END CAN1_MspInit 1 */
+  /* USER CODE END CAN1_MspInit 1 */
   }
 }
 
-void HAL_CAN_MspDeInit(CAN_HandleTypeDef *canHandle)
+void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
 {
 
-  if (canHandle->Instance == CAN1)
+  if(canHandle->Instance==CAN1)
   {
-    /* USER CODE BEGIN CAN1_MspDeInit 0 */
+  /* USER CODE BEGIN CAN1_MspDeInit 0 */
 
-    /* USER CODE END CAN1_MspDeInit 0 */
+  /* USER CODE END CAN1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_CAN1_CLK_DISABLE();
 
@@ -125,13 +126,13 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef *canHandle)
     PA11     ------> CAN1_RX
     PA12     ------> CAN1_TX
     */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_11 | GPIO_PIN_12);
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_11|GPIO_PIN_12);
 
     /* CAN1 interrupt Deinit */
     HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
-    /* USER CODE BEGIN CAN1_MspDeInit 1 */
+  /* USER CODE BEGIN CAN1_MspDeInit 1 */
 
-    /* USER CODE END CAN1_MspDeInit 1 */
+  /* USER CODE END CAN1_MspDeInit 1 */
   }
 }
 
