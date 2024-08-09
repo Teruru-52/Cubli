@@ -68,106 +68,92 @@ int cnt1kHz = 0;
 
 void SDIO_Test()
 {
-  FATFS SDFatFs;                  /* File system object for SD disk logical drive */
-  FIL MyFile;                     /* File object */
-  char SDPath[4];                 /* SD disk logical drive path */
-  static uint8_t buffer[_MAX_SS]; /* a work buffer for the f_mkfs() */
+  // static uint8_t buffer[_MAX_SS]; /* a work buffer for the f_mkfs() */
 
   FRESULT res;                                              /* FatFs function common result code */
   uint32_t byteswritten, bytesread;                         /* File write/read counts */
   uint8_t wtext[] = "Hi, this is STM32 working with FatFs"; /* File write buffer */
-  uint8_t rtext[100];                                       /* File read buffer */
+  uint8_t rtext[_MAX_SS];                                   /* File read buffer */
 
   /*##-1- Link the SD disk I/O driver ########################################*/
-  if (FATFS_LinkDriver(&SD_Driver, SDPath) == 0)
+  if (retSD == 0)
   {
     /*##-2- Register the file system object to the FatFs module ##############*/
-    if (f_mount(&SDFatFs, (TCHAR const *)SDPath, 0) != FR_OK)
+    if (f_mount(&SDFatFS, (TCHAR const *)SDPath, 0) != FR_OK)
     {
-      /* FatFs Initialization Error */
       Error_Handler();
     }
     else
     {
       /*##-3- Create a FAT file system (format) on the logical drive #########*/
-
-      FRESULT fr;
-      fr = f_mkfs((TCHAR const *)SDPath, FM_ANY, 0, buffer, sizeof(buffer));
+      FRESULT fr = f_mkfs((TCHAR const *)SDPath, FM_ANY, 0, rtext, sizeof(rtext));
       if (fr != FR_OK)
       {
-        Error_Handler();
+        for (int i = 0; i < 20; i++)
+        {
+          if (fr == i)
+            printf("FRESULT: %d\n", i);
+        }
+        Write_GPIO(LED_GREEN, GPIO_PIN_SET); // Error is here
+        // Error_Handler();
       }
       else
       {
         /*##-4- Create and Open a new text file object with write access #####*/
-        if (f_open(&MyFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
+        if (f_open(&SDFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
         {
-          /* 'STM32.TXT' file Open for write Error */
           Error_Handler();
         }
         else
         {
           /*##-5- Write data to the text file ################################*/
-          res = f_write(&MyFile, wtext, sizeof(wtext), (void *)&byteswritten);
-
+          res = f_write(&SDFile, wtext, sizeof(wtext), (void *)&byteswritten);
           if ((byteswritten == 0) || (res != FR_OK))
           {
-            /* 'STM32.TXT' file Write or EOF Error */
             Error_Handler();
           }
           else
           {
             /*##-6- Close the open text file #################################*/
-            f_close(&MyFile);
-
+            f_close(&SDFile);
             /*##-7- Open the text file object with read access ###############*/
-            if (f_open(&MyFile, "STM32.TXT", FA_READ) != FR_OK)
-            {
-              /* 'STM32.TXT' file Open for read Error */
-              Error_Handler();
-            }
-            else
-            {
-              /*##-8- Read data from the text file ###########################*/
-              res = f_read(&MyFile, rtext, sizeof(rtext), (UINT *)&bytesread);
-
-              if ((bytesread == 0) || (res != FR_OK)) /* EOF or Error */
-              {
-                /* 'STM32.TXT' file Read or EOF Error */
-                Error_Handler();
-              }
-              else
-              {
-                /*##-9- Close the open text file #############################*/
-                f_close(&MyFile);
-
-                /*##-10- Compare read data with the expected data ############*/
-                if ((bytesread != byteswritten))
-                {
-                  /* Read data is different from the expected data */
-                  Error_Handler();
-                }
-                else
-                {
-                  /* Success of the demo: no error occurrence */
-                }
-              }
-            }
+            // if (f_open(&SDFile, "STM32.TXT", FA_READ) != FR_OK)
+            // {
+            //   Error_Handler();
+            // }
+            // else
+            // {
+            //   /*##-8- Read data from the text file ###########################*/
+            //   res = f_read(&SDFile, rtext, sizeof(rtext), (UINT *)&bytesread);
+            //   if ((bytesread == 0) || (res != FR_OK)) /* EOF or Error */
+            //   {
+            //     Error_Handler();
+            //   }
+            //   else
+            //   {
+            //     /*##-9- Close the open text file #############################*/
+            //     f_close(&SDFile);
+            //     /*##-10- Compare read data with the expected data ############*/
+            //     if ((bytesread != byteswritten))
+            //     {
+            //       Error_Handler();
+            //     }
+            //   }
+            // }
           }
         }
       }
     }
   }
-
   /*##-11- Unlink the SD disk I/O driver ####################################*/
   FATFS_UnLinkDriver(SDPath);
 }
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
+ * @brief  The application entry point.
+ * @retval int
+ */
 int main(void)
 {
 
@@ -209,6 +195,16 @@ int main(void)
   HAL_UART_Receive_DMA(&huart1, RdBuff, RCV_BUFF_SIZE);
   Reset_CS_Pin();
 
+  // if (BSP_SD_IsDetected() != SD_PRESENT)
+  // {
+  //   Write_GPIO(LED_GREEN, GPIO_PIN_SET);
+  //   Error_Handler();
+  // }
+  // if (BSP_SD_Init() != MSD_OK)
+  // {
+  //   Error_Handler();
+  // }
+
   // SDIO_Test();
 
   __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, 20);
@@ -244,22 +240,22 @@ int main(void)
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+ * @brief System Clock Configuration
+ * @retval None
+ */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
-  */
+   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
+   * in the RCC_OscInitTypeDef structure.
+   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -275,9 +271,8 @@ void SystemClock_Config(void)
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+   */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
@@ -294,19 +289,20 @@ void SystemClock_Config(void)
 /* USER CODE END 4 */
 
 /**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM2 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
+ * @brief  Period elapsed callback in non blocking mode
+ * @note   This function is called  when TIM2 interrupt took place, inside
+ * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+ * a global variable "uwTick" used as application time base.
+ * @param  htim : TIM handle
+ * @retval None
+ */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM2) {
+  if (htim->Instance == TIM2)
+  {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
@@ -332,9 +328,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 }
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
@@ -346,14 +342,14 @@ void Error_Handler(void)
   /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */

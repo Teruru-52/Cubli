@@ -52,7 +52,7 @@ void CAN_Send()
 
     if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0)
     {
-        printf("FreeLevel = %ld\n", HAL_CAN_GetTxMailboxesFreeLevel(&hcan1));
+        // printf("FreeLevel = %ld\n", HAL_CAN_GetTxMailboxesFreeLevel(&hcan1));
         if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) != HAL_OK)
         {
             Error_Handler();
