@@ -85,8 +85,8 @@
 			(plot_on_all_layers_selection 0x0000000_00000000)
 			(disableapertmacros no)
 			(usegerberextensions yes)
-			(usegerberattributes no)
-			(usegerberadvancedattributes no)
+			(usegerberattributes yes)
+			(usegerberadvancedattributes yes)
 			(creategerberjobfile no)
 			(dashed_line_dash_ratio 12.000000)
 			(dashed_line_gap_ratio 3.000000)
@@ -94,7 +94,7 @@
 			(plotframeref no)
 			(viasonmask no)
 			(mode 1)
-			(useauxorigin yes)
+			(useauxorigin no)
 			(hpglpennumber 1)
 			(hpglpenspeed 20)
 			(hpglpendiameter 15.000000)
@@ -128,7 +128,7 @@
 		(descr "Connector XT30 Horizontal PCB Male, https://www.tme.eu/en/Document/ce4077e36b79046da520ca73227e15de/XT30PW%20SPEC.pdf")
 		(tags "RC Connector XT30")
 		(property "Reference" "J3"
-			(at 3.86 -12.33 360)
+			(at 3.86 -12.33 0)
 			(layer "F.SilkS")
 			(uuid "e84b54e6-e2f3-4304-8eb8-797268d6da5e")
 			(effects
@@ -139,7 +139,7 @@
 			)
 		)
 		(property "Value" "Conn_01x02"
-			(at -2.5 3.5 360)
+			(at -2.5 3.5 0)
 			(layer "F.Fab")
 			(uuid "084b18ab-dd95-4253-96f5-3ce732ba7f37")
 			(effects
@@ -478,7 +478,7 @@
 			(uuid "1480aaae-3867-4bab-b0d8-6a3bb6d435f2")
 		)
 		(fp_text user "-"
-			(at 3 0 360)
+			(at 3 0 0)
 			(layer "F.SilkS")
 			(uuid "9a53be0f-75d7-435a-8c72-7d4d8c99924e")
 			(effects
@@ -489,7 +489,7 @@
 			)
 		)
 		(fp_text user "+"
-			(at -8 0 360)
+			(at -8 0 0)
 			(layer "F.SilkS")
 			(uuid "de4eb417-8e02-4479-b6e1-bdeeb61e0493")
 			(effects
@@ -500,7 +500,7 @@
 			)
 		)
 		(fp_text user "${REFERENCE}"
-			(at -2.5 -3 360)
+			(at -2.5 -3 0)
 			(layer "F.Fab")
 			(uuid "bf490a67-39ce-40c6-bb21-896c95de9759")
 			(effects
@@ -819,7 +819,7 @@
 		(descr "Connector XT30 Horizontal PCB Male, https://www.tme.eu/en/Document/ce4077e36b79046da520ca73227e15de/XT30PW%20SPEC.pdf")
 		(tags "RC Connector XT30")
 		(property "Reference" "J4"
-			(at 3.98 -12.39 360)
+			(at 3.98 -12.39 0)
 			(layer "F.SilkS")
 			(uuid "fbf54a51-0511-4c70-ad4c-306b53ab0c74")
 			(effects
@@ -830,7 +830,7 @@
 			)
 		)
 		(property "Value" "Conn_01x02"
-			(at -2.5 3.5 360)
+			(at -2.5 3.5 0)
 			(layer "F.Fab")
 			(uuid "a57e8474-77cd-48e0-9cbf-5f72056880d5")
 			(effects
@@ -1169,7 +1169,7 @@
 			(uuid "a67c8b77-3308-4095-9166-5eb630d6d912")
 		)
 		(fp_text user "-"
-			(at 3 0 360)
+			(at 3 0 0)
 			(layer "F.SilkS")
 			(uuid "1d0e91e5-2a65-47ec-9c44-f8c6f566a89c")
 			(effects
@@ -1180,7 +1180,7 @@
 			)
 		)
 		(fp_text user "+"
-			(at -8 0 360)
+			(at -8 0 0)
 			(layer "F.SilkS")
 			(uuid "8c3be4a5-e232-41bf-ba50-ecf3d32a8735")
 			(effects
@@ -1191,7 +1191,7 @@
 			)
 		)
 		(fp_text user "${REFERENCE}"
-			(at -2.5 -3 360)
+			(at -2.5 -3 0)
 			(layer "F.Fab")
 			(uuid "ee99b2ed-50a9-44bd-9796-52216001e4cc")
 			(effects
@@ -1258,7 +1258,7 @@
 		(descr "DC Barrel Jack")
 		(tags "Power Jack")
 		(property "Reference" "J6"
-			(at -8.45 5.75 90)
+			(at -12.825 6.0575 0)
 			(layer "F.SilkS")
 			(uuid "e3cdd907-ad22-4c51-ac10-49924d220bbf")
 			(effects
@@ -2092,7 +2092,7 @@
 		(descr "Connector XT30 Horizontal PCB Male, https://www.tme.eu/en/Document/ce4077e36b79046da520ca73227e15de/XT30PW%20SPEC.pdf")
 		(tags "RC Connector XT30")
 		(property "Reference" "J2"
-			(at 3.83 -12.33 360)
+			(at 3.83 -12.33 0)
 			(layer "F.SilkS")
 			(uuid "fd94def6-7203-4d0f-96c7-2044b54e1f1f")
 			(effects
@@ -2103,7 +2103,7 @@
 			)
 		)
 		(property "Value" "Conn_01x02"
-			(at -2.5 3.5 360)
+			(at -2.5 3.5 0)
 			(layer "F.Fab")
 			(uuid "84ea7cde-a3f8-4ae6-8c85-fb8f89d731f7")
 			(effects
@@ -2442,7 +2442,7 @@
 			(uuid "ae5ffa58-a8ed-44f2-b8d3-419f7bce4c2f")
 		)
 		(fp_text user "-"
-			(at 3 0 360)
+			(at 3 0 0)
 			(layer "F.SilkS")
 			(uuid "b6f8d768-7c43-4f39-8361-6e3c2d39aba1")
 			(effects
@@ -2453,7 +2453,7 @@
 			)
 		)
 		(fp_text user "+"
-			(at -8 0 360)
+			(at -8 0 0)
 			(layer "F.SilkS")
 			(uuid "be8ec90a-30b7-4e18-b068-3c3f76af2885")
 			(effects
@@ -2464,7 +2464,7 @@
 			)
 		)
 		(fp_text user "${REFERENCE}"
-			(at -2.5 -3 360)
+			(at -2.5 -3 0)
 			(layer "F.Fab")
 			(uuid "97f2b6b9-3041-436f-a32d-39697cb00c98")
 			(effects
@@ -2531,7 +2531,7 @@
 		(descr "Connector XT30 Horizontal PCB Male, https://www.tme.eu/en/Document/ce4077e36b79046da520ca73227e15de/XT30PW%20SPEC.pdf")
 		(tags "RC Connector XT30")
 		(property "Reference" "J5"
-			(at 4.22 -12.42 360)
+			(at 4.22 -12.42 0)
 			(layer "F.SilkS")
 			(uuid "8b893456-6895-4753-a4b3-8c4478da1ad7")
 			(effects
@@ -2542,7 +2542,7 @@
 			)
 		)
 		(property "Value" "Conn_01x02"
-			(at -2.5 3.5 360)
+			(at -2.5 3.5 0)
 			(layer "F.Fab")
 			(uuid "6e81904f-a2b6-4bf9-9120-01eb6e355c24")
 			(effects
@@ -2881,7 +2881,7 @@
 			(uuid "1bebf2f5-f82a-4913-a325-feb83b75f043")
 		)
 		(fp_text user "+"
-			(at -8 0 360)
+			(at -8 0 0)
 			(layer "F.SilkS")
 			(uuid "83c31247-4b6a-47c2-af89-f7970730f56f")
 			(effects
@@ -2892,7 +2892,7 @@
 			)
 		)
 		(fp_text user "-"
-			(at 3 0 360)
+			(at 3 0 0)
 			(layer "F.SilkS")
 			(uuid "ac2d65a8-e09e-4941-9be3-9088fdbb2a0d")
 			(effects
@@ -2903,7 +2903,7 @@
 			)
 		)
 		(fp_text user "${REFERENCE}"
-			(at -2.5 -3 360)
+			(at -2.5 -3 0)
 			(layer "F.Fab")
 			(uuid "9da30e19-810e-4de5-975c-1a1200205eba")
 			(effects
