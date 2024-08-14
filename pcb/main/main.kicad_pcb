@@ -85,8 +85,8 @@
 			(plot_on_all_layers_selection 0x0000000_00000000)
 			(disableapertmacros no)
 			(usegerberextensions yes)
-			(usegerberattributes no)
-			(usegerberadvancedattributes no)
+			(usegerberattributes yes)
+			(usegerberadvancedattributes yes)
 			(creategerberjobfile no)
 			(dashed_line_dash_ratio 12.000000)
 			(dashed_line_gap_ratio 3.000000)
@@ -94,7 +94,7 @@
 			(plotframeref no)
 			(viasonmask no)
 			(mode 1)
-			(useauxorigin yes)
+			(useauxorigin no)
 			(hpglpennumber 1)
 			(hpglpenspeed 20)
 			(hpglpendiameter 15.000000)
@@ -115,7 +115,7 @@
 			(mirror no)
 			(drillshape 0)
 			(scaleselection 1)
-			(outputdirectory "main-gerber/")
+			(outputdirectory "gerber/")
 		)
 	)
 	(net 0 "")
@@ -1953,7 +1953,7 @@
 		(descr "Micro SD, SMD, right-angle, push-pull (https://www.hirose.com/product/en/download_file/key_name/DM3AT-SF-PEJM5/category/Drawing%20(2D)/doc_file_id/44099/?file_category_id=6&item_id=06090031000&is_series=)")
 		(tags "Micro SD")
 		(property "Reference" "J9"
-			(at -0.075 -9.525 360)
+			(at -0.075 -9.525 0)
 			(layer "F.SilkS")
 			(uuid "ba1a4f0f-f4db-43ed-b01a-3131e5027e1d")
 			(effects
@@ -1964,7 +1964,7 @@
 			)
 		)
 		(property "Value" "Micro_SD_Card_Det_Hirose_DM3AT"
-			(at -0.075 9.575 360)
+			(at -0.075 9.575 0)
 			(layer "F.Fab")
 			(uuid "317580c5-ca27-4f09-9fb1-a6bfdd9b36a4")
 			(effects
@@ -2434,7 +2434,7 @@
 			)
 		)
 		(fp_text user "KEEPOUT"
-			(at -1.075 -1.925 360)
+			(at -1.075 -1.925 0)
 			(layer "Cmts.User")
 			(uuid "1cdc6f70-2825-4bec-a1b1-d1cea0872586")
 			(effects
@@ -2456,7 +2456,7 @@
 			)
 		)
 		(fp_text user "KEEPOUT"
-			(at 4.2 7.65 360)
+			(at 4.2 7.65 0)
 			(layer "Cmts.User")
 			(uuid "998635c6-3587-487b-a171-3367c8c95f5b")
 			(effects
@@ -2467,7 +2467,7 @@
 			)
 		)
 		(fp_text user "${REFERENCE}"
-			(at -0.075 0.375 360)
+			(at -0.075 0.375 0)
 			(layer "F.Fab")
 			(uuid "7e148b13-195c-4990-8f58-0ebaa1fa0320")
 			(effects
