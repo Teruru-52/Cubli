@@ -29,17 +29,16 @@ protected:
     MedianFilter vel_filt = MedianFilter(7);
 
     // float dt = 1.0f / static_cast<float>(PWM_FREQUENCY); // need to be changed
-    float dt = 0.001; // need to be changed
-    float inv_dt = 1.0 / dt;
-    float pre_angle_raw = 0.0;
-    float angle = 0.0;
-    float angle_raw = 0.0; // raw angle of encoder output [rad]
-    float angle_diff = 0.0;
-    float angle_offset = 0.0;
-    float angle_base = 0.0;
+    const float dt = 0.001f; // need to be changed
+    float inv_dt = 1.0f / dt;
+    float angle_raw = 0.0f; // raw angle of encoder output [rad]
+    float pre_angle_raw = 0.0f;
+    float angle_full = 0.0f;
+    float pre_angle_full = 0.0f;
+    float angle_base = 0.0f;
     const float angle_diff_min = 0.001535f;   // M_2PI / 4095 = 0.001534... [rad]
     const float angle_diff_max = 1.5f * M_PI; // 270 [deg]
-    float velocity;
+    float velocity = 0.0f;
     // uint16_t flag_err;
 
 public:
@@ -50,12 +49,12 @@ public:
 
     void Initialize();
     void Update();
-    void SetAngleBase() { angle_base = angle; }
+    void SetAngleBase() { angle_base = angle_full; }
     uint16_t GetErrFlag() { return ReadByte(ERR_FLAG_H, ERR_FLAG_L); };
-    float GetAngle() { return angle; };
-    float GetRawAngle() { return angle_raw; };
-    float GetAngleDiff() { return angle - angle_base; };
-    float GetVelocity() { return velocity; };
+    float GetMechanicalAngle() { return angle_raw; };
+    float GetAngle() { return angle_full; };
+    float GetAngleDiff() { return angle_full - angle_base; };
+    float GetVelocity();;
     void LogPrint();
 };
 

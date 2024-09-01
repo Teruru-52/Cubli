@@ -39,7 +39,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         hall.SetHallValueV(Read_GPIO(HALL_V));
     if (GPIO_Pin == Hall_W_Pin)
         hall.SetHallValueW(Read_GPIO(HALL_W));
-    driver_controller->CorrectElectricAngle(hall.GetHallValue());
+    // driver_controller->CorrectElectricAngle(hall.GetHallValue());
 }
 
 void InitializeDriver()

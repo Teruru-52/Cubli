@@ -224,14 +224,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if (cnt1kHz % 200 == 0)
       LogPrint();
   }
-  else if (htim->Instance == TIM3)
-  {
-    cnt36kHz = (cnt36kHz + 1) % 36000;
-    ADCCpltCallback();
+  // else if (htim->Instance == TIM3)
+  // {
+  //   cnt36kHz = (cnt36kHz + 1) % 36000;
+  //   ADCCpltCallback();
 
-    if (cnt36kHz == 0)
-      Toggle_GPIO(LED_WHITE);
-  }
+  //   if (cnt36kHz == 0)
+  //     Toggle_GPIO(LED_WHITE);
+  // }
 
   /* USER CODE END Callback 1 */
 }

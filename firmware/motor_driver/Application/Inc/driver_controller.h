@@ -10,7 +10,7 @@
 
 #include "main.h"
 #include "protocol.h"
-#include "state_struct.h"
+#include "foc_utils.h"
 #include "motor_param.h"
 #include "encoder.h"
 #include "drv8323.h"
@@ -52,14 +52,14 @@ protected:
     float coeff_lp = tau / (tau + T);
     dq_t pre_current_dq;
 
-    uvw_t current_uvw;       // [A]
-    uvw_t current_offset;    // [A]
-    ab_t current_ab;         // [A]
-    dq_t current_dq;         // [A]
-    ab_t voltage_ab;         // [V]
-    dq_t voltage_dq;         // [V]
-    float disturbance = 0.0; // [V]
-    uvw_t input_pulsewidth;  // [s]
+    uvw_t current_uvw;        // [A]
+    uvw_t current_offset;     // [A]
+    ab_t current_ab;          // [A]
+    dq_t current_dq;          // [A]
+    ab_t voltage_ab;          // [V]
+    dq_t voltage_dq;          // [V]
+    float disturbance = 0.0f; // [V]
+    uvw_t input_pulsewidth;   // [s]
     uvw_t input_duty;
     float input_trape;   // common input for trapezoidal control
     dq_t ref_current_dq; // [A]
@@ -67,10 +67,10 @@ protected:
     uint8_t pre_hall_state = 0x00;
 
     // electric angle and angular velocity
-    float theta_e = 0.0;
-    float theta_e_base = 0.0;
-    float theta_e_offset = 0.0;
-    // float omega_e = 0.0;
+    float theta_e = 0.0f;
+    float zero_theta_e = 0.0f; // zero electric angle
+    float theta_e_offset = 0.0f;
+    // float omega_e = 0.0f;
 
     // mechanical angle and angular velocity
     // float theta_m = 0.0;
@@ -85,21 +85,12 @@ protected:
     const float Gcsa_calib = 40.0f;
     const int phase_num = 3; // U, V, W
 
-    // coefficient of Park and Clarke transform
-    const float cos23 = cos((2.0f / 3.0f) * M_PI);
-    const float cos43 = cos((4.0f / 3.0f) * M_PI);
-    const float sin23 = sin((2.0f / 3.0f) * M_PI);
-    const float sin43 = sin((4.0f / 3.0f) * M_PI);
-    const float sq23 = sqrt(2.0f / 3.0f);
-
     // coefficient of SVPWM
-    const float sq13 = 1.0f / sqrt(3.0f);
-    const float sq32 = sqrt(3.0f / 2.0f);
-    const float sq43 = 2.0f / sqrt(3.0f);
     float d1, d2, d3, d4, d5, d6, d7;
     const float zero_vector_param = 1.0f;
 
-    float UpdateElectricAngle(float theta_m_diff);
+    void SearchZeroElectricAngle();
+    float GetElectricAngle();
     uvw_t CalculateCurrent(uint32_t *adc_data);
     uvw_t GetCurrent();
     ab_t ClarkeTransform(const uvw_t &current_uvw);
@@ -112,7 +103,7 @@ protected:
     void ResetBase();
 
 public:
-    explicit DriverControllerBase(A1333 *encoder, DRV8323 *drv, HallSensor *hall) : encoder(encoder), drv(drv), hall(hall){};
+    explicit DriverControllerBase(A1333 *encoder, DRV8323 *drv, HallSensor *hall) : encoder(encoder), drv(drv), hall(hall) {};
     void Initialize();
     void CorrectElectricAngle(uint8_t _hall_state);
     void UpdateSensorAngle();
@@ -135,7 +126,7 @@ private:
     const float integral_max = 10.0;
 
 public:
-    explicit VelocityDriver(A1333 *encoder, DRV8323 *drv, HallSensor *hall) : DriverControllerBase(encoder, drv, hall){};
+    explicit VelocityDriver(A1333 *encoder, DRV8323 *drv, HallSensor *hall) : DriverControllerBase(encoder, drv, hall) {};
     uvw_t Control() override;
     void UpdateFOC();
     void UpdateTrapezoidalControl();
@@ -150,7 +141,7 @@ private:
     float ref_torque = 0.0;
 
 public:
-    explicit TorqueDriver(A1333 *encoder, DRV8323 *drv, HallSensor *hall) : DriverControllerBase(encoder, drv, hall){};
+    explicit TorqueDriver(A1333 *encoder, DRV8323 *drv, HallSensor *hall) : DriverControllerBase(encoder, drv, hall) {};
     uvw_t Control() override;
     void Reset() override;
 };

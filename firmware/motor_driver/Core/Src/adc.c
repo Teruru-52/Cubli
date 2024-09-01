@@ -82,7 +82,7 @@ void MX_ADC1_Init(void)
   sConfigInjected.InjectedDiscontinuousConvMode = DISABLE;
   sConfigInjected.AutoInjectedConv = DISABLE;
   sConfigInjected.QueueInjectedContext = DISABLE;
-  sConfigInjected.ExternalTrigInjecConv = ADC_EXTERNALTRIGINJEC_T4_TRGO;
+  sConfigInjected.ExternalTrigInjecConv = ADC_EXTERNALTRIGINJEC_T3_CC1;
   sConfigInjected.ExternalTrigInjecConvEdge = ADC_EXTERNALTRIGINJECCONV_EDGE_FALLING;
   sConfigInjected.InjecOversamplingMode = DISABLE;
   if (HAL_ADCEx_InjectedConfigChannel(&hadc1, &sConfigInjected) != HAL_OK)
@@ -183,15 +183,15 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
 }
 
 /* USER CODE BEGIN 1 */
-// void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
-// {
-// ADCCpltCallback();
+void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+  ADCCpltCallback();
 
-// static int cnt_36kHz = 0;
-// if (cnt_36kHz == 0)
-//   Toggle_GPIO(LED_WHITE);
-// cnt_36Hz = (cnt_36kHz + 1) % 36000;
-// }
+  static int cnt_1kHz = 0;
+  if (cnt_1kHz == 0)
+    Toggle_GPIO(LED_WHITE);
+  cnt_1kHz = (cnt_1kHz + 1) % 1000;
+}
 
 void ADC_Get_Value(uint32_t *Data)
 {

@@ -15,9 +15,11 @@ void DriverControllerBase::Initialize()
 {
     drv->Initialize();
     SetCurrentoffset();
-    theta_e = UpdateElectricAngle(0.0); // Need to be changed
+
+    encoder->Initialize();
     hall->ReadHallValue();
     pre_hall_state = hall->GetHallValue();
+    SearchZeroElectricAngle();
 
     arm_pid_init_f32(&pid_id, 0);
     arm_pid_init_f32(&pid_iq, 0);
@@ -27,14 +29,28 @@ void DriverControllerBase::Initialize()
     initialized = true;
 }
 
+void DriverControllerBase::SearchZeroElectricAngle()
+{
+    // Need to add searching movement
+    while (1)
+    {
+        hall_state = hall->GetHallValue();
+        encoder->Update();
+        if ((hall_state == 0b00000101 && pre_hall_state == 0b00000001) || (hall_state == 0b00000101 && pre_hall_state == 0b00000100))
+        {
+            zero_theta_e = Pn * encoder->GetMechanicalAngle();
+            break;
+        }
+    }
+    printf("zero_theta_e = %.3f\n", zero_theta_e);
+}
+
 void DriverControllerBase::UpdateSensorAngle()
 {
-    // hall->ReadHallValue();
     hall_state = hall->GetHallValue();
     // encoder->Update();
-    float theta_m_diff = encoder->GetAngleDiff();
     omega_m = encoder->GetVelocity();
-    theta_e = UpdateElectricAngle(theta_m_diff);
+    theta_e = GetElectricAngle();
 }
 
 void DriverControllerBase::CorrectElectricAngle(uint8_t _hall_state)
@@ -44,60 +60,53 @@ void DriverControllerBase::CorrectElectricAngle(uint8_t _hall_state)
     if (hall_state != pre_hall_state)
     {
         if (hall_state == 0b00000100 && pre_hall_state == 0b00000110)
-            // theta_e_base = 0.0;
-            theta_e_base = M_PI_3;
+            // theta_e = 0.0;
+            theta_e = M_PI_3;
         else if (hall_state == 0b00000100 && pre_hall_state == 0b00000101)
-            // theta_e_base = 0.0;
-            theta_e_base = M_PI_3;
+            // theta_e = 0.0;
+            theta_e = M_PI_3;
         else if (hall_state == 0b00000110 && pre_hall_state == 0b00000100)
-            // theta_e_base = M_PI_3;
-            theta_e_base = 2.0f * M_PI_3;
+            // theta_e = M_PI_3;
+            theta_e = 2.0f * M_PI_3;
         else if (hall_state == 0b00000110 && pre_hall_state == 0b00000010)
-            // theta_e_base = M_PI_3;
-            theta_e_base = 2.0f * M_PI_3;
+            // theta_e = M_PI_3;
+            theta_e = 2.0f * M_PI_3;
         else if (hall_state == 0b00000010 && pre_hall_state == 0b00000110)
-            // theta_e_base = 2.0f * M_PI_3;
-            theta_e_base = M_PI;
+            // theta_e = 2.0f * M_PI_3;
+            theta_e = M_PI;
         else if (hall_state == 0b00000010 && pre_hall_state == 0b00000011)
-            // theta_e_base = 2.0f * M_PI_3;
-            theta_e_base = M_PI;
+            // theta_e = 2.0f * M_PI_3;
+            theta_e = M_PI;
         else if (hall_state == 0b00000011 && pre_hall_state == 0b00000010)
-            // theta_e_base = M_PI;
-            theta_e_base = 4.0f * M_PI_3;
+            // theta_e = M_PI;
+            theta_e = 4.0f * M_PI_3;
         else if (hall_state == 0b00000011 && pre_hall_state == 0b00000001)
-            // theta_e_base = M_PI;
-            theta_e_base = 4.0f * M_PI_3;
+            // theta_e = M_PI;
+            theta_e = 4.0f * M_PI_3;
         else if (hall_state == 0b00000001 && pre_hall_state == 0b00000011)
-            // theta_e_base = 4.0f * M_PI_3;
-            theta_e_base = 5.0f * M_PI_3;
+            // theta_e = 4.0f * M_PI_3;
+            theta_e = 5.0f * M_PI_3;
         else if (hall_state == 0b00000001 && pre_hall_state == 0b00000101)
-            // theta_e_base = 4.0f * M_PI_3;
-            theta_e_base = 5.0f * M_PI_3;
+            // theta_e = 4.0f * M_PI_3;
+            theta_e = 5.0f * M_PI_3;
         else if (hall_state == 0b00000101 && pre_hall_state == 0b00000001)
-            // theta_e_base = 5.0f * M_PI_3;
-            theta_e_base = 0;
+            // theta_e = 5.0f * M_PI_3;
+            theta_e = 0;
         else if (hall_state == 0b00000101 && pre_hall_state == 0b00000100)
-            // theta_e_base = 5.0f * M_PI_3;
-            theta_e_base = 0;
+            // theta_e = 5.0f * M_PI_3;
+            theta_e = 0;
     }
 
     encoder->SetAngleBase();
     pre_hall_state = hall_state;
 }
 
-float DriverControllerBase::UpdateElectricAngle(float theta_m_diff)
+float DriverControllerBase::GetElectricAngle()
 {
-    // update theta_e by encoder
-    theta_e = theta_e_base + theta_m_diff * Pn;
-
-    // limit theta_e to [-2pi, 2pi)
-    if (theta_e >= M_2PI)
-        theta_e -= M_2PI;
-    // else if (theta_e <= -M_2PI)
-    else if (theta_e <= 0)
-        theta_e += M_2PI;
-
-    return theta_e;
+    // [-2pi, 2pi)
+    float electric_angle = fmod(Pn * encoder->GetMechanicalAngle() - zero_theta_e, M_2PI);
+    // [0, 2pi)
+    return (electric_angle >= 0) ? electric_angle : electric_angle + M_2PI;
 }
 
 uvw_t DriverControllerBase::CalculateCurrent(uint32_t *adc_data)
