@@ -39,7 +39,7 @@ extern "C" {
 #include "arm_math.h"
 
 // #include "can.h"
-#include "dma.h"
+// #include "dma.h"
 // #include "fatfs.h"
 #include "sdio.h"
 // #include "spi.h"
@@ -74,8 +74,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define SPI_CS_IMU2_Pin GPIO_PIN_13
 #define SPI_CS_IMU2_GPIO_Port GPIOC
-#define SW1_Pin GPIO_PIN_0
-#define SW1_GPIO_Port GPIOA
+#define SW_Pin GPIO_PIN_0
+#define SW_GPIO_Port GPIOA
 #define LCD_RST_Pin GPIO_PIN_1
 #define LCD_RST_GPIO_Port GPIOA
 #define LCD_DC_Pin GPIO_PIN_2

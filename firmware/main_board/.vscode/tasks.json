@@ -17,6 +17,25 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "type": "shell",
+            "label": "Flash program",
+            "command": "JLinkExe",
+            "args": [
+                "-device",
+                "STM32F405RG",
+                "-if",
+                "SWD",
+                "-speed",
+                "4000",
+                "-autoconnect",
+                "1",
+                "-CommanderScript",
+                "./load.jlink",
+            ],
+            "problemMatcher": [],
+            "group": "none"
         }
     ]
 }
