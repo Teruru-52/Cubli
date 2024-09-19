@@ -7,7 +7,7 @@
 
 #include "instance.h"
 
-DRV8323 drv(&hspi1, SPI1_CS_DRV, DRV_nFAULT, DRV_ENABLE, DRV_CAL, LED_BLUE, DRV_INLx, LED_YELLOW);
+DRV8323 drv(&hspi1, SPI1_CS_DRV, DRV_nFAULT, DRV_ENABLE, DRV_CAL, DRV_INLA, DRV_INLB, DRV_INLC);
 HallSensor hall(HALL_U, HALL_V, HALL_W);
 A1333 encoder(&hspi2, SPI2_CS_ENC);
 

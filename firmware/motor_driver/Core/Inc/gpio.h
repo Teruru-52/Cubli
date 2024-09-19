@@ -57,7 +57,9 @@ extern "C" {
   extern GPIO_Value DRV_nFAULT;
   extern GPIO_Value DRV_ENABLE;
   extern GPIO_Value DRV_CAL;
-  extern GPIO_Value DRV_INLx;
+  extern GPIO_Value DRV_INLA;
+  extern GPIO_Value DRV_INLB;
+  extern GPIO_Value DRV_INLC;
 
   typedef struct _Access_Lamp
   {
