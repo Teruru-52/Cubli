@@ -530,7 +530,11 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
+<<<<<<< HEAD
       "plot": "gerber/",
+=======
+      "plot": "",
+>>>>>>> motor_driver_v1.2
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",

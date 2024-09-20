@@ -93,7 +93,6 @@ void TIMUpdate()
 
     encoder.Update();
 
-    BLMD_Access_Lamp.FDCAN_TX = ENABLE;
     TxData[0] = 3;
     FDCAN_Send(TxData);
 }
@@ -190,20 +189,17 @@ void FDCANReceiveCallback(uint8_t *pRxData)
     //     }
     // }
     // }
-
-    BLMD_Access_Lamp.FDCAN_RX = ENABLE;
-    printf("data=%d\r\n", pRxData[0]);
 }
 
 void LogPrint()
 {
-    // encoder.LogPrint();
+    encoder.LogPrint();
     // hall.LogPrint();
 
     // uint16_t flag_err = encoder.GetErrFlag();
     // printf("flag_err = %x\n", flag_err);
 
-    driver_controller->LogPrint();
+    // driver_controller->LogPrint();
 }
 
 void TestADC()

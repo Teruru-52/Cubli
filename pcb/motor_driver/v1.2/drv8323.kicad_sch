@@ -6051,7 +6051,7 @@
 		)
 		(uuid "2e8a4beb-a762-451d-a162-348fdbf3128e")
 	)
-	(hierarchical_label "SOC"
+	(hierarchical_label "SOA"
 		(shape output)
 		(at 118.11 71.12 0)
 		(fields_autoplaced yes)
@@ -6135,7 +6135,7 @@
 		)
 		(uuid "a0416126-c282-487e-918f-1e69cfe2d409")
 	)
-	(hierarchical_label "SOA"
+	(hierarchical_label "SOC"
 		(shape output)
 		(at 118.11 66.04 0)
 		(fields_autoplaced yes)
@@ -8738,7 +8738,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:CP_Elec_8x10.5"
+		(property "Footprint" "Capacitor_SMD:CP_Elec_6.3x3.9"
 			(at 191.77 149.86 0)
 			(effects
 				(font
@@ -9421,7 +9421,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "dea1dc94-a988-4d20-b1f0-a54ceb254ec6")
-		(property "Reference" "J3"
+		(property "Reference" "J2"
 			(at 104.14 104.14 0)
 			(effects
 				(font
@@ -9616,7 +9616,7 @@
 		(instances
 			(project "motor_driver"
 				(path "/1ef6600e-ea1d-4a9a-8ae5-1c3f7136836c/99868341-3fcd-422d-afe6-e3750b4ef7c0"
-					(reference "J3")
+					(reference "J2")
 					(unit 1)
 				)
 			)

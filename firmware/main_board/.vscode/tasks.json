@@ -7,8 +7,8 @@
             "command": "make",
             "args": [
                 "DEBUG=1",
-                // "-j3",
-                // "all",
+                "-j8",
+                "all",
             ],
             "problemMatcher": [
                 "$gcc"

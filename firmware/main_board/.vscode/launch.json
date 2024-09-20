@@ -13,7 +13,6 @@
             "serverpath": "JLinkGDBServerCLExe",
             "device": "STM32F405RG",
             "interface": "swd",
-            // "svdFile": "${workspaceRoot}/STM32F411.svd"
         }
     ]
 }
