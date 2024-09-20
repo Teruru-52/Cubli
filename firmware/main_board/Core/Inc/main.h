@@ -90,12 +90,10 @@ void Error_Handler(void);
 #define LED3_GPIO_Port GPIOB
 #define LED4_Pin GPIO_PIN_11
 #define LED4_GPIO_Port GPIOB
-#define LED_CAN_RX_Pin GPIO_PIN_12
-#define LED_CAN_RX_GPIO_Port GPIOB
-#define LED_CAN_TX_Pin GPIO_PIN_15
+#define LED_CAN_TX_Pin GPIO_PIN_12
 #define LED_CAN_TX_GPIO_Port GPIOB
-#define LED_CAN_TXC7_Pin GPIO_PIN_7
-#define LED_CAN_TXC7_GPIO_Port GPIOC
+#define LED_CAN_RX_Pin GPIO_PIN_15
+#define LED_CAN_RX_GPIO_Port GPIOB
 #define SPI_CS_IMU5_Pin GPIO_PIN_3
 #define SPI_CS_IMU5_GPIO_Port GPIOB
 #define SPI_CS_IMU6_Pin GPIO_PIN_4

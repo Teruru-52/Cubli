@@ -40,7 +40,7 @@ extern "C" {
   } GPIO_Value;
 
   extern GPIO_Value LED_YELLOW;
-  extern GPIO_Value LED_GREEN;
+  extern GPIO_Value LED_RED;
   extern GPIO_Value LED_BLUE;
   extern GPIO_Value LED_WHITE;
   extern GPIO_Value LED_CAN_TX;

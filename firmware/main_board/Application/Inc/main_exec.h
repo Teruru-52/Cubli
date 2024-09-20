@@ -24,10 +24,4 @@ extern "C"
 };
 #endif
 
-CAN_TxHeaderTypeDef TxHeader;
-// CAN_RxHeaderTypeDef RxHeader;
-uint8_t TxData[8];
-// uint8_t RxData[8];
-uint32_t TxMailbox;
-
 #endif // MAIN_EXEC_H_

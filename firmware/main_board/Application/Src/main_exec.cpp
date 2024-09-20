@@ -10,6 +10,12 @@
 #include "instance.h"
 #include "controller/controller.h"
 
+CAN_TxHeaderTypeDef TxHeader;
+// CAN_RxHeaderTypeDef RxHeader;
+uint8_t TxData[8];
+// uint8_t RxData[8];
+uint32_t TxMailbox;
+
 Pose input_torque;
 
 void Initialize()
@@ -38,16 +44,21 @@ void LogPrint()
 void CAN_Send()
 {
     MB_Access_Lamp.CAN_TX = ENABLE;
-    TxHeader.StdId = CAN_ID_RX1;
+    TxHeader.StdId = CAN_ID_MB;
     TxHeader.RTR = CAN_RTR_DATA;
     TxHeader.IDE = CAN_ID_STD;
     TxHeader.DLC = 8;
     TxHeader.TransmitGlobalTime = DISABLE;
     TxData[0] = 1;
 
-    if (0 < HAL_CAN_GetTxMailboxesFreeLevel(&hcan1))
+    if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0)
     {
-        HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+        // printf("FreeLevel = %ld\n", HAL_CAN_GetTxMailboxesFreeLevel(&hcan1));
+        if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+        {
+            Error_Handler();
+        }
+        MB_Access_Lamp.CAN_TX = ENABLE;
     }
 }
 

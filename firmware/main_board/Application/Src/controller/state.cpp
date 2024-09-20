@@ -151,35 +151,35 @@ void StateComplimantaryFilter::Initialize()
 
     Write_GPIO(LED_YELLOW, GPIO_PIN_SET);
 
-    Write_GPIO(LED_GREEN, GPIO_PIN_SET);
+    Write_GPIO(LED_RED, GPIO_PIN_SET);
     imu1->Initialize();
     imu1->Calibrate();
 
-    Write_GPIO(LED_GREEN, GPIO_PIN_RESET);
+    Write_GPIO(LED_RED, GPIO_PIN_RESET);
     Write_GPIO(LED_BLUE, GPIO_PIN_SET);
     imu2->Initialize();
     imu2->Calibrate();
 
-    Write_GPIO(LED_GREEN, GPIO_PIN_SET);
+    Write_GPIO(LED_RED, GPIO_PIN_SET);
     imu3->Initialize();
     imu3->Calibrate();
 
-    Write_GPIO(LED_GREEN, GPIO_PIN_RESET);
+    Write_GPIO(LED_RED, GPIO_PIN_RESET);
     Write_GPIO(LED_BLUE, GPIO_PIN_RESET);
     Write_GPIO(LED_WHITE, GPIO_PIN_SET);
     imu4->Initialize();
     imu4->Calibrate();
 
-    Write_GPIO(LED_GREEN, GPIO_PIN_SET);
+    Write_GPIO(LED_RED, GPIO_PIN_SET);
     imu5->Initialize();
     imu5->Calibrate();
 
-    Write_GPIO(LED_GREEN, GPIO_PIN_RESET);
+    Write_GPIO(LED_RED, GPIO_PIN_RESET);
     Write_GPIO(LED_BLUE, GPIO_PIN_SET);
     imu6->Initialize();
     imu6->Calibrate();
 
-    Write_GPIO(LED_GREEN, GPIO_PIN_RESET);
+    Write_GPIO(LED_RED, GPIO_PIN_RESET);
     Write_GPIO(LED_BLUE, GPIO_PIN_RESET);
     Write_GPIO(LED_WHITE, GPIO_PIN_RESET);
     Write_GPIO(LED_YELLOW, GPIO_PIN_RESET);
