@@ -107,15 +107,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
 
-  Write_GPIO(LED_WHITE, GPIO_PIN_SET);
-  Write_GPIO(LED_BLUE, GPIO_PIN_SET);
   Write_GPIO(LED_YELLOW, GPIO_PIN_SET);
-  Write_GPIO(LED_RED, GPIO_PIN_SET);
-  HAL_Delay(1000);
-  Write_GPIO(LED_WHITE, GPIO_PIN_RESET);
-  Write_GPIO(LED_BLUE, GPIO_PIN_RESET);
-  Write_GPIO(LED_YELLOW, GPIO_PIN_RESET);
-  Write_GPIO(LED_RED, GPIO_PIN_RESET);
 
   HAL_FDCAN_Start(&hfdcan1);
   if (HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
@@ -136,6 +128,7 @@ int main(void)
 
   HAL_TIM_Base_Start_IT(&htim1);
   HAL_TIM_Base_Start_IT(&htim3);
+  Write_GPIO(LED_YELLOW, GPIO_PIN_RESET);
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */

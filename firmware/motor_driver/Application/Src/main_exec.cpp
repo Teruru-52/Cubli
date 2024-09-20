@@ -197,13 +197,13 @@ void FDCANReceiveCallback(uint8_t *pRxData)
 
 void LogPrint()
 {
-    // encoder.LogPrint();
+    encoder.LogPrint();
     // hall.LogPrint();
 
     // uint16_t flag_err = encoder.GetErrFlag();
     // printf("flag_err = %x\n", flag_err);
 
-    driver_controller->LogPrint();
+    // driver_controller->LogPrint();
 }
 
 void TestADC()
