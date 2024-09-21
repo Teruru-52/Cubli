@@ -35,18 +35,16 @@ uint16_t DRV8323::ReadByte(uint8_t reg)
 
     tx_data[0] = (reg << 3) | 0x80;
     tx_data[1] = 0x00; // dummy
-    printf("read tx_data = %x\n", ((uint16_t)(tx_data[0] << 8) | tx_data[1]));
+    // printf("read tx_data = %x\n", ((uint16_t)(tx_data[0] << 8) | tx_data[1]));
 
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_RESET);
     HAL_SPI_TransmitReceive(spi, tx_data, rx_data, 2, 10);
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_SET);
 
     uint16_t data = (int16_t)((int16_t)((rx_data[0] & 0x07) << 8) | rx_data[1]);
-    // printf("read rx_data[0] = %x\n", rx_data[0] & 0b00000111);
-    // printf("read rx_data[1] = %x\n", rx_data[1]);
-    printf("read rx_data = %x\n", data);
-    // data = ((int16_t)(rx_data[0]) & 0x07) << 8 | (uint16_t)(rx_data[1]);
-    // printf("read rx_data = %x\n", data);
+    printf("read rx_data[0] = %x\n", rx_data[0] & 0x07);
+    printf("read rx_data[1] = %x\n", rx_data[1]);
+    // printf("read data = %x\n", data);
     return data;
 }
 
@@ -54,20 +52,20 @@ void DRV8323::WriteByte(uint8_t reg, uint16_t data)
 {
     uint8_t rx_data[2];
     uint8_t tx_data[2];
+    printf("write data = %x\n", data);
 
-    uint8_t upper_data = (data >> 8) & 0x07;
+    uint8_t upper_data = (data >> 8) & 0x0007;
     // printf("upper = %x\n", upper_data);
-    uint8_t lower_data = data & 0xFF;
+    uint8_t lower_data = data & 0x00FF;
     // printf("lower = %x\n", lower_data);
     tx_data[0] = ((reg << 3) | upper_data) & 0x7F;
     // printf("tx_data[0] = %x\n", tx_data[0]);
     tx_data[1] = lower_data;
+    // printf("write tx_data = %x\n", ((uint16_t)(tx_data[0] << 8) | tx_data[1]));
 
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_RESET);
     HAL_SPI_TransmitReceive(spi, tx_data, rx_data, 2, 10);
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_SET);
-
-    printf("write tx_data = %x\n", ((uint16_t)(tx_data[0] << 8) | tx_data[1]));
 }
 
 void DRV8323::Initialize()
@@ -104,6 +102,7 @@ void DRV8323::Initialize()
     test[3] = ReadByte(OCP_CONTROL);
     HAL_Delay(1);
     test[4] = ReadByte(CSA_CONTROL);
+    HAL_Delay(1);
 }
 
 void DRV8323::StartCalibration()

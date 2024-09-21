@@ -116,10 +116,6 @@ int main(void)
   HAL_ADCEx_InjectedStart_IT(&hadc1);
   InitializeDriver();
 
-  // __HAL_TIM_SET_COMPARE(&htim15, TIM_CHANNEL_1, 20);
-  // HAL_Delay(50);
-  // __HAL_TIM_SET_COMPARE(&htim15, TIM_CHANNEL_1, 0);
-
   HAL_TIM_Base_Start_IT(&htim1);
   HAL_TIM_Base_Start_IT(&htim3);
   Write_GPIO(LED_YELLOW, GPIO_PIN_RESET);
