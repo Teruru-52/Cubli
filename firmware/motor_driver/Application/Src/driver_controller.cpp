@@ -14,6 +14,8 @@ using namespace protocol;
 void DriverControllerBase::Initialize()
 {
     drv->Initialize();
+    HAL_ADC_Start_DMA(&hadc1, (uint32_t *)adc_data, 3);
+    HAL_Delay(100);
     SetCurrentoffset();
 
     encoder->Initialize();
@@ -109,7 +111,7 @@ float DriverControllerBase::GetElectricAngle()
     return (electric_angle >= 0) ? electric_angle : electric_angle + M_2PI;
 }
 
-uvw_t DriverControllerBase::CalculateCurrent(uint32_t *adc_data)
+uvw_t DriverControllerBase::CalculateCurrent()
 {
     float Vsox[phase_num] = {0.0, 0.0, 0.0}; // [V]
 
@@ -128,20 +130,16 @@ uvw_t DriverControllerBase::CalculateCurrent(uint32_t *adc_data)
 
 uvw_t DriverControllerBase::GetCurrent()
 {
-    uint32_t adc_data[phase_num] = {0, 0, 0};
-    ADC_Get_Value(adc_data); // get digital current Data
-    return CalculateCurrent(adc_data);
+    return CalculateCurrent();
 }
 
 void DriverControllerBase::SetCurrentoffset()
 {
-    uint32_t adc_data[phase_num] = {0, 0, 0};
     float Vsox[phase_num] = {0.0, 0.0, 0.0}; // [V]
 
     drv->StartCalibration();
     for (int j = 0; j < max_cali_count; j++)
     {
-        ADC_Get_Value(adc_data); // get digital current data
         for (int i = 0; i < phase_num; i++)
             Vsox[i] = static_cast<float>(adc_data[i]) * Vref / static_cast<float>(adc_resolution);
 
@@ -507,9 +505,9 @@ void DriverControllerBase::LogPrint()
 {
     printf("theta_e = %.3f, omega_m = %.3f\n", theta_e, omega_m);
 
-    printf("cur_u = %.3f, cur_v = %.3f, cur_w = %.3f\n", current_uvw.u, current_uvw.v, current_uvw.w);
-    printf("cur_a = %.3f, cur_b = %.3f\n", current_ab.a, current_ab.b);
-    printf("cur_d = %.3f, cur_q = %.3f\n", current_dq.d, current_dq.q);
+    // printf("cur_u = %.3f, cur_v = %.3f, cur_w = %.3f\n", current_uvw.u, current_uvw.v, current_uvw.w);
+    // printf("cur_a = %.3f, cur_b = %.3f\n", current_ab.a, current_ab.b);
+    // printf("cur_d = %.3f, cur_q = %.3f\n", current_dq.d, current_dq.q);
     printf("input_u = %.3f, input_v = %.3f, input_w = %.3f\n", input_duty.u, input_duty.v, input_duty.w);
 
     // printf("input_trapezoidal = %.3f\n", input_trape);

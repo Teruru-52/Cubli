@@ -20,7 +20,6 @@ extern "C"
     void FDCANReceiveCallback(uint8_t *pRxData);
     void LogPrint();
 
-    void TestADC();
     void TestHallSensor();
     void TestEncoder();
     void TestElectricAngle();

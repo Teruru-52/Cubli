@@ -31,8 +31,10 @@ protected:
 
     arm_pid_instance_f32 pid_id = {0.0, 0.0, 0.0, {0.0}, 0.0, 0.0, 0.0};
     arm_pid_instance_f32 pid_iq = {0.0, 0.0, 0.0, {0.0}, 0.0, 0.0, 0.0};
-    PID _pid_id = PID(0.1, 0.1, 0.0, 0.0, 1.0 / static_cast<float>(PWM_FREQUENCY), 5.0);
-    PID _pid_iq = PID(0.1, 0.1, 0.0, 0.0, 1.0 / static_cast<float>(PWM_FREQUENCY), 5.0);
+    // PID _pid_id = PID(0.1, 0.1, 0.0, 0.0, 1.0 / static_cast<float>(PWM_FREQUENCY), 5.0);
+    // PID _pid_iq = PID(0.1, 0.1, 0.0, 0.0, 1.0 / static_cast<float>(PWM_FREQUENCY), 5.0);
+    PID _pid_id = PID(0.1f, 0.1f, 0.0, 0.0, 0.001f, 5.0f);
+    PID _pid_iq = PID(0.1f, 0.1f, 0.0, 0.0, 0.001f, 5.0f);
 
     // coefficient of IIR filter
     float32_t b0 = 0.1f;
@@ -84,13 +86,14 @@ protected:
     const float Gcsa = 40.0f;
     const float Gcsa_calib = 40.0f;
     const int phase_num = 3; // U, V, W
+    uint32_t adc_data[3] = {0, 0, 0};
 
     float d1, d2, d3, d4, d5, d6, d7;
     const float zero_vector_param = 1.0f;
 
     void SearchZeroElectricAngle();
     float GetElectricAngle();
-    uvw_t CalculateCurrent(uint32_t *adc_data);
+    uvw_t CalculateCurrent();
     uvw_t GetCurrent();
     ab_t ClarkeTransform(const uvw_t &current_uvw);
     dq_t ParkTransform(const ab_t &current_ab);
@@ -119,9 +122,10 @@ class VelocityDriver : public DriverControllerBase
 {
 private:
     // arm_pid_instance_f32 pid_vel; // need to be deleted
-    PID _pid_vel = PID(0.01, 1.0, 0.0, 0.0, 1.0 / static_cast<float>(PWM_FREQUENCY), 5.0);
+    // PID _pid_vel = PID(0.01, 1.0, 0.0, 0.0, 1.0 / static_cast<float>(PWM_FREQUENCY), 5.0);
+    PID _pid_vel = PID(0.2, 0.0, 0.0, 0.0, 0.001f, 5.0);
 
-    const float ref_vel = 50.0;
+    const float ref_vel = 30.0;
     const float integral_max = 10.0;
 
 public:

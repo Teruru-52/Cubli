@@ -39,6 +39,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         hall.SetHallValueV(Read_GPIO(HALL_V));
     if (GPIO_Pin == Hall_W_Pin)
         hall.SetHallValueW(Read_GPIO(HALL_W));
+    hall.FlashLED();
     driver_controller->CorrectElectricAngle(hall.GetHallValue());
 }
 
@@ -117,7 +118,7 @@ void ADCCpltCallback()
         //     else
         //     {
         uvw_t input_duty = driver_controller->Control();
-        PWM_Update(&blcd_pwm, input_duty.u, input_duty.v, input_duty.w);
+        // PWM_Update(&blcd_pwm, input_duty.u, input_duty.v, input_duty.w);
         //     }
     }
 }
@@ -193,24 +194,13 @@ void FDCANReceiveCallback(uint8_t *pRxData)
 
 void LogPrint()
 {
-    encoder.LogPrint();
+    // encoder.LogPrint();
     // hall.LogPrint();
 
     // uint16_t flag_err = encoder.GetErrFlag();
     // printf("flag_err = %x\n", flag_err);
 
-    // driver_controller->LogPrint();
-}
-
-void TestADC()
-{
-    uint32_t ADC_Data[3];
-    ADC_Get_Value(ADC_Data);
-
-    static int cnt = 0;
-    if (cnt == 0)
-        printf("%ld, %ld, %ld\n", ADC_Data[0], ADC_Data[1], ADC_Data[2]);
-    cnt = (cnt + 1) % 1000;
+    driver_controller->LogPrint();
 }
 
 void TestHallSensor()
