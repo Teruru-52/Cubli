@@ -1,7 +1,7 @@
 /*
  * foc_utils.h
  *
- *  Created on: Aug 15th, 2023
+ *  Created on: Aug 15th, 2024
  *      Author: Reiji Terunuma
  */
 
@@ -9,6 +9,10 @@
 #define FOC_UTILS_H_
 
 #include "main.h"
+
+#define _constrain(amt, low, high) ((amt) < (low) ? (low) : ((amt) > (high) ? (high) : (amt)))
+
+#define _HIGH_IMPEDANCE 0
 
 // variables on u-v-w axis
 struct uvw_t
@@ -50,6 +54,7 @@ const float cos43 = cos((4.0f / 3.0f) * M_PI);
 const float sin23 = sin((2.0f / 3.0f) * M_PI);
 const float sin43 = sin((4.0f / 3.0f) * M_PI);
 const float sq23 = sqrt(2.0f / 3.0f);
+const float sq34 = sqrt(3.0f) / 2.0f;
 
 // coefficient of SVPWM
 const float sq13 = 1.0f / sqrt(3.0f);

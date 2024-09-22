@@ -25,6 +25,7 @@ uint16_t A1333::ReadByte(uint8_t reg1, uint8_t reg2)
 
 void A1333::Initialize()
 {
+    Write_GPIO(SPI_CS_ENC, GPIO_PIN_SET);
     Update();
     pre_angle_full = angle_full;
 }
@@ -55,5 +56,5 @@ float A1333::GetVelocity()
 
 void A1333::LogPrint()
 {
-    printf("angle = %.3f, angle_base = %.3f, angle_raw = %.3f, velocty = %.3f\n", angle_full, angle_base, angle_raw, velocity);
+    printf("angle = %.3f, angle_raw = %.3f, velocity = %.3f\n", angle_full, angle_raw, velocity);
 }

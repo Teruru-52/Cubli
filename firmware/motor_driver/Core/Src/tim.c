@@ -59,7 +59,7 @@ void MX_TIM1_Init(void)
     Error_Handler();
   }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
-  sMasterConfig.MasterOutputTrigger2 = TIM_TRGO2_OC1REF;
+  sMasterConfig.MasterOutputTrigger2 = TIM_TRGO2_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
   {
@@ -99,7 +99,7 @@ void MX_TIM3_Init(void)
   {
     Error_Handler();
   }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
   {
@@ -310,8 +310,6 @@ void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* tim_pwmHandle)
 }
 
 /* USER CODE BEGIN 1 */
-BLDC_PWM blcd_pwm = {ENABLE, &htim4, TIM_CHANNEL_1, TIM_CHANNEL_2, TIM_CHANNEL_4};
-
 // void Blmd_TIM_Init(void)
 // {
 //   // Init for PWM
@@ -332,7 +330,7 @@ BLDC_PWM blcd_pwm = {ENABLE, &htim4, TIM_CHANNEL_1, TIM_CHANNEL_2, TIM_CHANNEL_4
 //   }
 // }
 
-void PWM_Start(BLDC_PWM *bldc_pwm)
+void _configure3PWM(BLDC_PWM *bldc_pwm)
 {
   if (HAL_TIM_PWM_Start(bldc_pwm->htim, bldc_pwm->Channel_U) != HAL_OK)
   {
@@ -346,39 +344,13 @@ void PWM_Start(BLDC_PWM *bldc_pwm)
   {
     Error_Handler();
   }
-  bldc_pwm->OutputPWM = ENABLE;
 }
 
-void PWM_Stop(BLDC_PWM *bldc_pwm)
+void _writeDutyCycle3PWM(BLDC_PWM *bldc_pwm, float duty_u, float duty_v, float duty_w)
 {
-  if (HAL_TIM_PWM_Stop(bldc_pwm->htim, bldc_pwm->Channel_U) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_TIM_PWM_Stop(bldc_pwm->htim, bldc_pwm->Channel_V) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_TIM_PWM_Stop(bldc_pwm->htim, bldc_pwm->Channel_W) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  PWM_Update(bldc_pwm, 0.0, 0.0, 0.0);
-  bldc_pwm->OutputPWM = DISABLE;
-}
-
-void PWM_Set(BLDC_PWM *bldc_pwm, float CHu, float CHv, float CHw)
-{ // CH: Standardized UnsignedPWM (0 ~ 1)
-  __HAL_TIM_SET_COMPARE(bldc_pwm->htim, bldc_pwm->Channel_U, CHu * (PWM_PERIOD_CYCLES - 1));
-  __HAL_TIM_SET_COMPARE(bldc_pwm->htim, bldc_pwm->Channel_V, CHv * (PWM_PERIOD_CYCLES - 1));
-  __HAL_TIM_SET_COMPARE(bldc_pwm->htim, bldc_pwm->Channel_W, CHw * (PWM_PERIOD_CYCLES - 1));
-}
-
-void PWM_Update(BLDC_PWM *bldc_pwm, float Duty_u, float Duty_v, float Duty_w)
-{ // Duty_x: Standardized Signed PWM (0 ~ 1)
-  if (bldc_pwm->OutputPWM == DISABLE)
-    PWM_Start(bldc_pwm);
-
-  PWM_Set(bldc_pwm, Duty_u, Duty_v, Duty_w);
+  // transform duty cycle from [0, 1] to [0, PWM_PERIOD_CYCLES - 1]
+  __HAL_TIM_SET_COMPARE(bldc_pwm->htim, bldc_pwm->Channel_U, duty_u * (PWM_PERIOD_CYCLES - 1));
+  __HAL_TIM_SET_COMPARE(bldc_pwm->htim, bldc_pwm->Channel_V, duty_v * (PWM_PERIOD_CYCLES - 1));
+  __HAL_TIM_SET_COMPARE(bldc_pwm->htim, bldc_pwm->Channel_W, duty_w * (PWM_PERIOD_CYCLES - 1));
 }
 /* USER CODE END 1 */

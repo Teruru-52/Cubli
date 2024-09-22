@@ -20,7 +20,6 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "adc.h"
-#include "dma.h"
 #include "fdcan.h"
 #include "spi.h"
 #include "tim.h"
@@ -93,7 +92,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_ADC1_Init();
   MX_FDCAN1_Init();
   MX_SPI1_Init();
@@ -104,16 +102,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
   SEGGER_RTT_Init();
   setbuf(stdout, NULL);
-  // HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
 
   Write_GPIO(LED_YELLOW, GPIO_PIN_SET);
-
-  Reset_CS_Pin();
-
-  HAL_Delay(100);
+  // HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
+  HAL_ADCEx_InjectedStart_IT(&hadc1);
   InitializeDriver();
 
   HAL_TIM_Base_Start_IT(&htim1);
@@ -213,10 +208,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     // TestElectricAngle();
     // TestHallSensor();
     TIMUpdate();
-    ADCCpltCallback();
+    // ADCCpltCallback();
 
-    if (cnt1kHz == 0)
-      Toggle_GPIO(LED_WHITE);
+    // if (cnt1kHz == 0)
+    //   Toggle_GPIO(LED_WHITE);
 
     if (cnt1kHz % 200 == 0)
       LogPrint();

@@ -49,7 +49,6 @@ public:
 
     void Initialize();
     void Update();
-    void SetAngleBase() { angle_base = angle_full; }
     uint16_t GetErrFlag() { return ReadByte(ERR_FLAG_H, ERR_FLAG_L); };
     float GetMechanicalAngle() { return angle_raw; };
     float GetAngle() { return angle_full; };
