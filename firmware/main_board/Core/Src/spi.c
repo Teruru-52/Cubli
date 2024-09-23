@@ -200,12 +200,12 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
 }
 
 /* USER CODE BEGIN 1 */
-SPI_Value spi_imu1 = {&hspi2, &SPI_CS_IMU1, 2, 10};
-SPI_Value spi_imu2 = {&hspi2, &SPI_CS_IMU2, 2, 10};
-SPI_Value spi_imu3 = {&hspi2, &SPI_CS_IMU3, 2, 10};
-SPI_Value spi_imu4 = {&hspi2, &SPI_CS_IMU4, 2, 10};
-SPI_Value spi_imu5 = {&hspi2, &SPI_CS_IMU5, 2, 10};
-SPI_Value spi_imu6 = {&hspi2, &SPI_CS_IMU6, 2, 10};
+SPI_Value spi_imu1 = {&hspi2, &SPI_CS_IMU1, 2, 1};
+SPI_Value spi_imu2 = {&hspi2, &SPI_CS_IMU2, 2, 1};
+SPI_Value spi_imu3 = {&hspi2, &SPI_CS_IMU3, 2, 1};
+SPI_Value spi_imu4 = {&hspi2, &SPI_CS_IMU4, 2, 1};
+SPI_Value spi_imu5 = {&hspi2, &SPI_CS_IMU5, 2, 1};
+SPI_Value spi_imu6 = {&hspi2, &SPI_CS_IMU6, 2, 1};
 
 uint8_t Read_1byte(SPI_Value *spi_value, uint8_t reg)
 {

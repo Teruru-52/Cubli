@@ -94,6 +94,8 @@ void Error_Handler(void);
 #define LED_CAN_TX_GPIO_Port GPIOB
 #define LED_CAN_RX_Pin GPIO_PIN_15
 #define LED_CAN_RX_GPIO_Port GPIOB
+#define SDIO_SW_Pin GPIO_PIN_15
+#define SDIO_SW_GPIO_Port GPIOA
 #define SPI_CS_IMU5_Pin GPIO_PIN_3
 #define SPI_CS_IMU5_GPIO_Port GPIOB
 #define SPI_CS_IMU6_Pin GPIO_PIN_4

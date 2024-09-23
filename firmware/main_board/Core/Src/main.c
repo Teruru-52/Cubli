@@ -20,6 +20,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "can.h"
+#include "dma.h"
 #include "fatfs.h"
 #include "sdio.h"
 #include "spi.h"
@@ -63,92 +64,6 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-int cnt1kHz = 0;
-
-void SDIO_Test()
-{
-  FRESULT res;                                              /* FatFs function common result code */
-  uint32_t byteswritten, bytesread;                         /* File write/read counts */
-  uint8_t wtext[] = "Hi, this is STM32 working with FatFs"; /* File write buffer */
-  uint8_t rtext[100];                                       /* File read buffer */
-
-  /*##-1- Link the SD disk I/O driver ########################################*/
-  if (retSD == 0)
-  {
-    /*##-2- Register the file system object to the FatFs module ##############*/
-    if (f_mount(&SDFatFS, (TCHAR const *)SDPath, 0) != FR_OK)
-    {
-      Error_Handler();
-    }
-    else
-    {
-      /*##-3- Create a FAT file system (format) on the logical drive #########*/
-      FRESULT fr = f_mkfs((TCHAR const *)SDPath, FM_ANY, 0, rtext, sizeof(rtext));
-      if (fr != FR_OK)
-      {
-        for (int i = 0; i < 20; i++)
-        {
-          if (fr == i)
-            printf("FRESULT: %d\n", i); // see ff.h for FRESULT values
-        }
-        Write_GPIO(LED_RED, GPIO_PIN_SET); // Error is here
-        Error_Handler();
-      }
-      else
-      {
-        /*##-4- Create and Open a new text file object with write access #####*/
-        if (f_open(&SDFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
-        {
-          Error_Handler();
-        }
-        else
-        {
-          /*##-5- Write data to the text file ################################*/
-          res = f_write(&SDFile, wtext, sizeof(wtext), (void *)&byteswritten);
-
-          if ((byteswritten == 0) || (res != FR_OK))
-          {
-            Error_Handler();
-          }
-          else
-          {
-            /*##-6- Close the open text file #################################*/
-            f_close(&SDFile);
-            /*##-7- Open the text file object with read access ###############*/
-            if (f_open(&SDFile, "STM32.TXT", FA_READ) != FR_OK)
-            {
-              Error_Handler();
-            }
-            else
-            {
-              /*##-8- Read data from the text file ###########################*/
-              res = f_read(&SDFile, rtext, sizeof(rtext), (UINT *)&bytesread);
-
-              if ((bytesread == 0) || (res != FR_OK)) /* EOF or Error */
-              {
-                Error_Handler();
-              }
-              else
-              {
-                /*##-9- Close the open text file #############################*/
-                f_close(&SDFile);
-                /*##-10- Compare read data with the expected data ############*/
-                if ((bytesread != byteswritten))
-                {
-                  /* Read data is different from the expected data */
-                  Error_Handler();
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  /*##-11- Unlink the SD disk I/O driver ####################################*/
-  FATFS_UnLinkDriver(SDPath);
-}
 /* USER CODE END 0 */
 
 /**
@@ -180,6 +95,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_CAN1_Init();
   MX_TIM1_Init();
   MX_SPI1_Init();
@@ -187,8 +103,8 @@ int main(void)
   MX_SPI2_Init();
   MX_TIM3_Init();
   MX_TIM12_Init();
-  MX_FATFS_Init();
   MX_USART1_UART_Init();
+  MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
   SEGGER_RTT_Init();
   HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
@@ -208,9 +124,6 @@ int main(void)
   LCD_1in28_test();
 
   Initialize();
-
-  HAL_TIM_Base_Start_IT(&htim1);
-
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
@@ -277,7 +190,7 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+int cnt1kHz = 0;
 /* USER CODE END 4 */
 
 /**
