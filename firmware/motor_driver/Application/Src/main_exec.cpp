@@ -39,7 +39,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         hall.SetHallValueV(Read_GPIO(HALL_V));
     if (GPIO_Pin == Hall_W_Pin)
         hall.SetHallValueW(Read_GPIO(HALL_W));
-    driver_controller->CorrectElectricAngle(hall.GetHallValue());
+    // hall.FlashLED();
 }
 
 void InitializeDriver()
@@ -106,7 +106,7 @@ void ADCCpltCallback()
     // }
     if (driver_controller == nullptr) // if driver_controller is not initialized
     {
-        PWM_Update(&blcd_pwm, 0.0, 0.0, 0.0);
+        driver_controller->SetPwm(0.0, 0.0, 0.0);
         return;
     }
     else
@@ -116,8 +116,11 @@ void ADCCpltCallback()
         //         PWM_Update(&blcd_pwm, 0.0, 0.0, 0.0);
         //     else
         //     {
-        uvw_t input_duty = driver_controller->Control();
-        PWM_Update(&blcd_pwm, input_duty.u, input_duty.v, input_duty.w);
+        if (driver_controller->GetInitilizationFlag())
+        {
+            driver_controller->Control();
+            driver_controller->SetPwm();
+        }
         //     }
     }
 }
@@ -193,24 +196,13 @@ void FDCANReceiveCallback(uint8_t *pRxData)
 
 void LogPrint()
 {
-    encoder.LogPrint();
+    // encoder.LogPrint();
     // hall.LogPrint();
 
     // uint16_t flag_err = encoder.GetErrFlag();
     // printf("flag_err = %x\n", flag_err);
 
-    // driver_controller->LogPrint();
-}
-
-void TestADC()
-{
-    uint32_t ADC_Data[3];
-    ADC_Get_Value(ADC_Data);
-
-    static int cnt = 0;
-    if (cnt == 0)
-        printf("%ld, %ld, %ld\n", ADC_Data[0], ADC_Data[1], ADC_Data[2]);
-    cnt = (cnt + 1) % 1000;
+    driver_controller->LogPrint();
 }
 
 void TestHallSensor()

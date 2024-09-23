@@ -7,17 +7,25 @@
 
 #include "driver_controller.h"
 
-#define CURRENT_LIMIT 20.0
-
-using namespace protocol;
+// see https://www.youtube.com/watch?v=InzXA7mWBWE Slide 5
+// each is 60 degrees with values for 3 phases of 1=positive -1=negative 0=high-z
+int trap_120_map[6][3] = {
+    {_HIGH_IMPEDANCE, 1, -1},
+    {-1, 1, _HIGH_IMPEDANCE},
+    {-1, _HIGH_IMPEDANCE, 1},
+    {_HIGH_IMPEDANCE, -1, 1},
+    {1, -1, _HIGH_IMPEDANCE},
+    {1, _HIGH_IMPEDANCE, -1}};
 
 void DriverControllerBase::Initialize()
 {
     drv->Initialize();
+    HAL_Delay(100);
     SetCurrentoffset();
-    theta_e = UpdateElectricAngle(0.0); // Need to be changed
-    hall->ReadHallValue();
-    pre_hall_state = hall->GetHallValue();
+
+    encoder->Initialize();
+    // _configure3PWM(bldc_pwm);
+    SearchZeroElectricAngle();
 
     arm_pid_init_f32(&pid_id, 0);
     arm_pid_init_f32(&pid_iq, 0);
@@ -27,128 +35,117 @@ void DriverControllerBase::Initialize()
     initialized = true;
 }
 
+void DriverControllerBase::SearchZeroElectricAngle()
+{
+    uint8_t pre_sector = GetSector();
+    // Need to add searching movement
+    while (1)
+    {
+        uint8_t sector = GetSector();
+        encoder->Update();
+        if ((sector == 1 && pre_sector == 6) || (sector == 6 && pre_sector == 1))
+        {
+            // AngleOpenLoop(3.0f * M_PI);
+            zero_theta_e = Pn * encoder->GetMechanicalAngle();
+            break;
+        }
+        HAL_Delay(1);
+        pre_sector = sector;
+    }
+    printf("zero_theta_e = %.3f\n", zero_theta_e);
+}
+
 void DriverControllerBase::UpdateSensorAngle()
 {
-    // hall->ReadHallValue();
-    hall_state = hall->GetHallValue();
     // encoder->Update();
-    float theta_m_diff = encoder->GetAngleDiff();
     omega_m = encoder->GetVelocity();
-    theta_e = UpdateElectricAngle(theta_m_diff);
+    theta_e = GetElectricAngle();
 }
 
-void DriverControllerBase::CorrectElectricAngle(uint8_t _hall_state)
+float DriverControllerBase::GetElectricAngle()
 {
-    // update theta_e by hall sensor
-    hall_state = _hall_state;
-    if (hall_state != pre_hall_state)
-    {
-        if (hall_state == 0b00000100 && pre_hall_state == 0b00000110)
-            // theta_e_base = 0.0;
-            theta_e_base = M_PI_3;
-        else if (hall_state == 0b00000100 && pre_hall_state == 0b00000101)
-            // theta_e_base = 0.0;
-            theta_e_base = M_PI_3;
-        else if (hall_state == 0b00000110 && pre_hall_state == 0b00000100)
-            // theta_e_base = M_PI_3;
-            theta_e_base = 2.0f * M_PI_3;
-        else if (hall_state == 0b00000110 && pre_hall_state == 0b00000010)
-            // theta_e_base = M_PI_3;
-            theta_e_base = 2.0f * M_PI_3;
-        else if (hall_state == 0b00000010 && pre_hall_state == 0b00000110)
-            // theta_e_base = 2.0f * M_PI_3;
-            theta_e_base = M_PI;
-        else if (hall_state == 0b00000010 && pre_hall_state == 0b00000011)
-            // theta_e_base = 2.0f * M_PI_3;
-            theta_e_base = M_PI;
-        else if (hall_state == 0b00000011 && pre_hall_state == 0b00000010)
-            // theta_e_base = M_PI;
-            theta_e_base = 4.0f * M_PI_3;
-        else if (hall_state == 0b00000011 && pre_hall_state == 0b00000001)
-            // theta_e_base = M_PI;
-            theta_e_base = 4.0f * M_PI_3;
-        else if (hall_state == 0b00000001 && pre_hall_state == 0b00000011)
-            // theta_e_base = 4.0f * M_PI_3;
-            theta_e_base = 5.0f * M_PI_3;
-        else if (hall_state == 0b00000001 && pre_hall_state == 0b00000101)
-            // theta_e_base = 4.0f * M_PI_3;
-            theta_e_base = 5.0f * M_PI_3;
-        else if (hall_state == 0b00000101 && pre_hall_state == 0b00000001)
-            // theta_e_base = 5.0f * M_PI_3;
-            theta_e_base = 0;
-        else if (hall_state == 0b00000101 && pre_hall_state == 0b00000100)
-            // theta_e_base = 5.0f * M_PI_3;
-            theta_e_base = 0;
-    }
-
-    encoder->SetAngleBase();
-    pre_hall_state = hall_state;
+    // [-2pi, 2pi)
+    float electric_angle = fmod(Pn * encoder->GetMechanicalAngle() - zero_theta_e, M_2PI);
+    // [0, 2pi)
+    return (electric_angle >= 0) ? electric_angle : electric_angle + M_2PI;
 }
 
-float DriverControllerBase::UpdateElectricAngle(float theta_m_diff)
-{
-    // update theta_e by encoder
-    theta_e = theta_e_base + theta_m_diff * Pn;
-
-    // limit theta_e to [-2pi, 2pi)
-    if (theta_e >= M_2PI)
-        theta_e -= M_2PI;
-    // else if (theta_e <= -M_2PI)
-    else if (theta_e <= 0)
-        theta_e += M_2PI;
-
-    return theta_e;
-}
-
-uvw_t DriverControllerBase::CalculateCurrent(uint32_t *adc_data)
+void DriverControllerBase::CalculateCurrent()
 {
     float Vsox[phase_num] = {0.0, 0.0, 0.0}; // [V]
+    uint32_t adc_data[phase_num] = {0, 0, 0};
+    ADC_Get_Value(adc_data); // get digital current Data
 
     for (int i = 0; i < phase_num; i++)
         Vsox[i] = static_cast<float>(adc_data[i]) * Vref / static_cast<float>(adc_resolution);
-    current_uvw.u = (Vref * 0.5f - Vsox[2]) / (Gcsa * Rsense) - current_offset.u;
+    current_uvw.u = (Vref * 0.5f - Vsox[0]) / (Gcsa * Rsense) - current_offset.u;
     current_uvw.v = (Vref * 0.5f - Vsox[1]) / (Gcsa * Rsense) - current_offset.v;
-    current_uvw.w = (Vref * 0.5f - Vsox[0]) / (Gcsa * Rsense) - current_offset.w;
+    current_uvw.w = (Vref * 0.5f - Vsox[2]) / (Gcsa * Rsense) - current_offset.w;
 
     // current_uvw.u = (Vref * 0.5f - Vsox[2]) / (Gcsa * Rsense);
     // current_uvw.v = (Vref * 0.5f - Vsox[1]) / (Gcsa * Rsense);
     // current_uvw.w = (Vref * 0.5f - Vsox[0]) / (Gcsa * Rsense);
-
-    return current_uvw;
+    // printf("%.3f, %.3f, %.3f\n", Vsox[0], Vsox[1], Vsox[2]);
 }
 
-uvw_t DriverControllerBase::GetCurrent()
+uint8_t DriverControllerBase::GetSector()
 {
-    uint32_t adc_data[phase_num] = {0, 0, 0};
-    ADC_Get_Value(adc_data); // get digital current Data
-    return CalculateCurrent(adc_data);
+    uint8_t hall_state = hall->GetHallValue();
+    uint8_t sector = 0;
+    if (hall_state == 0b00000110)
+        sector = 1;
+    else if (hall_state == 0b00000100)
+        sector = 2;
+    else if (hall_state == 0b00000101)
+        sector = 3;
+    else if (hall_state == 0b00000001)
+        sector = 4;
+    else if (hall_state == 0b00000011)
+        sector = 5;
+    else if (hall_state == 0b00000010)
+        sector = 6;
+    return sector;
 }
 
 void DriverControllerBase::SetCurrentoffset()
 {
-    uint32_t adc_data[phase_num] = {0, 0, 0};
-    float Vsox[phase_num] = {0.0, 0.0, 0.0}; // [V]
+    uvw_t current_sum;
 
     drv->StartCalibration();
     for (int j = 0; j < max_cali_count; j++)
     {
-        ADC_Get_Value(adc_data); // get digital current data
-        for (int i = 0; i < phase_num; i++)
-            Vsox[i] = static_cast<float>(adc_data[i]) * Vref / static_cast<float>(adc_resolution);
-
-        current_offset.u += (Vref * 0.5f - Vsox[2]) / (Gcsa_calib * Rsense);
-        current_offset.v += (Vref * 0.5f - Vsox[1]) / (Gcsa_calib * Rsense);
-        current_offset.w += (Vref * 0.5f - Vsox[0]) / (Gcsa_calib * Rsense);
-        // printf("current_offset.u = %.3f, current_offset.v = %.3f, current_offset.w = %.3f\n", current_offset.u, current_offset.v, current_offset.w);
-        // HAL_Delay(1);
+        CalculateCurrent();
+        current_sum.u += current_uvw.u;
+        current_sum.v += current_uvw.v;
+        current_sum.w += current_uvw.w;
     }
 
-    current_offset.u /= static_cast<float>(max_cali_count);
-    current_offset.v /= static_cast<float>(max_cali_count);
-    current_offset.w /= static_cast<float>(max_cali_count);
+    current_offset.u = current_sum.u / static_cast<float>(max_cali_count);
+    current_offset.v = current_sum.v / static_cast<float>(max_cali_count);
+    current_offset.w = current_sum.w / static_cast<float>(max_cali_count);
     printf("current_offset.u = %.3f, current_offset.v = %.3f, current_offset.w = %.3f\n", current_offset.u, current_offset.v, current_offset.w);
     drv->FinishCalibration();
     adc_calibrated = true;
+}
+
+void DriverControllerBase::SetPwm()
+{
+    SetPwm(voltage_uvw.u, voltage_uvw.v, voltage_uvw.w);
+}
+
+void DriverControllerBase::SetPwm(float Vu, float Vv, float Vw)
+{
+    // limit the voltage in driver
+    Vu = _constrain(Vu, 0.0f, voltage_limit);
+    Vv = _constrain(Vv, 0.0f, voltage_limit);
+    Vw = _constrain(Vw, 0.0f, voltage_limit);
+    // calculate duty cycle
+    // limited in [0, 1]
+    input_duty.u = _constrain(Vu / voltage_power_supply, 0.0f, 1.0f);
+    input_duty.v = _constrain(Vv / voltage_power_supply, 0.0f, 1.0f);
+    input_duty.w = _constrain(Vw / voltage_power_supply, 0.0f, 1.0f);
+
+    _writeDutyCycle3PWM(bldc_pwm, input_duty.u, input_duty.v, input_duty.w);
 }
 
 ab_t DriverControllerBase::ClarkeTransform(const uvw_t &current_uvw)
@@ -163,122 +160,129 @@ ab_t DriverControllerBase::ClarkeTransform(const uvw_t &current_uvw)
 dq_t DriverControllerBase::ParkTransform(const ab_t &current_ab)
 {
     dq_t current_dq_;
-    current_dq_.d = current_ab.a * cos(theta_e) + current_ab.b * sin(theta_e);
-    current_dq_.q = -current_ab.a * sin(theta_e) + current_ab.b * cos(theta_e);
+    current_dq_.d = current_ab.a * arm_cos_f32(theta_e) + current_ab.b * arm_sin_f32(theta_e);
+    current_dq_.q = -current_ab.a * arm_sin_f32(theta_e) + current_ab.b * arm_cos_f32(theta_e);
     // arm_park_f32(current_ab.a, current_ab.b, &(current_dq_.d), &(current_dq_.q), arm_sin_f32(theta_e), arm_cos_f32(theta_e));
 
     return current_dq_;
 }
 
-// uvw_t DriverControllerBase::InvClarkeTransform(const ab_t &voltage_ab)
-// {
-//     uvw_t voltage_uvw_;
-//     voltage_uvw_.u = voltage_ab.a * sq23;
-//     voltage_uvw_.v = (voltage_ab.a * cos23 + voltage_ab.b * sin23) * sq23;
-//     voltage_uvw_.w = (voltage_ab.a * cos43 + voltage_ab.b * sin43) * sq23;
+uvw_t DriverControllerBase::InvClarkeTransform(const ab_t &voltage_ab)
+{
+    uvw_t voltage_uvw_;
+    // voltage_uvw_.u = voltage_ab.a * sq23;
+    // voltage_uvw_.v = (voltage_ab.a * cos23 + voltage_ab.b * sin23) * sq23;
+    // voltage_uvw_.w = (voltage_ab.a * cos43 + voltage_ab.b * sin43) * sq23;
+    voltage_uvw_.u = voltage_ab.a;
+    voltage_uvw_.v = -0.5f * voltage_ab.a + sq34 * voltage_ab.b;
+    voltage_uvw_.w = -0.5f * voltage_ab.a - sq34 * voltage_ab.b;
 
-//     return voltage_uvw_;
-// }
+    return voltage_uvw_;
+}
 
 ab_t DriverControllerBase::InvParkTransform(const dq_t &voltage_dq)
 {
     ab_t voltage_ab_;
-    voltage_ab_.a = voltage_dq.d * cos(theta_e) - voltage_dq.q * sin(theta_e);
-    voltage_ab_.b = voltage_dq.d * sin(theta_e) + voltage_dq.q * cos(theta_e);
+    voltage_ab_.a = voltage_dq.d * arm_cos_f32(theta_e) - voltage_dq.q * arm_sin_f32(theta_e);
+    voltage_ab_.b = voltage_dq.d * arm_sin_f32(theta_e) + voltage_dq.q * arm_cos_f32(theta_e);
     // arm_inv_park_f32(voltage_dq.d, voltage_dq.q, &(voltage_ab_.a), &(voltage_ab_.b), arm_sin_f32(theta_e), arm_cos_f32(theta_e));
 
     return voltage_ab_;
 }
 
-uvw_t DriverControllerBase::CalculateSVPWM(const ab_t &voltage_ab)
+void DriverControllerBase::SetPhaseVoltage(float Uq, float Ud, float angle_el)
 {
-    uvw_t input_duty_;
+    float center;
+    uint8_t sector = GetSector();
+    sector--;
 
-    // Sector 0
-    if ((voltage_ab.a >= 0) && (voltage_ab.b >= 0) && (abs(voltage_ab.a) >= abs(sq13 * voltage_ab.b)))
+    center = Uq;
+    // center = voltage_limit / 2.0f;
+    if (trap_120_map[sector][0] == _HIGH_IMPEDANCE)
     {
-        d1 = sq32 * (voltage_ab.a - sq13 * voltage_ab.b) / max_voltage;
-        d2 = sq32 * (sq43 * voltage_ab.b) / max_voltage;
-        d7 = (zero_vector_param - (d1 + d2)) * 0.5f;
-        input_duty_.u = d1 + d2 + d7;
-        input_duty_.v = d2 + d7;
-        input_duty_.w = d7;
+        voltage_uvw.u = center;
+        voltage_uvw.v = trap_120_map[sector][1] * Uq + center;
+        voltage_uvw.w = trap_120_map[sector][2] * Uq + center;
+        drv->SetPhaseState(PhaseState::PHASE_OFF, PhaseState::PHASE_ON, PhaseState::PHASE_ON); // disable phase if possible
     }
-    // Sector 1
-    else if ((abs(voltage_ab.a) <= sq13 * voltage_ab.b))
+    else if (trap_120_map[sector][1] == _HIGH_IMPEDANCE)
     {
-        d3 = sq32 * (-voltage_ab.a + sq13 * voltage_ab.b) / max_voltage;
-        d2 = sq32 * (voltage_ab.a + sq13 * voltage_ab.b) / max_voltage;
-        d7 = (zero_vector_param - (d2 + d3)) * 0.5f;
-        input_duty_.u = d2 + d7;
-        input_duty_.v = d2 + d3 + d7;
-        input_duty_.w = d7;
+        voltage_uvw.u = trap_120_map[sector][0] * Uq + center;
+        voltage_uvw.v = center;
+        voltage_uvw.w = trap_120_map[sector][2] * Uq + center;
+        drv->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_OFF, PhaseState::PHASE_ON); // disable phase if possible
     }
-    // Sector 2
-    else if ((voltage_ab.a <= 0) && (voltage_ab.b >= 0) && (abs(voltage_ab.a) >= abs(sq13 * voltage_ab.b)))
+    else
     {
-        d3 = sq32 * (sq43 * voltage_ab.b) / max_voltage;
-        d4 = sq32 * (-voltage_ab.a - sq13 * voltage_ab.b) / max_voltage;
-        d7 = (zero_vector_param - (d3 + d4)) * 0.5f;
-        input_duty_.u = d7;
-        input_duty_.v = d3 + d4 + d7;
-        input_duty_.w = d4 + d7;
-    }
-    // Sector 3
-    else if ((voltage_ab.a <= 0) && (voltage_ab.b <= 0) && (abs(voltage_ab.a) >= abs(sq13 * voltage_ab.b)))
-    {
-        d5 = -sq32 * (sq43 * voltage_ab.b) / max_voltage;
-        d4 = sq32 * (-voltage_ab.a + sq13 * voltage_ab.b) / max_voltage;
-        d7 = (zero_vector_param - (d4 + d5)) * 0.5f;
-        input_duty_.u = d7;
-        input_duty_.v = d4 + d7;
-        input_duty_.w = d4 + d5 + d7;
-    }
-    // Sector 4
-    else if ((abs(voltage_ab.a) <= -sq13 * voltage_ab.b))
-    {
-        d5 = sq32 * (-voltage_ab.a - sq13 * voltage_ab.b) / max_voltage;
-        d6 = sq32 * (voltage_ab.a - sq13 * voltage_ab.b) / max_voltage;
-        d7 = (zero_vector_param - (d5 + d6)) * 0.5f;
-        input_duty_.u = d6 + d7;
-        input_duty_.v = d7;
-        input_duty_.w = d5 + d6 + d7;
-    }
-    // Sector 5
-    else if ((voltage_ab.a >= 0) && (voltage_ab.b <= 0) && (abs(voltage_ab.a) >= abs(sq13 * voltage_ab.b)))
-    {
-        d1 = sq32 * (voltage_ab.a + sq13 * voltage_ab.b) / max_voltage;
-        d6 = -sq32 * (sq43 * voltage_ab.b) / max_voltage;
-        d7 = (zero_vector_param - (d1 + d6)) * 0.5f;
-        input_duty_.u = d1 + d6 + d7;
-        input_duty_.v = d7;
-        input_duty_.w = d6 + d7;
+        voltage_uvw.u = trap_120_map[sector][0] * Uq + center;
+        voltage_uvw.v = trap_120_map[sector][1] * Uq + center;
+        voltage_uvw.w = center;
+        drv->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_ON, PhaseState::PHASE_OFF); // disable phase if possible
     }
 
-    // input_duty_.u = max_duty - input_duty_.u;
-    // input_duty_.v = max_duty - input_duty_.v;
-    // input_duty_.w = max_duty - input_duty_.w;
+    // voltage_dq.q = Uq;
+    // voltage_dq.d = Ud;
+    // voltage_ab = InvParkTransform(voltage_dq);
+    // voltage_uvw = InvClarkeTransform(voltage_ab);
 
-    // input_duty_.u = -0.5f + input_duty_.u;
-    // input_duty_.v = -0.5f + input_duty_.v;
-    // input_duty_.w = -0.5f + input_duty_.w;
+    // center = voltage_limit / 2;
+    // // discussed here: https://community.simplefoc.com/t/embedded-world-2023-stm32-cordic-co-processor/3107/165?u=candas1
+    // // a bit more info here: https://microchipdeveloper.com/mct5001:which-zsm-is-best
+    // // Midpoint Clamp
+    // float Umin = min(voltage_uvw.u, min(voltage_uvw.v, voltage_uvw.w));
+    // float Umax = max(voltage_uvw.u, max(voltage_uvw.v, voltage_uvw.w));
+    // center -= (Umax + Umin) / 2;
 
-    return input_duty_;
+    // Umin = min(voltage_uvw.u, min(voltage_uvw.v, voltage_uvw.w));
+    // voltage_uvw.u -= Umin;
+    // voltage_uvw.v -= Umin;
+    // voltage_uvw.w -= Umin;
+    // drv->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_ON, PhaseState::PHASE_ON);
 }
 
-uvw_t VelocityDriver::Control()
+void DriverControllerBase::AngleOpenLoop(float target_angle)
+{
+    float Ts = 0.001f;
+    float shaft_angle = encoder->GetMechanicalAngle();
+
+    // calculate the necessary angle to move from current position towards target angle
+    // with maximal velocity (velocity_limit)
+    // TODO sensor precision: this calculation is not numerically precise. The angle can grow to the point
+    //                        where small position changes are no longer captured by the precision of floats
+    //                        when the total position is large.
+    // if (abs(target_angle - shaft_angle) > abs(velocity_limit * Ts))
+    // {
+    //     shaft_angle += _sign(target_angle - shaft_angle) * abs(velocity_limit) * Ts;
+    //     shaft_velocity = velocity_limit;
+    // }
+    // else
+    // {
+    //     shaft_angle = target_angle;
+    //     shaft_velocity = 0;
+    // }
+
+    // use voltage limit or current limit
+    float Uq = voltage_limit;
+    // if (_isset(phase_resistance))
+    // {
+    //     Uq = _constrain(current_limit * phase_resistance + fabs(voltage_bemf), -voltage_limit, voltage_limit);
+    //     // recalculate the current
+    //     current.q = (Uq - fabs(voltage_bemf)) / phase_resistance;
+    // }
+    SetPhaseVoltage(Uq, 0, 0);
+}
+
+void VelocityDriver::Control()
 {
     UpdateSensorAngle();
-    current_uvw = GetCurrent();
+    CalculateCurrent();
 
     // select control method
     // UpdateFOC();
-    UpdateTrapezoidalControl();
+    // UpdateTrapezoid_120();
+    SetPhaseVoltage(1.0, 0.0, 0.0);
 
-    LimitInput();
     // LimitCurrent();
-
-    return input_duty;
 }
 
 void VelocityDriver::UpdateFOC()
@@ -304,173 +308,18 @@ void VelocityDriver::UpdateFOC()
     voltage_dq.q = _pid_iq.Update(ref_current_dq.q - current_dq.q);
 
     voltage_ab = InvParkTransform(voltage_dq);
-    input_duty = CalculateSVPWM(voltage_ab);
+    // CalculateSVPWM(voltage_ab);
 
-    drv->SetINLA();
-    drv->SetINLB();
-    drv->SetINLC();
+    drv->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_ON, PhaseState::PHASE_ON);
 }
 
-void VelocityDriver::UpdateTrapezoidalControl()
+void VelocityDriver::UpdateTrapezoid_120()
 {
     // float input_trape = arm_pid_f32(&pid_vel, ref_vel - omega_m);
-    input_trape = _pid_vel.Update(ref_vel - omega_m);
-    if (ref_vel > 0)
-        input_trape = 0.5f - input_trape;
-    else
-        input_trape = 0.5f + input_trape;
+    voltage_dq.q = _pid_vel.Update(ref_vel - omega_m);
+    voltage_dq.d = 0.0f;
 
-    if (hall_state == 0b00000110)
-    {
-        if (ref_vel > 0)
-        {
-            input_duty.u = 0.0;
-            drv->ResetINLA();
-            input_duty.v = input_trape;
-            drv->SetINLB();
-            input_duty.w = max_duty;
-            drv->SetINLC();
-        }
-        else
-        {
-            input_duty.u = 0.0;
-            drv->ResetINLA();
-            input_duty.v = max_duty;
-            drv->SetINLB();
-            input_duty.w = input_trape;
-            drv->SetINLC();
-        }
-    }
-    else if (hall_state == 0b00000100)
-    {
-        if (ref_vel > 0)
-        {
-            input_duty.u = input_trape;
-            drv->SetINLA();
-            input_duty.v = 0.0;
-            drv->ResetINLB();
-            input_duty.w = max_duty;
-            drv->SetINLC();
-        }
-        else
-        {
-            input_duty.u = max_duty;
-            drv->SetINLA();
-            input_duty.v = 0.0;
-            drv->ResetINLB();
-            input_duty.w = input_trape;
-            drv->SetINLC();
-        }
-    }
-    else if (hall_state == 0b00000101)
-    {
-        if (ref_vel > 0)
-        {
-            input_duty.u = input_trape;
-            drv->SetINLA();
-            input_duty.v = max_duty;
-            drv->SetINLB();
-            input_duty.w = 0.0;
-            drv->ResetINLC();
-        }
-        else
-        {
-            input_duty.u = max_duty;
-            drv->SetINLA();
-            input_duty.v = input_trape;
-            drv->SetINLB();
-            input_duty.w = 0.0;
-            drv->ResetINLC();
-        }
-    }
-    else if (hall_state == 0b00000001)
-    {
-        if (ref_vel > 0)
-        {
-            input_duty.u = 0.0;
-            drv->ResetINLA();
-            input_duty.v = max_duty;
-            drv->SetINLB();
-            input_duty.w = input_trape;
-            drv->SetINLC();
-        }
-        else
-        {
-            input_duty.u = 0.0;
-            drv->ResetINLA();
-            input_duty.v = input_trape;
-            drv->SetINLB();
-            input_duty.w = max_duty;
-            drv->SetINLC();
-        }
-    }
-    else if (hall_state == 0b00000011)
-    {
-        if (ref_vel > 0)
-        {
-            input_duty.u = max_duty;
-            drv->SetINLA();
-            input_duty.v = 0.0;
-            drv->ResetINLB();
-            input_duty.w = input_trape;
-            drv->SetINLC();
-        }
-        else
-        {
-            input_duty.u = input_trape;
-            drv->SetINLA();
-            input_duty.v = 0.0;
-            drv->ResetINLB();
-            input_duty.w = max_duty;
-            drv->SetINLC();
-        }
-    }
-    else if (hall_state == 0b00000010)
-    {
-        if (ref_vel > 0)
-        {
-            input_duty.u = max_duty;
-            drv->SetINLA();
-            input_duty.v = input_trape;
-            drv->SetINLB();
-            input_duty.w = 0.0;
-            drv->ResetINLC();
-        }
-        else
-        {
-            input_duty.u = input_trape;
-            drv->SetINLA();
-            input_duty.v = max_duty;
-            drv->SetINLB();
-            input_duty.w = 0.0;
-            drv->ResetINLC();
-        }
-    }
-    else
-    {
-        Write_GPIO(LED_RED, GPIO_PIN_RESET);
-        drv->ResetINLA();
-        drv->ResetINLB();
-        drv->ResetINLC();
-    }
-}
-
-void DriverControllerBase::LimitInput()
-{
-    // limit input duty
-    if (input_duty.u > max_duty)
-        input_duty.u = max_duty;
-    if (input_duty.v > max_duty)
-        input_duty.v = max_duty;
-    if (input_duty.w > max_duty)
-        input_duty.w = max_duty;
-
-    if (input_duty.u < 0.0)
-        input_duty.u = 0.0;
-    if (input_duty.v < 0.0)
-        input_duty.v = 0.0;
-    if (input_duty.w < 0.0)
-        input_duty.w = 0.0;
+    SetPhaseVoltage(voltage_dq.q, voltage_dq.d, theta_e);
 }
 
 void DriverControllerBase::LimitCurrent()
@@ -479,9 +328,9 @@ void DriverControllerBase::LimitCurrent()
     if (abs(current_uvw.u) > CURRENT_LIMIT || abs(current_uvw.v) > CURRENT_LIMIT || abs(current_uvw.w) > CURRENT_LIMIT)
     {
         drv->Stop();
-        input_duty.u = 0.0;
-        input_duty.v = 0.0;
-        input_duty.w = 0.0;
+        voltage_uvw.u = 0.0;
+        voltage_uvw.v = 0.0;
+        voltage_uvw.w = 0.0;
     }
 }
 
@@ -499,9 +348,11 @@ void DriverControllerBase::LogPrint()
     printf("theta_e = %.3f, omega_m = %.3f\n", theta_e, omega_m);
 
     printf("cur_u = %.3f, cur_v = %.3f, cur_w = %.3f\n", current_uvw.u, current_uvw.v, current_uvw.w);
-    printf("cur_a = %.3f, cur_b = %.3f\n", current_ab.a, current_ab.b);
-    printf("cur_d = %.3f, cur_q = %.3f\n", current_dq.d, current_dq.q);
-    printf("input_u = %.3f, input_v = %.3f, input_w = %.3f\n", input_duty.u, input_duty.v, input_duty.w);
+    // printf("cur_a = %.3f, cur_b = %.3f\n", current_ab.a, current_ab.b);
+    // printf("cur_d = %.3f, cur_q = %.3f\n", current_dq.d, current_dq.q);
+    // printf("vol_d = %.3f, vol_q = %.3f\n", voltage_dq.d, voltage_dq.q);
+    // printf("vol_u = %.3f, vol_v = %.3f, vol_w = %.3f\n", voltage_uvw.u, voltage_uvw.v, voltage_uvw.w);
+    // printf("input_u = %.3f, input_v = %.3f, input_w = %.3f\n", input_duty.u, input_duty.v, input_duty.w);
 
     // printf("input_trapezoidal = %.3f\n", input_trape);
 }
@@ -519,10 +370,10 @@ void VelocityDriver::Reset()
 // arm_pid_init_f32(&pid_torque, 0);
 // }
 
-uvw_t TorqueDriver::Control()
+void TorqueDriver::Control()
 {
     UpdateSensorAngle();
-    current_uvw = GetCurrent();
+    CalculateCurrent();
 
     current_ab = ClarkeTransform(current_uvw);
     dq_t raw_current_dq = ParkTransform(current_ab);
@@ -538,12 +389,9 @@ uvw_t TorqueDriver::Control()
     voltage_dq.q = arm_pid_f32(&pid_iq, ref_current_dq.q - current_dq.q);
 
     voltage_ab = InvParkTransform(voltage_dq);
-    input_duty = CalculateSVPWM(voltage_ab);
+    // CalculateSVPWM(voltage_ab);
 
-    LimitInput();
     LimitCurrent();
-
-    return input_duty;
 }
 
 void TorqueDriver::Reset()

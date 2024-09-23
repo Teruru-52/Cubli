@@ -21,7 +21,7 @@ private:
 public:
     HallSensor(GPIO_Value HALL_U, GPIO_Value HALL_V, GPIO_Value HALL_W);
 
-    uint8_t GetHallValue();
+    uint8_t GetHallValue() { return hall_state; }
     void ReadHallValue();
     void SetHallValueU(GPIO_PinState PinState);
     void SetHallValueV(GPIO_PinState PinState);

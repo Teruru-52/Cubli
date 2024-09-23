@@ -102,23 +102,16 @@ int main(void)
   /* USER CODE BEGIN 2 */
   SEGGER_RTT_Init();
   setbuf(stdout, NULL);
-  // HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
 
   Write_GPIO(LED_YELLOW, GPIO_PIN_SET);
-
-  Reset_CS_Pin();
-
-  HAL_Delay(100);
   // HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
   HAL_ADCEx_InjectedStart_IT(&hadc1);
+  // __HAL_SPI_ENABLE_IT(&hspi2, SPI_IT_TXE | SPI_IT_RXNE);
+  HAL_Delay(10);
   InitializeDriver();
-
-  // __HAL_TIM_SET_COMPARE(&htim15, TIM_CHANNEL_1, 20);
-  // HAL_Delay(50);
-  // __HAL_TIM_SET_COMPARE(&htim15, TIM_CHANNEL_1, 0);
 
   HAL_TIM_Base_Start_IT(&htim1);
   HAL_TIM_Base_Start_IT(&htim3);
@@ -215,9 +208,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   {
     cnt1kHz = (cnt1kHz + 1) % 1000;
     // TestElectricAngle();
-    // TestADC();
     // TestHallSensor();
     TIMUpdate();
+    // ADCCpltCallback();
 
     // if (cnt1kHz == 0)
     //   Toggle_GPIO(LED_WHITE);
@@ -230,8 +223,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     cnt30kHz = (cnt30kHz + 1) % 30000;
     // ADCCpltCallback();
 
-    if (cnt30kHz == 0)
-      Toggle_GPIO(LED_WHITE);
+    // if (cnt30kHz == 0)
+    //   Toggle_GPIO(LED_WHITE);
   }
 
   /* USER CODE END Callback 1 */

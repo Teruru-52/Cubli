@@ -5,7 +5,7 @@
             "cwd": "${workspaceRoot}",
             "executable": "./build/${workspaceFolderBasename}.elf",
             "request": "launch",
-            "preLaunchTask": "BLMD Build",
+            // "preLaunchTask": "BLMD Build",
             "type": "cortex-debug",
             "showDevDebugOutput": "raw",
             "armToolchainPath": "/opt/gcc-arm-none-eabi/bin",

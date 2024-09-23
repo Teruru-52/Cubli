@@ -55,7 +55,6 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* USER CODE BEGIN Prototypes */
   typedef struct _BLDC_PWM
   {
-    FunctionalState OutputPWM;
     TIM_HandleTypeDef *htim;
     uint32_t Channel_U;
     uint32_t Channel_V;
@@ -63,10 +62,8 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
   } BLDC_PWM;
 
   void Blmd_TIM_Init(void);
-  void PWM_Start(BLDC_PWM *bldc_pwm);
-  void PWM_Stop(BLDC_PWM *bldc_pwm);
-  void PWM_Set(BLDC_PWM *bldc_pwm, float CHu, float CHv, float CHw);
-  void PWM_Update(BLDC_PWM *bldc_pwm, float Duty_u, float Duty_v, float Duty_w);
+  void _configure3PWM(BLDC_PWM *bldc_pwm);
+  void _writeDutyCycle3PWM(BLDC_PWM *bldc_pwm, float duty_u, float duty_v, float duty_w);
 
   extern BLDC_PWM blcd_pwm;
 /* USER CODE END Prototypes */

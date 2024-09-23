@@ -12,11 +12,6 @@ HallSensor::HallSensor(GPIO_Value HALL_U, GPIO_Value HALL_V, GPIO_Value HALL_W)
       HALL_V(HALL_V),
       HALL_W(HALL_W) {}
 
-uint8_t HallSensor::GetHallValue()
-{
-    return hall_state;
-}
-
 void HallSensor::ReadHallValue()
 {
     SetHallValueU(Read_GPIO(HALL_U));
@@ -50,17 +45,17 @@ void HallSensor::SetHallValueW(GPIO_PinState PinState)
 
 void HallSensor::FlashLED()
 {
-    if ((hall_state >> 2) & 1 == 1) // check hall U
+    if ((hall_state >> 2) & 0x01) // check hall U
         Write_GPIO(LED_BLUE, GPIO_PIN_SET);
     else
         Write_GPIO(LED_BLUE, GPIO_PIN_RESET);
 
-    if ((hall_state >> 1) & 1 == 1) // check hall V
+    if ((hall_state >> 1) & 0x01) // check hall V
         Write_GPIO(LED_YELLOW, GPIO_PIN_SET);
     else
         Write_GPIO(LED_YELLOW, GPIO_PIN_RESET);
 
-    if (hall_state & 1 == 1) // check hall W
+    if (hall_state & 0x01) // check hall W
         Write_GPIO(LED_RED, GPIO_PIN_SET);
     else
         Write_GPIO(LED_RED, GPIO_PIN_RESET);
