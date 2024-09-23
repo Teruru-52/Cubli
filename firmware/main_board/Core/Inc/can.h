@@ -46,8 +46,6 @@ extern CAN_HandleTypeDef hcan1;
 void MX_CAN1_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-  CAN_RxHeaderTypeDef RxHeader;
-  uint8_t RxData[8];
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

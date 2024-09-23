@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/opt/gcc-arm-none-eabi/arm-none-eabi/include/**",
-                "/opt/gcc-arm-none-eabi/lib/gcc/arm-none-eabi/12.3.1/include/**"
+                "/opt/gcc-arm-none-eabi/lib/gcc/arm-none-eabi/13.3.1/include/**"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
