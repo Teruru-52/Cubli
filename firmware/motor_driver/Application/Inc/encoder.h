@@ -23,7 +23,7 @@
 class A1333
 {
 protected:
-    SPI_HandleTypeDef *spi;
+    SPI_HandleTypeDef *hspi;
     GPIO_Value SPI_CS_ENC;
     // MovingAverageFilter vel_filt = MovingAverageFilter(100);
     MedianFilter vel_filt = MedianFilter(7);
@@ -42,19 +42,18 @@ protected:
     // uint16_t flag_err;
 
 public:
-    A1333(SPI_HandleTypeDef *spi, GPIO_Value SPI_CS_ENC) : spi(spi),
-                                                           SPI_CS_ENC(SPI_CS_ENC) {}
+    A1333(SPI_HandleTypeDef *hspi, GPIO_Value SPI_CS_ENC) : hspi(hspi),
+                                                            SPI_CS_ENC(SPI_CS_ENC) {}
 
-    uint16_t ReadByte(uint8_t reg1, uint8_t reg2);
+    int16_t ReadByte(uint8_t reg1, uint8_t reg2);
 
     void Initialize();
     void Update();
-    uint16_t GetErrFlag() { return ReadByte(ERR_FLAG_H, ERR_FLAG_L); };
-    float GetMechanicalAngle() { return angle_raw; };
-    float GetAngle() { return angle_full; };
-    float GetAngleDiff() { return angle_full - angle_base; };
-    float GetVelocity();
-    ;
+    uint16_t GetErrFlag() { return ReadByte(ERR_FLAG_H, ERR_FLAG_L); }
+    float GetMechanicalAngle() { return angle_raw; }
+    float GetAngle() { return angle_full; }
+    float GetAngleDiff() { return angle_full - angle_base; }
+    float GetVelocity() { return velocity; };
     void LogPrint();
 };
 

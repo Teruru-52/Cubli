@@ -42,7 +42,6 @@ void MX_SPI1_Init(void);
 void MX_SPI2_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-  void Reset_CS_Pin();
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

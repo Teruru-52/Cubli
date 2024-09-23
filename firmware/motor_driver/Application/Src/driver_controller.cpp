@@ -85,6 +85,7 @@ void DriverControllerBase::CalculateCurrent()
     // current_uvw.u = (Vref * 0.5f - Vsox[2]) / (Gcsa * Rsense);
     // current_uvw.v = (Vref * 0.5f - Vsox[1]) / (Gcsa * Rsense);
     // current_uvw.w = (Vref * 0.5f - Vsox[0]) / (Gcsa * Rsense);
+    // printf("%.3f, %.3f, %.3f\n", Vsox[0], Vsox[1], Vsox[2]);
 }
 
 uint8_t DriverControllerBase::GetSector()
@@ -344,7 +345,7 @@ void DriverControllerBase::ResetBase()
 
 void DriverControllerBase::LogPrint()
 {
-    // printf("theta_e = %.3f, omega_m = %.3f\n", theta_e, omega_m);
+    printf("theta_e = %.3f, omega_m = %.3f\n", theta_e, omega_m);
 
     printf("cur_u = %.3f, cur_v = %.3f, cur_w = %.3f\n", current_uvw.u, current_uvw.v, current_uvw.w);
     // printf("cur_a = %.3f, cur_b = %.3f\n", current_ab.a, current_ab.b);

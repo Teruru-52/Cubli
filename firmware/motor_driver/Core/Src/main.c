@@ -109,6 +109,8 @@ int main(void)
   Write_GPIO(LED_YELLOW, GPIO_PIN_SET);
   // HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
   HAL_ADCEx_InjectedStart_IT(&hadc1);
+  // __HAL_SPI_ENABLE_IT(&hspi2, SPI_IT_TXE | SPI_IT_RXNE);
+  HAL_Delay(10);
   InitializeDriver();
 
   HAL_TIM_Base_Start_IT(&htim1);
