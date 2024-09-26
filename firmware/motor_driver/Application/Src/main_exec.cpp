@@ -9,7 +9,7 @@
 
 #include "main_exec.h"
 #include "instance.h"
-#include "driver_controller.h"
+#include "drivers/driver_controller.h"
 #include "fdcan.h"
 #include "SEGGER_RTT.h"
 
@@ -33,13 +33,7 @@ LEDState led_state = LEDState::yet_inited;
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-    if (GPIO_Pin == Hall_U_Pin)
-        hall.SetHallValueU(Read_GPIO(HALL_U));
-    if (GPIO_Pin == Hall_V_Pin)
-        hall.SetHallValueV(Read_GPIO(HALL_V));
-    if (GPIO_Pin == Hall_W_Pin)
-        hall.SetHallValueW(Read_GPIO(HALL_W));
-    // hall.FlashLED();
+    hall.HandleCallback(GPIO_Pin);
 }
 
 void InitializeDriver()
@@ -47,7 +41,7 @@ void InitializeDriver()
     driver_controller->Initialize();
 }
 
-void TIMUpdate()
+void TimUpdate()
 {
     // TIM_rising_edge = !TIM_rising_edge;
     // if (TIM_rising_edge)
@@ -97,7 +91,7 @@ void TIMUpdate()
     FDCAN_Send(TxData);
 }
 
-void ADCCpltCallback()
+void AdcCpltCallback()
 {
     // if (driver_controller->GetCalibrationFlag() == false) // if calibration is needed
     // {
@@ -203,23 +197,6 @@ void LogPrint()
     // printf("flag_err = %x\n", flag_err);
 
     driver_controller->LogPrint();
-}
-
-void TestHallSensor()
-{
-    // hall.ReadHallValue();
-    hall.FlashLED();
-}
-
-void TestEncoder()
-{
-    encoder.Update();
-}
-
-void TestElectricAngle()
-{
-    driver_controller->UpdateSensorAngle();
-    hall.FlashLED();
 }
 
 void LEDUpdate()

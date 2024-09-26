@@ -87,6 +87,7 @@ Core/Src/sysmem.c
 CPP_SOURCES = \
 $(wildcard Core/Src/*.cpp) \
 $(wildcard Application/Src/*.cpp) \
+$(wildcard Application/Src/*/*.cpp) \
 
 # ASM sources
 ASM_SOURCES =  \
@@ -153,6 +154,9 @@ AS_INCLUDES =  \
 C_INCLUDES =  \
 -ICore/Inc \
 -IApplication/Inc \
+-IApplication/Inc/common \
+-IApplication/Inc/drivers \
+-IApplication/Inc/sensors \
 -IDrivers/STM32G4xx_HAL_Driver/Inc \
 -IDrivers/STM32G4xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32G4xx/Include \

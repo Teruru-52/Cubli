@@ -5,7 +5,7 @@
  *      Author: Reiji Terunuma
  */
 
-#include "drv8323.h"
+#include "drivers/drv8323.h"
 
 #define FAULT_STATUS_1 0x00
 #define FAULT_STATUS_2 0x01

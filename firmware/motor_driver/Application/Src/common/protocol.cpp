@@ -5,7 +5,7 @@
  *      Author: Reiji Terunuma
  */
 
-#include "protocol.h"
+#include "common/protocol.h"
 
 namespace protocol
 {

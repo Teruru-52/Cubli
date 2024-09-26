@@ -1,4 +1,4 @@
-#include "pid_controller.h"
+#include "common/pid.h"
 
 Integrator::Integrator(float control_period, float bound_windup)
     : control_period(control_period),

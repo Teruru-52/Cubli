@@ -15,14 +15,10 @@ extern "C"
 #include "main.h"
 
     void InitializeDriver();
-    void TIMUpdate();
-    void ADCCpltCallback();
+    void TimUpdate();
+    void AdcCpltCallback();
     void FDCANReceiveCallback(uint8_t *pRxData);
     void LogPrint();
-
-    void TestHallSensor();
-    void TestEncoder();
-    void TestElectricAngle();
 
 #ifdef __cplusplus
 };

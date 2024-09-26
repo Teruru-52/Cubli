@@ -11,7 +11,7 @@
 #include "main.h"
 #include "spi.h"
 #include "tim.h"
-#include "digital_filter.h"
+#include "common/digital_filter.h"
 
 #define ANGLE_OUT_H 0x20
 #define ANGLE_OUT_L 0x21

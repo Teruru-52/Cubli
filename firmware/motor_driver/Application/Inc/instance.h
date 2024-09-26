@@ -9,7 +9,7 @@
 #define INSTANCE_H_
 
 #include "main.h"
-#include "driver_controller.h"
+#include "drivers/driver_controller.h"
 
 extern DRV8323 drv;
 extern HallSensor hall;

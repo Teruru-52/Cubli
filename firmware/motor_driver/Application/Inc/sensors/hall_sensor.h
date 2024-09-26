@@ -23,6 +23,7 @@ public:
 
     uint8_t GetHallValue() { return hall_state; }
     void ReadHallValue();
+    void HandleCallback(uint16_t GPIO_Pin);
     void SetHallValueU(GPIO_PinState PinState);
     void SetHallValueV(GPIO_PinState PinState);
     void SetHallValueW(GPIO_PinState PinState);

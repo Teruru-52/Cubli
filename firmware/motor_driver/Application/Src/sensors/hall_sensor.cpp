@@ -5,7 +5,7 @@
  *      Author: Reiji Terunuma
  */
 
-#include "hall_sensor.h"
+#include "sensors/hall_sensor.h"
 
 HallSensor::HallSensor(GPIO_Value HALL_U, GPIO_Value HALL_V, GPIO_Value HALL_W)
     : HALL_U(HALL_U),
@@ -17,6 +17,17 @@ void HallSensor::ReadHallValue()
     SetHallValueU(Read_GPIO(HALL_U));
     SetHallValueV(Read_GPIO(HALL_V));
     SetHallValueW(Read_GPIO(HALL_W));
+}
+
+void HallSensor::HandleCallback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == Hall_U_Pin)
+        SetHallValueU(Read_GPIO(HALL_U));
+    if (GPIO_Pin == Hall_V_Pin)
+        SetHallValueV(Read_GPIO(HALL_V));
+    if (GPIO_Pin == Hall_W_Pin)
+        SetHallValueW(Read_GPIO(HALL_W));
+    // FlashLED();
 }
 
 void HallSensor::SetHallValueU(GPIO_PinState PinState)

@@ -9,13 +9,13 @@
 #define DRIVER_CONTROLLER_H_
 
 #include "main.h"
-#include "protocol.h"
-#include "foc_utils.h"
-#include "motor_param.h"
-#include "encoder.h"
-#include "drv8323.h"
-#include "hall_sensor.h"
-#include "pid_controller.h"
+#include "common/protocol.h"
+#include "common/foc_utils.h"
+#include "common/pid.h"
+#include "common/motor_param.h"
+#include "sensors/encoder.h"
+#include "sensors/hall_sensor.h"
+#include "drivers/drv8323.h"
 #include <algorithm>
 
 #define max_cali_count 5000

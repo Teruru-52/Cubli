@@ -5,7 +5,7 @@
  *      Author: Reiji Terunuma
  */
 
-#include "driver_controller.h"
+#include "drivers/driver_controller.h"
 
 // see https://www.youtube.com/watch?v=InzXA7mWBWE Slide 5
 // each is 60 degrees with values for 3 phases of 1=positive -1=negative 0=high-z
@@ -225,18 +225,21 @@ void DriverControllerBase::SetPhaseVoltage(float Uq, float Ud, float angle_el)
     // voltage_ab = InvParkTransform(voltage_dq);
     // voltage_uvw = InvClarkeTransform(voltage_ab);
 
-    // center = voltage_limit / 2;
+    // center = voltage_limit / 2.0f;
     // // discussed here: https://community.simplefoc.com/t/embedded-world-2023-stm32-cordic-co-processor/3107/165?u=candas1
     // // a bit more info here: https://microchipdeveloper.com/mct5001:which-zsm-is-best
     // // Midpoint Clamp
     // float Umin = min(voltage_uvw.u, min(voltage_uvw.v, voltage_uvw.w));
     // float Umax = max(voltage_uvw.u, max(voltage_uvw.v, voltage_uvw.w));
-    // center -= (Umax + Umin) / 2;
+    // center -= (Umax + Umin) / 2.0f;
 
-    // Umin = min(voltage_uvw.u, min(voltage_uvw.v, voltage_uvw.w));
-    // voltage_uvw.u -= Umin;
-    // voltage_uvw.v -= Umin;
-    // voltage_uvw.w -= Umin;
+    // // Umin = min(voltage_uvw.u, min(voltage_uvw.v, voltage_uvw.w));
+    // // voltage_uvw.u -= Umin;
+    // // voltage_uvw.v -= Umin;
+    // // voltage_uvw.w -= Umin;
+    // voltage_uvw.u += center;
+    // voltage_uvw.v += center;
+    // voltage_uvw.w += center;
     // drv->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_ON, PhaseState::PHASE_ON);
 }
 
@@ -345,14 +348,14 @@ void DriverControllerBase::ResetBase()
 
 void DriverControllerBase::LogPrint()
 {
-    printf("theta_e = %.3f, omega_m = %.3f\n", theta_e, omega_m);
+    // printf("theta_e = %.3f, omega_m = %.3f\n", theta_e, omega_m);
 
-    printf("cur_u = %.3f, cur_v = %.3f, cur_w = %.3f\n", current_uvw.u, current_uvw.v, current_uvw.w);
+    // printf("cur_u = %.3f, cur_v = %.3f, cur_w = %.3f\n", current_uvw.u, current_uvw.v, current_uvw.w);
     // printf("cur_a = %.3f, cur_b = %.3f\n", current_ab.a, current_ab.b);
     // printf("cur_d = %.3f, cur_q = %.3f\n", current_dq.d, current_dq.q);
     // printf("vol_d = %.3f, vol_q = %.3f\n", voltage_dq.d, voltage_dq.q);
-    // printf("vol_u = %.3f, vol_v = %.3f, vol_w = %.3f\n", voltage_uvw.u, voltage_uvw.v, voltage_uvw.w);
-    // printf("input_u = %.3f, input_v = %.3f, input_w = %.3f\n", input_duty.u, input_duty.v, input_duty.w);
+    printf("vol_u = %.3f, vol_v = %.3f, vol_w = %.3f\n", voltage_uvw.u, voltage_uvw.v, voltage_uvw.w);
+    printf("input_u = %.3f, input_v = %.3f, input_w = %.3f\n", input_duty.u, input_duty.v, input_duty.w);
 
     // printf("input_trapezoidal = %.3f\n", input_trape);
 }

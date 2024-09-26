@@ -1,5 +1,5 @@
-#ifndef PID_CONTROLLER_H
-#define PID_CONTROLLER_H
+#ifndef PID_H
+#define PID_H
 
 #include "main.h"
 
@@ -67,4 +67,4 @@ private:
     Differentiator differentiator;
 };
 
-#endif //  PID_CONTROLLER_H
+#endif //  PID_H
