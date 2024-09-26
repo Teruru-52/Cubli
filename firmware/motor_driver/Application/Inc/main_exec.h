@@ -8,6 +8,8 @@
 #ifndef MAIN_EXEC_H_
 #define MAIN_EXEC_H_
 
+#define FDCAN_RECEIVE_INTERVAL_TIMEOUT_VALUE 1000
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -18,7 +20,7 @@ extern "C"
     void TimUpdate();
     void AdcCpltCallback();
     void FDCANReceiveCallback(uint8_t *pRxData);
-    void LogPrint();
+    void PrintLog();
 
 #ifdef __cplusplus
 };

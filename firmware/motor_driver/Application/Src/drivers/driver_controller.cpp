@@ -148,6 +148,18 @@ void DriverControllerBase::SetPwm(float Vu, float Vv, float Vw)
     _writeDutyCycle3PWM(bldc_pwm, input_duty.u, input_duty.v, input_duty.w);
 }
 
+void DriverControllerBase::Stop()
+{
+    drv->Align();
+    SetPwm(0.0, 0.0, 0.0);
+}
+
+void DriverControllerBase::Free()
+{
+    drv->Free();
+    SetPwm(0.0, 0.0, 0.0);
+}
+
 ab_t DriverControllerBase::ClarkeTransform(const uvw_t &current_uvw)
 {
     ab_t current_ab_;
@@ -330,7 +342,7 @@ void DriverControllerBase::LimitCurrent()
     // limit current
     if (abs(current_uvw.u) > CURRENT_LIMIT || abs(current_uvw.v) > CURRENT_LIMIT || abs(current_uvw.w) > CURRENT_LIMIT)
     {
-        drv->Stop();
+        drv->Free();
         voltage_uvw.u = 0.0;
         voltage_uvw.v = 0.0;
         voltage_uvw.w = 0.0;
@@ -346,7 +358,7 @@ void DriverControllerBase::ResetBase()
     _pid_iq.Reset();
 }
 
-void DriverControllerBase::LogPrint()
+void DriverControllerBase::PrintLog()
 {
     // printf("theta_e = %.3f, omega_m = %.3f\n", theta_e, omega_m);
 

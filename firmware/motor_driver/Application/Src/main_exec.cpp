@@ -13,23 +13,17 @@
 #include "fdcan.h"
 #include "SEGGER_RTT.h"
 
-bool can_received = false;
-uint32_t can_receive_interval = 0;
-
-uint32_t period_count = 0;
-bool TIM_rising_edge = false;
-bool Update_and_send = false;
-
-uint8_t TxData[8];
-
 using namespace protocol;
 enum class LEDState
 {
-    yet_inited,
+    not_inited,
     inited,
     stop
 };
-LEDState led_state = LEDState::yet_inited;
+LEDState led_state = LEDState::not_inited;
+bool can_received = false;
+uint32_t can_receive_interval = 0;
+uint8_t TxData[8];
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
@@ -39,181 +33,117 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 void InitializeDriver()
 {
     driver_controller->Initialize();
+    led_state = LEDState::inited;
 }
 
 void TimUpdate()
 {
-    // TIM_rising_edge = !TIM_rising_edge;
-    // if (TIM_rising_edge)
-    // {
-    //     Write_GPIO(LED_RED, GPIO_PIN_SET);
-    //     LEDUpdate();
-    //     can_receive_interval++;
-    //     if (can_receive_interval > FDCAN_RECEIVE_INTERVAL_TIMEOUT_VALUE)
-    //     {
-    //         led_state = LEDState::yet_inited;
-    //         can_received = false;
-    //         if (driver_controller != nullptr)
-    //             driver_controller->Reset();
-    //         driver_controller = nullptr;
-    //         initialized = false;
-    //     }
-    //     if (driver_controller == nullptr || !initialized)
-    //         return;
-    //     else
-    //         period_count++;
-
-    //     // if (period_count % driver_controller->GetPeriod() == 0)
-    //     // {
-    //     // Update_and_send = true;
-    //     // driver_controller->UpdateInTimerCallback(TIM_rising_edge);
-    //     // }
-    //     // else
-    //     // {
-    //     //     Update_and_send = false;
-    //     // }
-    //     Write_GPIO(LED_RED, GPIO_PIN_RESET);
-    // }
-    // else
-    // {
-    //     if (driver_controller == nullptr || !initialized)
-    //         return;
-    //     if (Update_and_send)
-    //     {
-    //         // driver_controller->UpdateInTimerCallback(TIM_rising_edge);
-    //         // driver_controller->SendData();
-    //     }
-    // }
-
+    LEDUpdate();
     encoder.Update();
 
-    TxData[0] = 3;
-    FDCAN_Send(TxData);
+    can_receive_interval++;
+    if (can_receive_interval > FDCAN_RECEIVE_INTERVAL_TIMEOUT_VALUE)
+    {
+        led_state = LEDState::stop;
+        can_received = false;
+    }
+    else
+    {
+        if (driver_controller == nullptr || driver_controller->GetInitilizationFlag() == false)
+            return;
+        else
+        {
+            TxData[0] = 3;
+            FDCAN_Send(TxData);
+        }
+    }
 }
 
 void AdcCpltCallback()
 {
-    // if (driver_controller->GetCalibrationFlag() == false) // if calibration is needed
-    // {
-    //     driver_controller->SetCurrentoffset();
-    //     Write_GPIO(LED_RED, GPIO_PIN_RESET);
-    // }
     if (driver_controller == nullptr) // if driver_controller is not initialized
     {
-        driver_controller->SetPwm(0.0, 0.0, 0.0);
+        Write_GPIO(LED_RED, GPIO_PIN_SET);
+        driver_controller->Stop();
         return;
     }
     else
     {
-        // Write_GPIO(LED_RED, GPIO_PIN_SET);
-        //     if (!can_received)
-        //         PWM_Update(&blcd_pwm, 0.0, 0.0, 0.0);
-        //     else
-        //     {
-        if (driver_controller->GetInitilizationFlag())
+        // Write_GPIO(LED_RED, GPIO_PIN_RESET);
+        if (!can_received)
+            driver_controller->Stop();
+        else
         {
             driver_controller->Control();
             driver_controller->SetPwm();
         }
-        //     }
     }
 }
 
 void FDCANReceiveCallback(uint8_t *pRxData)
 {
-    // Buffer<64> can_buf;
-    // uint8_t DataSize = 0;
-    // uint32_t ID = 0;
-    // uint8_t RxData[64] = {0};
-    // DataSize = FDCAN_Receive(&ID, RxData);
-    // if (ID != CAN_ID_TX || DataSize == 0)
-    // {
-    //     return;
-    // }
-    // BLMD_Access_Lamp.FDCAN_RX = ENABLE;
-    // can_receive_interval = 0;
-    // can_received = true;
-    // for (uint8_t i = 0; i < DataSize; i++)
-    //     can_buf.push_back(RxData[i]);
-
-    // switch (led_state)
-    // {
-    // case LEDState::yet_inited:
-    // {
-    //     MessageHeader header = static_cast<MessageHeader>(can_buf[0]);
-    //     if (header == MessageHeader::init)
-    //     {
-    //         encoder.Reset();
-
-    //         // ControlMode control_mode = static_cast<ControlMode>(can_buf[1]);
-    //         // if (control_mode == ControlMode::voltage)
-    //         //     driver_controller = &voltage_driver;
-    //         // else if (control_mode == ControlMode::current)
-    //         //     driver_controller = &current_driver;
-    //         // else if (control_mode == ControlMode::motor_identification)
-    //         //     driver_controller = &motor_identification;
-    //         // else
-    //         //     return;
-
-    //         driver_controller->Initialize(can_buf);
-    //         led_state = LEDState::inited;
-    //     }
-    //     return;
-    // }
-    // case LEDState::inited:
-    // case LEDState::stop:
-    // {
-    //     MessageHeader header = static_cast<MessageHeader>(can_buf[0]);
-    //     if (header == MessageHeader::tx)
-    //     {
-    //         driver_controller->ReceiveAndUpdateData(can_buf);
-    //         led_state = LEDState::inited;
-    //     }
-    //     else if (header == MessageHeader::stop)
-    //     {
-    //         PWM_Update(&blcd_pwm, 0.0, 0.0, 0.0);
-    //         led_state = LEDState::stop;
-    //     }
-    //     else if (header == MessageHeader::free)
-    //     {
-    //         PWM_Stop();
-    //         led_state = LEDState::stop;
-    //     }
-    //     else
-    //     {
-    //         PWM_Update(&blcd_pwm, 0.0, 0.0, 0.0);
-    //         can_buf.pop_front();
-    //     }
-    // }
-    // }
+    can_received = true;
+    switch (led_state)
+    {
+    case LEDState::not_inited:
+    {
+        MessageHeader header = static_cast<MessageHeader>(pRxData[0]);
+        if (header == MessageHeader::init)
+        {
+            driver_controller->Reset();
+            driver_controller->Initialize();
+            led_state = LEDState::inited;
+        }
+        return;
+    }
+    case LEDState::inited:
+    case LEDState::stop:
+    {
+        MessageHeader header = static_cast<MessageHeader>(pRxData[0]);
+        if (header == MessageHeader::tx)
+        {
+            float ref = static_cast<float>(pRxData[1]); // to do
+            driver_controller->UpdateReference(ref);
+            led_state = LEDState::inited;
+        }
+        else if (header == MessageHeader::stop)
+        {
+            driver_controller->Stop();
+            led_state = LEDState::stop;
+        }
+        else if (header == MessageHeader::free)
+        {
+            driver_controller->Free();
+            led_state = LEDState::stop;
+        }
+        else
+            driver_controller->Stop();
+    }
+    }
 }
 
-void LogPrint()
+void PrintLog()
 {
-    // encoder.LogPrint();
-    // hall.LogPrint();
-
-    // uint16_t flag_err = encoder.GetErrFlag();
-    // printf("flag_err = %x\n", flag_err);
-
-    driver_controller->LogPrint();
+    // encoder.PrintLog();
+    // hall.PrintLog();
+    driver_controller->PrintLog();
 }
 
 void LEDUpdate()
 {
     switch (led_state)
     {
-    case LEDState::yet_inited:
-        Write_GPIO(LED_WHITE, GPIO_PIN_SET);
+    case LEDState::not_inited:
+        Write_GPIO(LED_YELLOW, GPIO_PIN_SET);
         Write_GPIO(LED_BLUE, GPIO_PIN_RESET);
         break;
     case LEDState::inited:
-        Write_GPIO(LED_WHITE, GPIO_PIN_RESET);
+        Write_GPIO(LED_YELLOW, GPIO_PIN_RESET);
         Write_GPIO(LED_BLUE, GPIO_PIN_SET);
         break;
     case LEDState::stop:
-        Write_GPIO(LED_WHITE, GPIO_PIN_SET);
-        Write_GPIO(LED_BLUE, GPIO_PIN_SET);
+        Write_GPIO(LED_YELLOW, GPIO_PIN_RESET);
+        Write_GPIO(LED_BLUE, GPIO_PIN_RESET);
         break;
     }
 }

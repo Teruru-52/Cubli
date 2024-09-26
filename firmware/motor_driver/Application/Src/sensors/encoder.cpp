@@ -54,7 +54,7 @@ void A1333::Update()
     pre_angle_full = angle_full;
 }
 
-void A1333::LogPrint()
+void A1333::PrintLog()
 {
     printf("angle = %.3f, angle_raw = %.3f, velocity = %.3f\n", angle_full, angle_raw, velocity);
 }

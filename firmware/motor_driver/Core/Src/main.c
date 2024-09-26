@@ -214,7 +214,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     //   Toggle_GPIO(LED_WHITE);
 
     if (cnt1kHz % 200 == 0)
-      LogPrint();
+      PrintLog();
   }
   else if (htim->Instance == TIM3)
   {

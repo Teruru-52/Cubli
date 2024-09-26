@@ -72,7 +72,7 @@ void HallSensor::FlashLED()
         Write_GPIO(LED_RED, GPIO_PIN_RESET);
 }
 
-void HallSensor::LogPrint()
+void HallSensor::PrintLog()
 {
     printf("hall = %d\n", hall_state);
 }

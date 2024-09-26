@@ -100,7 +100,7 @@ void DRV8323::Initialize()
 
 void DRV8323::StartCalibration()
 {
-    Stop();
+    Free();
     Write_GPIO(DRV_CAL, GPIO_PIN_SET); // Perform auto offset calbration (amplifier)
     HAL_Delay(1);
 }
@@ -126,7 +126,7 @@ void DRV8323::Align()
     SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_ON, PhaseState::PHASE_ON);
 }
 
-void DRV8323::Stop()
+void DRV8323::Free()
 {
     SetPhaseState(PhaseState::PHASE_OFF, PhaseState::PHASE_OFF, PhaseState::PHASE_OFF);
 }

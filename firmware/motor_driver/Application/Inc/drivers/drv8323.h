@@ -9,7 +9,7 @@
 #define DRV8323_H_
 
 #include "main.h"
-#include "foc_driver.h"
+#include "drivers/foc_driver.h"
 
 class DRV8323
 {
@@ -41,7 +41,7 @@ public:
     void CheckFaultStatus();
     void SetPhaseState(PhaseState sa, PhaseState sb, PhaseState sc);
     void Align();
-    void Stop();
+    void Free();
 };
 
 #endif // DRV8323_H_

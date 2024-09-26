@@ -54,7 +54,7 @@ public:
     float GetAngle() { return angle_full; }
     float GetAngleDiff() { return angle_full - angle_base; }
     float GetVelocity() { return velocity; };
-    void LogPrint();
+    void PrintLog();
 };
 
 #endif // ENCODER_H_

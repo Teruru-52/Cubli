@@ -28,7 +28,7 @@ public:
     void SetHallValueV(GPIO_PinState PinState);
     void SetHallValueW(GPIO_PinState PinState);
     void FlashLED();
-    void LogPrint();
+    void PrintLog();
 };
 
 #endif // HALL_SENSOR_H_

@@ -118,11 +118,14 @@ public:
     void SetCurrentoffset();
     void SetPwm();
     void SetPwm(float Vu, float Vv, float Vw);
+    void Stop();
+    void Free();
     bool GetCalibrationFlag() { return adc_calibrated; };
     bool GetInitilizationFlag() { return initialized; };
     virtual void Control() = 0;
+    virtual void UpdateReference(float ref) = 0;
     virtual void Reset() = 0;
-    void LogPrint();
+    void PrintLog();
     virtual ~DriverControllerBase() {}
 };
 
@@ -133,12 +136,13 @@ private:
     PID _pid_vel = PID(0.02, 6.0, 0.0, 0.0, 1.0 / static_cast<float>(PWM_FREQUENCY), 100.0);
     // PID _pid_vel = PID(0.02, 0.2, 0.0, 0.0, 0.001f, 100.0);
 
-    const float ref_vel = 50.0;
+    float ref_vel = 50.0;
     const float integral_max = 10.0;
 
 public:
     explicit VelocityDriver(BLDC_PWM *bldc_pwm, A1333 *encoder, DRV8323 *drv, HallSensor *hall) : DriverControllerBase(bldc_pwm, encoder, drv, hall) {};
     void Control() override;
+    void UpdateReference(float ref) override { ref_vel = ref; };
     void UpdateFOC();
     void UpdateTrapezoid_120();
     void Reset() override;
@@ -154,6 +158,7 @@ private:
 public:
     explicit TorqueDriver(BLDC_PWM *bldc_pwm, A1333 *encoder, DRV8323 *drv, HallSensor *hall) : DriverControllerBase(bldc_pwm, encoder, drv, hall) {};
     void Control() override;
+    void UpdateReference(float ref) override { ref_torque = ref; };
     void Reset() override;
 };
 
