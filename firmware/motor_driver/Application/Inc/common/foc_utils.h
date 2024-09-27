@@ -54,12 +54,11 @@ public:
 };
 
 // coefficient of Park and Clarke transform
-const float cos23 = cos((2.0f / 3.0f) * M_PI);
-const float cos43 = cos((4.0f / 3.0f) * M_PI);
+const float cos23 = -0.5f;
+const float cos43 = -0.5f;
 const float sin23 = sin((2.0f / 3.0f) * M_PI);
 const float sin43 = sin((4.0f / 3.0f) * M_PI);
 const float sq23 = sqrt(2.0f / 3.0f);
-const float sq34 = sqrt(3.0f) / 2.0f;
 
 // coefficient of SVPWM
 const float sq13 = 1.0f / sqrt(3.0f);

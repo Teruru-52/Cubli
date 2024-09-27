@@ -30,6 +30,10 @@ DriverController::DriverController(BLDC_PWM *bldc_pwm, A1333 *encoder, DRV8323 *
 
 void DriverController::Initialize()
 {
+    // constrain voltage for sensor alignment
+    if (voltage_sensor_align > voltage_limit)
+        voltage_sensor_align = voltage_limit;
+
     driver->Initialize();
     HAL_Delay(100);
     adc_calibrated = driver->SetCurrentoffsets();
@@ -38,44 +42,51 @@ void DriverController::Initialize()
     // _configure3PWM(bldc_pwm);
     SearchZeroElectricAngle();
 
-    arm_pid_init_f32(&pid_id, 0);
-    arm_pid_init_f32(&pid_iq, 0);
+    // arm_pid_init_f32(&pid_id, 0);
+    // arm_pid_init_f32(&pid_iq, 0);
 
-    arm_biquad_cascade_df2T_init_f32(&iir_id, 1, iir_coeff_d, iir_statebuff_d);
-    arm_biquad_cascade_df2T_init_f32(&iir_iq, 1, iir_coeff_q, iir_statebuff_q);
+    // arm_biquad_cascade_df2T_init_f32(&iir_id, 1, iir_coeff_d, iir_statebuff_d);
+    // arm_biquad_cascade_df2T_init_f32(&iir_iq, 1, iir_coeff_q, iir_statebuff_q);
+
+    Enable();
     initialized = 1;
 }
 
 void DriverController::Enable()
 {
-    // arm_pid_reset_f32(&(pid_vel));
-    // arm_pid_reset_f32(&pid_id);
-    // arm_pid_reset_f32(&pid_iq);
-
-    _pid_vel.Reset();
-    _pid_id.Reset();
-    _pid_iq.Reset();
-    target = 0.0;
+    driver->Enable();
+    SetPwm(0.0, 0.0, 0.0);
+    enabled = 1;
 }
 
 void DriverController::Disable()
 {
+    // arm_pid_reset_f32(&(pid_vel));
+    // arm_pid_reset_f32(&pid_id);
+    // arm_pid_reset_f32(&pid_iq);
+
+    target = 0;
+    _pid_vel.Reset();
+    _pid_id.Reset();
+    _pid_iq.Reset();
+
+    driver->Disable();
+    SetPwm(0.0, 0.0, 0.0);
+    enabled = 0;
 }
 
 void DriverController::SearchZeroElectricAngle()
 {
     // search the absolute zero with small velocity
-    float limit_vel = velocity_limit;
-    float limit_volt = voltage_limit;
-    velocity_limit = velocity_index_search;
-    voltage_limit = voltage_sensor_align;
-    shaft_angle = 0;
+    float voltage_align = voltage_sensor_align;
     uint8_t pre_sector = GetSector();
-    // Need to add searching movement
-    while (1)
+    for (int i = 0; i <= align_rounds; i++)
     {
+        float angle = M_PI_2 * 3.0f + M_2PI * i / 500.0f;
+        SetPhaseVoltage(voltage_align, 0, angle);
+        SetPwm();
         uint8_t sector = GetSector();
-        // AngleOpenLoop(3.0f * M_PI);
+        encoder->Update();
         if ((sector == 1 && pre_sector == 6) || (sector == 6 && pre_sector == 1))
         {
             zero_electric_angle = pole_pairs * encoder->GetMechanicalAngle();
@@ -87,9 +98,6 @@ void DriverController::SearchZeroElectricAngle()
     // disable motor
     SetPhaseVoltage(0, 0, 0);
     SetPwm();
-    // reinit the limits
-    velocity_limit = limit_vel;
-    voltage_limit = limit_volt;
 
     // HAL_Delay(500);
 }
@@ -140,6 +148,10 @@ uint8_t DriverController::GetSector()
 
 void DriverController::Update()
 {
+    // if disabled do nothing
+    if (!enabled)
+        return;
+
     UpdateFOC();
     Move();
 }
@@ -194,30 +206,31 @@ void DriverController::Move()
         if (torque_controller == TorqueControlType::voltage)
         {
             // // use voltage if phase-resistance not provided
-            // if (!_isset(phase_resistance))
-            //     voltage_dq.q = ref_current_dq.q;
-            // else
-            //     voltage_dq.q = _constrain(ref_current_dq.q * phase_resistance + voltage_bemf, -voltage_limit, voltage_limit);
-            // // set d-component (lag compensation if known inductance)
-            // if (!_isset(phase_inductance))
-            //     voltage_dq.d = 0;
-            // else
-            //     voltage_dq.d = _constrain(-current_sp * shaft_velocity * pole_pairs * phase_inductance, -voltage_limit, voltage_limit);
+            if (!_isset(phase_resistance))
+                voltage_dq.q = ref_current_dq.q;
+            else
+                voltage_dq.q = _constrain(ref_current_dq.q * phase_resistance + voltage_bemf, -voltage_limit, voltage_limit);
+            // set d-component (lag compensation if known inductance)
+            if (!_isset(phase_inductance))
+                voltage_dq.d = 0;
+            else
+                voltage_dq.d = _constrain(-ref_current_dq.q * shaft_velocity * pole_pairs * phase_inductance, -voltage_limit, voltage_limit);
         }
         break;
     case MotionControlType::torque:
         if (torque_controller == TorqueControlType::voltage)
-        { // if voltage torque control
-          // if (!_isset(phase_resistance))
-          //     voltage_dq.q = target;
-          // else
-          //     voltage_dq.q = target * phase_resistance + voltage_bemf;
-          // voltage_dq.q = _constrain(voltage_dq.q, -voltage_limit, voltage_limit);
-          // // set d-component (lag compensation if known inductance)
-          // if (!_isset(phase_inductance))
-          //     voltage_dq.d = 0;
-          // else
-          //     voltage_dq.d = _constrain(-target * shaft_velocity * pole_pairs * phase_inductance, -voltage_limit, voltage_limit);
+        {
+            // if voltage torque control
+            if (!_isset(phase_resistance))
+                voltage_dq.q = target;
+            else
+                voltage_dq.q = target * phase_resistance + voltage_bemf;
+            voltage_dq.q = _constrain(voltage_dq.q, -voltage_limit, voltage_limit);
+            // set d-component (lag compensation if known inductance)
+            if (!_isset(phase_inductance))
+                voltage_dq.d = 0;
+            else
+                voltage_dq.d = _constrain(-target * shaft_velocity * pole_pairs * phase_inductance, -voltage_limit, voltage_limit);
         }
         else
             current_dq.q = target; // if current torque control
@@ -228,14 +241,14 @@ void DriverController::Move()
 void DriverController::SetPhaseVoltage(float Uq, float Ud, float angle_el)
 {
     float center;
-    uint8_t sector = GetSector();
-    sector--;
+    uint8_t sector = GetSector() - 1;
+    if (sector < 0 || sector > 5)
+        return;
 
     switch (foc_modulation)
     {
     case FOCModulationType::Trapezoid_120:
-        center = Uq;
-        // center = voltage_limit / 2.0f;
+        center = modulation_centered ? (voltage_limit) * 0.5f : Uq;
         if (trap_120_map[sector][0] == _HIGH_IMPEDANCE)
         {
             voltage_uvw.u = center;
@@ -262,65 +275,33 @@ void DriverController::SetPhaseVoltage(float Uq, float Ud, float angle_el)
     case FOCModulationType::SpaceVectorPWM:
         voltage_dq.q = Uq;
         voltage_dq.d = Ud;
-        voltage_ab = InvParkTransform(voltage_dq, electric_angle);
+        voltage_ab = InvParkTransform(voltage_dq, angle_el);
         voltage_uvw = InvClarkeTransform(voltage_ab);
 
-        center = voltage_limit / 2.0f;
+        center = voltage_limit * 0.5f;
         // discussed here: https://community.simplefoc.com/t/embedded-world-2023-stm32-cordic-co-processor/3107/165?u=candas1
         // a bit more info here: https://microchipdeveloper.com/mct5001:which-zsm-is-best
         // Midpoint Clamp
         float Umin = min(voltage_uvw.u, min(voltage_uvw.v, voltage_uvw.w));
         float Umax = max(voltage_uvw.u, max(voltage_uvw.v, voltage_uvw.w));
-        center -= (Umax + Umin) / 2.0f;
+        center -= (Umax + Umin) * 0.5f;
 
-        // Umin = min(voltage_uvw.u, min(voltage_uvw.v, voltage_uvw.w));
-        // voltage_uvw.u -= Umin;
-        // voltage_uvw.v -= Umin;
-        // voltage_uvw.w -= Umin;
-        voltage_uvw.u += center;
-        voltage_uvw.v += center;
-        voltage_uvw.w += center;
+        if (!modulation_centered)
+        {
+            Umin = min(voltage_uvw.u, min(voltage_uvw.v, voltage_uvw.w));
+            voltage_uvw.u -= Umin;
+            voltage_uvw.v -= Umin;
+            voltage_uvw.w -= Umin;
+        }
+        else
+        {
+            voltage_uvw.u += center;
+            voltage_uvw.v += center;
+            voltage_uvw.w += center;
+        }
         driver->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_ON, PhaseState::PHASE_ON);
         break;
     }
-}
-
-void DriverController::AngleOpenLoop(float target_angle)
-{
-    // get current timestamp
-    unsigned long now_us = micros();
-    // calculate the sample time from last call
-    float Ts = (now_us - open_loop_timestamp) * 1e-6f;
-    // quick fix for strange cases (micros overflow + timestamp not defined)
-    if (Ts <= 0 || Ts > 0.5f)
-        Ts = 1e-3f;
-
-    // calculate the necessary angle to move from current position towards target angle
-    // with maximal velocity (velocity_limit)
-    // TODO sensor precision: this calculation is not numerically precise. The angle can grow to the point
-    //                        where small position changes are no longer captured by the precision of floats
-    //                        when the total position is large.
-    if (abs(target_angle - shaft_angle) > abs(velocity_limit * Ts))
-    {
-        shaft_angle += _sign(target_angle - shaft_angle) * abs(velocity_limit) * Ts;
-        shaft_velocity = velocity_limit;
-    }
-    else
-    {
-        shaft_angle = target_angle;
-        shaft_velocity = 0;
-    }
-
-    // use voltage limit or current limit
-    float Uq = voltage_limit;
-    // if (_isset(phase_resistance))
-    // {
-    //     Uq = _constrain(current_limit * phase_resistance + fabs(voltage_bemf), -voltage_limit, voltage_limit);
-    //     // recalculate the current
-    //     current_dq.q = (Uq - fabs(voltage_bemf)) / phase_resistance;
-    // }
-    SetPhaseVoltage(Uq, 0, NormalizeAngle(pole_pairs * shaft_angle));
-    SetPwm();
 }
 
 void DriverController::SetPwm()
@@ -341,18 +322,6 @@ void DriverController::SetPwm(float Vu, float Vv, float Vw)
     input_duty.w = _constrain(Vw / voltage_power_supply, 0.0f, 1.0f);
 
     _writeDutyCycle3PWM(bldc_pwm, input_duty.u, input_duty.v, input_duty.w);
-}
-
-void DriverController::Stop()
-{
-    driver->Align();
-    SetPwm(0.0, 0.0, 0.0);
-}
-
-void DriverController::Free()
-{
-    driver->Free();
-    SetPwm(0.0, 0.0, 0.0);
 }
 
 void DriverController::PrintLog()

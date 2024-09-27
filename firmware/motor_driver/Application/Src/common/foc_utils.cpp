@@ -10,6 +10,8 @@ float NormalizeAngle(float angle)
 ab_t ClarkeTransform(const uvw_t &current_uvw)
 {
   ab_t current_ab_;
+  // current_ab_.a = current_uvw.u + current_uvw.v * cos23 + current_uvw.w * cos43;
+  // current_ab_.b = current_uvw.v * sin23 + current_uvw.w * sin43;
   current_ab_.a = (current_uvw.u + current_uvw.v * cos23 + current_uvw.w * cos43) * sq23;
   current_ab_.b = (current_uvw.v * sin23 + current_uvw.w * sin43) * sq23;
 
@@ -29,12 +31,12 @@ dq_t ParkTransform(const ab_t &current_ab, float electrical_angle)
 uvw_t InvClarkeTransform(const ab_t &voltage_ab)
 {
   uvw_t voltage_uvw;
-  // voltage_uvw.u = voltage_ab.a * sq23;
-  // voltage_uvw.v = (voltage_ab.a * cos23 + voltage_ab.b * sin23) * sq23;
-  // voltage_uvw.w = (voltage_ab.a * cos43 + voltage_ab.b * sin43) * sq23;
-  voltage_uvw.u = voltage_ab.a;
-  voltage_uvw.v = -0.5f * voltage_ab.a + sq34 * voltage_ab.b;
-  voltage_uvw.w = -0.5f * voltage_ab.a - sq34 * voltage_ab.b;
+  // voltage_uvw.u = voltage_ab.a;
+  // voltage_uvw.v = voltage_ab.a * cos23 + voltage_ab.b * sin23;
+  // voltage_uvw.w = voltage_ab.a * cos43 + voltage_ab.b * sin43;
+  voltage_uvw.u = voltage_ab.a * sq23;
+  voltage_uvw.v = (voltage_ab.a * cos23 + voltage_ab.b * sin23) * sq23;
+  voltage_uvw.w = (voltage_ab.a * cos43 + voltage_ab.b * sin43) * sq23;
 
   return voltage_uvw;
 }

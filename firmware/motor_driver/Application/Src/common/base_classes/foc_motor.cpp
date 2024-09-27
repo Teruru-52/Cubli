@@ -12,8 +12,6 @@ FOCMotor::FOCMotor()
     // not set on the begining
     current_limit = DEF_CURRENT_LIM;
 
-    // index search velocity
-    velocity_index_search = DEF_INDEX_SEARCH_TARGET_VELOCITY;
     // sensor and motor align voltage
     voltage_sensor_align = DEF_VOLTAGE_SENSOR_ALIGN;
 
@@ -21,18 +19,18 @@ FOCMotor::FOCMotor()
     foc_modulation = FOCModulationType::SpaceVectorPWM;
 
     // default target value
-    target = 0;
-    voltage_dq.d = 0;
-    voltage_dq.q = 0;
+    target = 50.0f;
+    voltage_dq.d = 0.0f;
+    voltage_dq.q = 0.0f;
     // current target values
-    ref_current_dq.q = 0;
-    current_dq.q = 0;
-    current_dq.d = 0;
+    ref_current_dq.q = 0.0f;
+    current_dq.q = 0.0f;
+    current_dq.d = 0.0f;
 
     // voltage bemf
-    voltage_bemf = 0;
+    voltage_bemf = 0.0f;
 
     // Initialize phase voltages used for inverse Park and Clarke transform
-    voltage_ab.a = 0;
-    voltage_ab.b = 0;
+    voltage_ab.a = 0.0f;
+    voltage_ab.b = 0.0f;
 }

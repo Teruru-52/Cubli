@@ -41,17 +41,17 @@ enum FOCModulationType : uint8_t
     Trapezoid_120 = 0x01,
 };
 
-enum FOCMotorStatus : uint8_t
-{
-    motor_uninitialized = 0x00, //!< Motor is not yet initialized
-    motor_initializing = 0x01,  //!< Motor intiialization is in progress
-    motor_uncalibrated = 0x02,  //!< Motor is initialized, but not calibrated (open loop possible)
-    motor_calibrating = 0x03,   //!< Motor calibration in progress
-    motor_ready = 0x04,         //!< Motor is initialized and calibrated (closed loop possible)
-    motor_error = 0x08,         //!< Motor is in error state (recoverable, e.g. overcurrent protection active)
-    motor_calib_failed = 0x0E,  //!< Motor calibration failed (possibly recoverable)
-    motor_init_failed = 0x0F,   //!< Motor initialization failed (not recoverable)
-};
+// enum FOCMotorStatus : uint8_t
+// {
+//     motor_uninitialized = 0x00, //!< Motor is not yet initialized
+//     motor_initializing = 0x01,  //!< Motor intiialization is in progress
+//     motor_uncalibrated = 0x02,  //!< Motor is initialized, but not calibrated (open loop possible)
+//     motor_calibrating = 0x03,   //!< Motor calibration in progress
+//     motor_ready = 0x04,         //!< Motor is initialized and calibrated (closed loop possible)
+//     motor_error = 0x08,         //!< Motor is in error state (recoverable, e.g. overcurrent protection active)
+//     motor_calib_failed = 0x0E,  //!< Motor calibration failed (possibly recoverable)
+//     motor_init_failed = 0x0F,   //!< Motor initialization failed (not recoverable)
+// };
 
 /**
  Generic motor class
@@ -79,21 +79,19 @@ public:
 
     virtual void SetPwm() = 0;
     virtual void SetPwm(float Vu, float Vv, float Vw) = 0;
-    virtual void Stop() = 0;
-    virtual void Free() = 0;
-    int GetCalibrationFlag() { return adc_calibrated; };
-    int GetInitilizationFlag() { return initialized; };
+    int8_t Calibrated() { return adc_calibrated; };
+    int8_t Initilized() { return initialized; };
     virtual void PrintLog() = 0;
 
-    arm_pid_instance_f32 pid_id = {0.0, 0.0, 0.0, {0.0}, 0.0, 0.0, 0.0};
-    arm_pid_instance_f32 pid_iq = {0.0, 0.0, 0.0, {0.0}, 0.0, 0.0, 0.0};
-    // PID _pid_id = PID(0.1, 0.1, 0.0, 0.0, 1.0f / static_cast<float>(PWM_FREQUENCY), 5.0);
-    // PID _pid_iq = PID(0.1, 0.1, 0.0, 0.0, 1.0f / static_cast<float>(PWM_FREQUENCY), 5.0);
-    PID _pid_id = PID(DEF_PID_CURR_P, DEF_PID_CURR_I, DEF_PID_CURR_D, 0.0, 0.001f, 5.0f);
-    PID _pid_iq = PID(DEF_PID_CURR_P, DEF_PID_CURR_I, DEF_PID_CURR_D, 0.0, 0.001f, 5.0f);
+    arm_pid_instance_f32 pid_id{0.0, 0.0, 0.0, {0.0}, 0.0, 0.0, 0.0};
+    arm_pid_instance_f32 pid_iq{0.0, 0.0, 0.0, {0.0}, 0.0, 0.0, 0.0};
+    // PID _pid_id{0.1, 0.1, 0.0, 0.0, 1.0f / static_cast<float>(PWM_FREQUENCY), 5.0};
+    // PID _pid_iq{0.1, 0.1, 0.0, 0.0, 1.0f / static_cast<float>(PWM_FREQUENCY), 5.0};
+    PID _pid_id{DEF_PID_CURR_P, DEF_PID_CURR_I, DEF_PID_CURR_D, 0.0, 0.001f, 5.0f};
+    PID _pid_iq{DEF_PID_CURR_P, DEF_PID_CURR_I, DEF_PID_CURR_D, 0.0, 0.001f, 5.0f};
 
     // arm_pid_instance_f32 pid_vel; // need to be deleted
-    PID _pid_vel = PID(DEF_PID_VEL_P, DEF_PID_VEL_I, DEF_PID_VEL_D, 0.0, 1.0f / static_cast<float>(PWM_FREQUENCY), 100.0);
+    PID _pid_vel{DEF_PID_VEL_P, DEF_PID_VEL_I, DEF_PID_VEL_D, 0.0, 1.0f / static_cast<float>(PWM_FREQUENCY), 100.0};
     // PID _pid_vel = PID(0.02, 0.2, 0.0, 0.0, 0.001f, 100.0);
 
     // coefficient of IIR filter
@@ -128,17 +126,12 @@ public:
     // electric angle and angular velocity
     float electric_angle = 0.0f;
     float zero_electric_angle = NOT_SET; // zero electric angle
-    float theta_e_offset = 0.0f;
-    // float omega_e = 0.0f;
 
     // mechanical angular velocity
-    float shaft_angle = 0.0f;
+    // float shaft_angle = 0.0f;
     float shaft_velocity = 0.0f;
 
-    float target = 50.0f;
-
-    int adc_calibrated = 0;
-    int initialized = 0;
+    float target = 0.0f;
 
     float voltage_power_supply = 12.0f; // power supply voltage
 
@@ -147,10 +140,12 @@ public:
     float velocity_index_search; //!< target velocity for index search
 
     // motor physical parameters
-    float phase_resistance = 64e-3f;  //!< motor phase resistance
+    // float phase_resistance = 64e-3f;  //!< motor phase resistance
+    float phase_resistance = NOT_SET; //!< motor phase resistance
     float pole_pairs = 8.0f;          //!< motor pole pairs number
     float KV_rating = NOT_SET;        //!< motor KV rating
-    float phase_inductance = 0.5e-3f; //!< motor phase inductance
+    // float phase_inductance = 0.5e-3f; //!< motor phase inductance
+    float phase_inductance = NOT_SET; //!< motor phase inductance
 
     // limiting variables
     float voltage_limit;  //!< Voltage limiting variable - global limit
@@ -159,6 +154,8 @@ public:
 
     // motor status vairables
     int8_t enabled = 0; //!< enabled or disabled motor flag
+    int8_t adc_calibrated = 0;
+    int8_t initialized = 0;
     // FOCMotorStatus motor_status = FOCMotorStatus::motor_uninitialized; //!< motor status
 
     // pwm modulation related variables

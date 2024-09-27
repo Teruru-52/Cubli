@@ -103,11 +103,11 @@ int DRV8323::SetCurrentoffsets()
     uvw_t current_uvw;
     uvw_t current_sum;
 
-    Free();
+    Disable();
     Write_GPIO(DRV_CAL, GPIO_PIN_SET); // Perform auto offset calbration (amplifier)
     HAL_Delay(1);
 
-    for (int j = 0; j < max_cali_count; j++)
+    for (int j = 0; j < calibration_rounds; j++)
     {
         current_uvw = GetPhaseCurrents();
         current_sum.u += current_uvw.u;
@@ -115,9 +115,9 @@ int DRV8323::SetCurrentoffsets()
         current_sum.w += current_uvw.w;
     }
 
-    current_offset.u = current_sum.u / static_cast<float>(max_cali_count);
-    current_offset.v = current_sum.v / static_cast<float>(max_cali_count);
-    current_offset.w = current_sum.w / static_cast<float>(max_cali_count);
+    current_offset.u = current_sum.u / static_cast<float>(calibration_rounds);
+    current_offset.v = current_sum.v / static_cast<float>(calibration_rounds);
+    current_offset.w = current_sum.w / static_cast<float>(calibration_rounds);
     printf("current_offset.u = %.3f, current_offset.v = %.3f, current_offset.w = %.3f\n", current_offset.u, current_offset.v, current_offset.w);
 
     Write_GPIO(DRV_CAL, GPIO_PIN_RESET); // finish calibration
@@ -161,12 +161,12 @@ void DRV8323::SetPhaseState(PhaseState sa, PhaseState sb, PhaseState sc)
     Write_GPIO(INLC, sc == PhaseState::PHASE_ON ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 
-void DRV8323::Align()
+void DRV8323::Enable()
 {
     SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_ON, PhaseState::PHASE_ON);
 }
 
-void DRV8323::Free()
+void DRV8323::Disable()
 {
     SetPhaseState(PhaseState::PHASE_OFF, PhaseState::PHASE_OFF, PhaseState::PHASE_OFF);
 }
