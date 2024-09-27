@@ -61,4 +61,9 @@ const float sq13 = 1.0f / sqrt(3.0f);
 const float sq32 = sqrt(3.0f / 2.0f);
 const float sq43 = 2.0f / sqrt(3.0f);
 
+ab_t ClarkeTransform(const uvw_t &current_uvw);
+dq_t ParkTransform(const ab_t &current_ab, float electrical_angle);
+uvw_t InvClarkeTransform(const ab_t &voltage_ab);
+ab_t InvParkTransform(const dq_t &voltage_dq, float electrical_angle);
+
 #endif // FOC_UTILS_H_

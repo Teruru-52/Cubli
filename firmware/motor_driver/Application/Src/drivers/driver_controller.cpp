@@ -19,9 +19,9 @@ int trap_120_map[6][3] = {
 
 void DriverControllerBase::Initialize()
 {
-    drv->Initialize();
+    driver->Initialize();
     HAL_Delay(100);
-    SetCurrentoffset();
+    SetCurrentoffsets();
 
     encoder->Initialize();
     // _configure3PWM(bldc_pwm);
@@ -33,6 +33,44 @@ void DriverControllerBase::Initialize()
     arm_biquad_cascade_df2T_init_f32(&iir_id, 1, iir_coeff_d, iir_statebuff_d);
     arm_biquad_cascade_df2T_init_f32(&iir_iq, 1, iir_coeff_q, iir_statebuff_q);
     initialized = true;
+}
+
+void DriverControllerBase::Enable()
+{
+    // arm_pid_reset_f32(&(pid_vel));
+    // arm_pid_reset_f32(&pid_id);
+    // arm_pid_reset_f32(&pid_iq);
+
+    _pid_vel.Reset();
+    _pid_id.Reset();
+    _pid_iq.Reset();
+    target = 0.0;
+}
+
+void DriverControllerBase::Disable()
+{
+}
+
+void DriverControllerBase::SetCurrentoffsets()
+{
+    uvw_t current_uvw;
+    uvw_t current_sum;
+
+    driver->StartCalibration();
+    for (int j = 0; j < max_cali_count; j++)
+    {
+        current_uvw = GetPhaseCurrents();
+        current_sum.u += current_uvw.u;
+        current_sum.v += current_uvw.v;
+        current_sum.w += current_uvw.w;
+    }
+
+    current_offset.u = current_sum.u / static_cast<float>(max_cali_count);
+    current_offset.v = current_sum.v / static_cast<float>(max_cali_count);
+    current_offset.w = current_sum.w / static_cast<float>(max_cali_count);
+    printf("current_offset.u = %.3f, current_offset.v = %.3f, current_offset.w = %.3f\n", current_offset.u, current_offset.v, current_offset.w);
+    driver->FinishCalibration();
+    adc_calibrated = true;
 }
 
 void DriverControllerBase::SearchZeroElectricAngle()
@@ -70,22 +108,34 @@ float DriverControllerBase::GetElectricAngle()
     return (electric_angle >= 0) ? electric_angle : electric_angle + M_2PI;
 }
 
-void DriverControllerBase::CalculateCurrent()
+uvw_t DriverControllerBase::GetPhaseCurrents()
 {
     float Vsox[phase_num] = {0.0, 0.0, 0.0}; // [V]
+    uvw_t current_uvw_;
     uint32_t adc_data[phase_num] = {0, 0, 0};
-    ADC_Get_Value(adc_data); // get digital current Data
+    GetAdcValue(adc_data); // get digital current Data
 
     for (int i = 0; i < phase_num; i++)
         Vsox[i] = static_cast<float>(adc_data[i]) * Vref / static_cast<float>(adc_resolution);
-    current_uvw.u = (Vref * 0.5f - Vsox[0]) / (Gcsa * Rsense) - current_offset.u;
-    current_uvw.v = (Vref * 0.5f - Vsox[1]) / (Gcsa * Rsense) - current_offset.v;
-    current_uvw.w = (Vref * 0.5f - Vsox[2]) / (Gcsa * Rsense) - current_offset.w;
+    current_uvw_.u = (Vref * 0.5f - Vsox[0]) / (Gcsa * Rsense) - current_offset.u;
+    current_uvw_.v = (Vref * 0.5f - Vsox[1]) / (Gcsa * Rsense) - current_offset.v;
+    current_uvw_.w = (Vref * 0.5f - Vsox[2]) / (Gcsa * Rsense) - current_offset.w;
 
-    // current_uvw.u = (Vref * 0.5f - Vsox[2]) / (Gcsa * Rsense);
-    // current_uvw.v = (Vref * 0.5f - Vsox[1]) / (Gcsa * Rsense);
-    // current_uvw.w = (Vref * 0.5f - Vsox[0]) / (Gcsa * Rsense);
+    // current.u = (Vref * 0.5f - Vsox[2]) / (Gcsa * Rsense);
+    // current.v = (Vref * 0.5f - Vsox[1]) / (Gcsa * Rsense);
+    // current.w = (Vref * 0.5f - Vsox[0]) / (Gcsa * Rsense);
     // printf("%.3f, %.3f, %.3f\n", Vsox[0], Vsox[1], Vsox[2]);
+
+    return current_uvw_;
+}
+
+dq_t DriverControllerBase::GetDQCurrents()
+{
+    current_uvw = GetPhaseCurrents();
+    current_ab = ClarkeTransform(current_uvw);
+    dq_t current_dq_ = ParkTransform(current_ab, theta_e);
+
+    return current_dq_;
 }
 
 uint8_t DriverControllerBase::GetSector()
@@ -105,27 +155,6 @@ uint8_t DriverControllerBase::GetSector()
     else if (hall_state == 0b00000010)
         sector = 6;
     return sector;
-}
-
-void DriverControllerBase::SetCurrentoffset()
-{
-    uvw_t current_sum;
-
-    drv->StartCalibration();
-    for (int j = 0; j < max_cali_count; j++)
-    {
-        CalculateCurrent();
-        current_sum.u += current_uvw.u;
-        current_sum.v += current_uvw.v;
-        current_sum.w += current_uvw.w;
-    }
-
-    current_offset.u = current_sum.u / static_cast<float>(max_cali_count);
-    current_offset.v = current_sum.v / static_cast<float>(max_cali_count);
-    current_offset.w = current_sum.w / static_cast<float>(max_cali_count);
-    printf("current_offset.u = %.3f, current_offset.v = %.3f, current_offset.w = %.3f\n", current_offset.u, current_offset.v, current_offset.w);
-    drv->FinishCalibration();
-    adc_calibrated = true;
 }
 
 void DriverControllerBase::SetPwm()
@@ -150,56 +179,104 @@ void DriverControllerBase::SetPwm(float Vu, float Vv, float Vw)
 
 void DriverControllerBase::Stop()
 {
-    drv->Align();
+    driver->Align();
     SetPwm(0.0, 0.0, 0.0);
 }
 
 void DriverControllerBase::Free()
 {
-    drv->Free();
+    driver->Free();
     SetPwm(0.0, 0.0, 0.0);
 }
 
-ab_t DriverControllerBase::ClarkeTransform(const uvw_t &current_uvw)
+void DriverControllerBase::Update()
 {
-    ab_t current_ab_;
-    current_ab_.a = (current_uvw.u + current_uvw.v * cos23 + current_uvw.w * cos43) * sq23;
-    current_ab_.b = (current_uvw.v * sin23 + current_uvw.w * sin43) * sq23;
-
-    return current_ab_;
+    UpdateFOC();
+    Move();
 }
 
-dq_t DriverControllerBase::ParkTransform(const ab_t &current_ab)
+void DriverControllerBase::UpdateFOC()
 {
-    dq_t current_dq_;
-    current_dq_.d = current_ab.a * arm_cos_f32(theta_e) + current_ab.b * arm_sin_f32(theta_e);
-    current_dq_.q = -current_ab.a * arm_sin_f32(theta_e) + current_ab.b * arm_cos_f32(theta_e);
-    // arm_park_f32(current_ab.a, current_ab.b, &(current_dq_.d), &(current_dq_.q), arm_sin_f32(theta_e), arm_cos_f32(theta_e));
+    UpdateSensorAngle();
 
-    return current_dq_;
+    dq_t raw_current_dq;
+    switch (torque_controller)
+    {
+    case TorqueControlType::voltage:
+        // no need to do anything really
+        break;
+    case TorqueControlType::foc_current:
+        raw_current_dq = GetDQCurrents();
+
+        // arm_biquad_cascade_df2T_f32(&iir_id, &raw_current_dq.d, &current_dq.d, 1);
+        // arm_biquad_cascade_df2T_f32(&iir_iq, &raw_current_dq.q, &current_dq.q, 1);
+        current_dq.d = coeff_lp * pre_current_dq.d + (1.0f - coeff_lp) * raw_current_dq.d;
+        current_dq.q = coeff_lp * pre_current_dq.q + (1.0f - coeff_lp) * raw_current_dq.q;
+        pre_current_dq = current_dq;
+        // current_dq = raw_current_dq; // no filter
+
+        // voltage_dq.d = arm_pid_f32(&pid_id, -current_dq.d);
+        // voltage_dq.q = arm_pid_f32(&pid_iq, ref_current_dq.q - current_dq.q);
+        voltage_dq.d = _pid_id.Update(-current_dq.d);
+        voltage_dq.q = _pid_iq.Update(ref_current_dq.q - current_dq.q);
+        break;
+    default:
+        // no torque control selected
+        printf("MOT: no torque control selected!\n");
+        Write_GPIO(LED_RED, GPIO_PIN_SET);
+        break;
+    }
+
+    // set the phase voltage - FOC heart function :)
+    SetPhaseVoltage(voltage_dq.q, voltage_dq.d, theta_e);
 }
 
-uvw_t DriverControllerBase::InvClarkeTransform(const ab_t &voltage_ab)
+void DriverControllerBase::Move()
 {
-    uvw_t voltage_uvw_;
-    // voltage_uvw_.u = voltage_ab.a * sq23;
-    // voltage_uvw_.v = (voltage_ab.a * cos23 + voltage_ab.b * sin23) * sq23;
-    // voltage_uvw_.w = (voltage_ab.a * cos43 + voltage_ab.b * sin43) * sq23;
-    voltage_uvw_.u = voltage_ab.a;
-    voltage_uvw_.v = -0.5f * voltage_ab.a + sq34 * voltage_ab.b;
-    voltage_uvw_.w = -0.5f * voltage_ab.a - sq34 * voltage_ab.b;
+    switch (controller)
+    {
+    case MotionControlType::velocity:
+        // float input_trape = arm_pid_f32(&pid_vel, ref_vel - omega_m);
+        voltage_dq.q = _pid_vel.Update(target - omega_m);
+        voltage_dq.d = 0.0f;
 
-    return voltage_uvw_;
-}
+        // calculate the torque command
+        ref_current_dq.q = _pid_vel.Update(target - omega_m); // if current torque control
+        // ref_current_dq.q = arm_pid_f32(&pid_vel, target - omega_m);
 
-ab_t DriverControllerBase::InvParkTransform(const dq_t &voltage_dq)
-{
-    ab_t voltage_ab_;
-    voltage_ab_.a = voltage_dq.d * arm_cos_f32(theta_e) - voltage_dq.q * arm_sin_f32(theta_e);
-    voltage_ab_.b = voltage_dq.d * arm_sin_f32(theta_e) + voltage_dq.q * arm_cos_f32(theta_e);
-    // arm_inv_park_f32(voltage_dq.d, voltage_dq.q, &(voltage_ab_.a), &(voltage_ab_.b), arm_sin_f32(theta_e), arm_cos_f32(theta_e));
-
-    return voltage_ab_;
+        // if torque controlled through voltage control
+        if (torque_controller == TorqueControlType::voltage)
+        {
+            // // use voltage if phase-resistance not provided
+            // if (!_isset(phase_resistance))
+            //     voltage_dq.q = ref_current_dq.q;
+            // else
+            //     voltage_dq.q = _constrain(ref_current_dq.q * phase_resistance + voltage_bemf, -voltage_limit, voltage_limit);
+            // // set d-component (lag compensation if known inductance)
+            // if (!_isset(phase_inductance))
+            //     voltage_dq.d = 0;
+            // else
+            //     voltage_dq.d = _constrain(-current_sp * shaft_velocity * pole_pairs * phase_inductance, -voltage_limit, voltage_limit);
+        }
+        break;
+    case MotionControlType::torque:
+        if (torque_controller == TorqueControlType::voltage)
+        { // if voltage torque control
+          // if (!_isset(phase_resistance))
+          //     voltage_dq.q = target;
+          // else
+          //     voltage_dq.q = target * phase_resistance + voltage_bemf;
+          // voltage_dq.q = _constrain(voltage_dq.q, -voltage_limit, voltage_limit);
+          // // set d-component (lag compensation if known inductance)
+          // if (!_isset(phase_inductance))
+          //     voltage_dq.d = 0;
+          // else
+          //     voltage_dq.d = _constrain(-target * shaft_velocity * pole_pairs * phase_inductance, -voltage_limit, voltage_limit);
+        }
+        else
+            current_dq.q = target; // if current torque control
+        break;
+    }
 }
 
 void DriverControllerBase::SetPhaseVoltage(float Uq, float Ud, float angle_el)
@@ -208,57 +285,64 @@ void DriverControllerBase::SetPhaseVoltage(float Uq, float Ud, float angle_el)
     uint8_t sector = GetSector();
     sector--;
 
-    center = Uq;
-    // center = voltage_limit / 2.0f;
-    if (trap_120_map[sector][0] == _HIGH_IMPEDANCE)
+    switch (foc_modulation)
     {
-        voltage_uvw.u = center;
-        voltage_uvw.v = trap_120_map[sector][1] * Uq + center;
-        voltage_uvw.w = trap_120_map[sector][2] * Uq + center;
-        drv->SetPhaseState(PhaseState::PHASE_OFF, PhaseState::PHASE_ON, PhaseState::PHASE_ON); // disable phase if possible
-    }
-    else if (trap_120_map[sector][1] == _HIGH_IMPEDANCE)
-    {
-        voltage_uvw.u = trap_120_map[sector][0] * Uq + center;
-        voltage_uvw.v = center;
-        voltage_uvw.w = trap_120_map[sector][2] * Uq + center;
-        drv->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_OFF, PhaseState::PHASE_ON); // disable phase if possible
-    }
-    else
-    {
-        voltage_uvw.u = trap_120_map[sector][0] * Uq + center;
-        voltage_uvw.v = trap_120_map[sector][1] * Uq + center;
-        voltage_uvw.w = center;
-        drv->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_ON, PhaseState::PHASE_OFF); // disable phase if possible
-    }
+    case FOCModulationType::Trapezoid_120:
+        center = Uq;
+        // center = voltage_limit / 2.0f;
+        if (trap_120_map[sector][0] == _HIGH_IMPEDANCE)
+        {
+            voltage_uvw.u = center;
+            voltage_uvw.v = trap_120_map[sector][1] * Uq + center;
+            voltage_uvw.w = trap_120_map[sector][2] * Uq + center;
+            driver->SetPhaseState(PhaseState::PHASE_OFF, PhaseState::PHASE_ON, PhaseState::PHASE_ON); // disable phase if possible
+        }
+        else if (trap_120_map[sector][1] == _HIGH_IMPEDANCE)
+        {
+            voltage_uvw.u = trap_120_map[sector][0] * Uq + center;
+            voltage_uvw.v = center;
+            voltage_uvw.w = trap_120_map[sector][2] * Uq + center;
+            driver->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_OFF, PhaseState::PHASE_ON); // disable phase if possible
+        }
+        else
+        {
+            voltage_uvw.u = trap_120_map[sector][0] * Uq + center;
+            voltage_uvw.v = trap_120_map[sector][1] * Uq + center;
+            voltage_uvw.w = center;
+            driver->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_ON, PhaseState::PHASE_OFF); // disable phase if possible
+        }
+        break;
 
-    // voltage_dq.q = Uq;
-    // voltage_dq.d = Ud;
-    // voltage_ab = InvParkTransform(voltage_dq);
-    // voltage_uvw = InvClarkeTransform(voltage_ab);
+    case FOCModulationType::SpaceVectorPWM:
+        voltage_dq.q = Uq;
+        voltage_dq.d = Ud;
+        voltage_ab = InvParkTransform(voltage_dq, theta_e);
+        voltage_uvw = InvClarkeTransform(voltage_ab);
 
-    // center = voltage_limit / 2.0f;
-    // // discussed here: https://community.simplefoc.com/t/embedded-world-2023-stm32-cordic-co-processor/3107/165?u=candas1
-    // // a bit more info here: https://microchipdeveloper.com/mct5001:which-zsm-is-best
-    // // Midpoint Clamp
-    // float Umin = min(voltage_uvw.u, min(voltage_uvw.v, voltage_uvw.w));
-    // float Umax = max(voltage_uvw.u, max(voltage_uvw.v, voltage_uvw.w));
-    // center -= (Umax + Umin) / 2.0f;
+        center = voltage_limit / 2.0f;
+        // discussed here: https://community.simplefoc.com/t/embedded-world-2023-stm32-cordic-co-processor/3107/165?u=candas1
+        // a bit more info here: https://microchipdeveloper.com/mct5001:which-zsm-is-best
+        // Midpoint Clamp
+        float Umin = min(voltage_uvw.u, min(voltage_uvw.v, voltage_uvw.w));
+        float Umax = max(voltage_uvw.u, max(voltage_uvw.v, voltage_uvw.w));
+        center -= (Umax + Umin) / 2.0f;
 
-    // // Umin = min(voltage_uvw.u, min(voltage_uvw.v, voltage_uvw.w));
-    // // voltage_uvw.u -= Umin;
-    // // voltage_uvw.v -= Umin;
-    // // voltage_uvw.w -= Umin;
-    // voltage_uvw.u += center;
-    // voltage_uvw.v += center;
-    // voltage_uvw.w += center;
-    // drv->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_ON, PhaseState::PHASE_ON);
+        // Umin = min(voltage_uvw.u, min(voltage_uvw.v, voltage_uvw.w));
+        // voltage_uvw.u -= Umin;
+        // voltage_uvw.v -= Umin;
+        // voltage_uvw.w -= Umin;
+        voltage_uvw.u += center;
+        voltage_uvw.v += center;
+        voltage_uvw.w += center;
+        driver->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_ON, PhaseState::PHASE_ON);
+        break;
+    }
 }
 
 void DriverControllerBase::AngleOpenLoop(float target_angle)
 {
-    float Ts = 0.001f;
-    float shaft_angle = encoder->GetMechanicalAngle();
+    // float Ts = 0.001f;
+    // float shaft_angle = encoder->GetMechanicalAngle();
 
     // calculate the necessary angle to move from current position towards target angle
     // with maximal velocity (velocity_limit)
@@ -287,77 +371,6 @@ void DriverControllerBase::AngleOpenLoop(float target_angle)
     SetPhaseVoltage(Uq, 0, 0);
 }
 
-void VelocityDriver::Control()
-{
-    UpdateSensorAngle();
-    CalculateCurrent();
-
-    // select control method
-    // UpdateFOC();
-    // UpdateTrapezoid_120();
-    SetPhaseVoltage(1.0, 0.0, 0.0);
-
-    // LimitCurrent();
-}
-
-void VelocityDriver::UpdateFOC()
-{
-    current_ab = ClarkeTransform(current_uvw);
-    dq_t raw_current_dq = ParkTransform(current_ab);
-
-    // arm_biquad_cascade_df2T_f32(&iir_id, &raw_current_dq.d, &current_dq.d, 1);
-    // arm_biquad_cascade_df2T_f32(&iir_iq, &raw_current_dq.q, &current_dq.q, 1);
-    // current_dq = raw_current_dq;
-    current_dq.d = coeff_lp * pre_current_dq.d + (1.0f - coeff_lp) * raw_current_dq.d;
-    current_dq.q = coeff_lp * pre_current_dq.q + (1.0f - coeff_lp) * raw_current_dq.q;
-    pre_current_dq = current_dq;
-
-    ref_current_dq.d = 0.0;
-    // ref_current_dq.q = arm_pid_f32(&pid_vel, ref_vel - omega_m);
-    // ref_current_dq.q = _pid_vel.Update(ref_vel - omega_m);
-    ref_current_dq.q = 0.5f;
-
-    // voltage_dq.d = arm_pid_f32(&pid_id, ref_current_dq.d - current_dq.d);
-    // voltage_dq.q = arm_pid_f32(&pid_iq, ref_current_dq.q - current_dq.q);
-    voltage_dq.d = _pid_id.Update(ref_current_dq.d - current_dq.d);
-    voltage_dq.q = _pid_iq.Update(ref_current_dq.q - current_dq.q);
-
-    voltage_ab = InvParkTransform(voltage_dq);
-    // CalculateSVPWM(voltage_ab);
-
-    drv->SetPhaseState(PhaseState::PHASE_ON, PhaseState::PHASE_ON, PhaseState::PHASE_ON);
-}
-
-void VelocityDriver::UpdateTrapezoid_120()
-{
-    // float input_trape = arm_pid_f32(&pid_vel, ref_vel - omega_m);
-    voltage_dq.q = _pid_vel.Update(ref_vel - omega_m);
-    voltage_dq.d = 0.0f;
-
-    SetPhaseVoltage(voltage_dq.q, voltage_dq.d, theta_e);
-}
-
-void DriverControllerBase::LimitCurrent()
-{
-    // limit current
-    if (abs(current_uvw.u) > CURRENT_LIMIT || abs(current_uvw.v) > CURRENT_LIMIT || abs(current_uvw.w) > CURRENT_LIMIT)
-    {
-        drv->Free();
-        voltage_uvw.u = 0.0;
-        voltage_uvw.v = 0.0;
-        voltage_uvw.w = 0.0;
-    }
-}
-
-void DriverControllerBase::ResetBase()
-{
-    arm_pid_reset_f32(&pid_id);
-    arm_pid_reset_f32(&pid_iq);
-
-    _pid_id.Reset();
-    _pid_iq.Reset();
-}
-
 void DriverControllerBase::PrintLog()
 {
     // printf("theta_e = %.3f, omega_m = %.3f\n", theta_e, omega_m);
@@ -372,46 +385,32 @@ void DriverControllerBase::PrintLog()
     // printf("input_trapezoidal = %.3f\n", input_trape);
 }
 
-void VelocityDriver::Reset()
-{
-    ResetBase();
-    // arm_pid_reset_f32(&(pid_vel));
-    _pid_vel.Reset();
-}
-
 // void TorqueDriver::Initialize()
 // {
 // CurrentControlInit();
 // arm_pid_init_f32(&pid_torque, 0);
 // }
 
-void TorqueDriver::Control()
-{
-    UpdateSensorAngle();
-    CalculateCurrent();
+// void TorqueDriver::Update()
+// {
+//     UpdateSensorAngle();
+//     CalculateCurrent();
 
-    current_ab = ClarkeTransform(current_uvw);
-    dq_t raw_current_dq = ParkTransform(current_ab);
+//     current_ab = ClarkeTransform(current_uvw);
+//     dq_t raw_current_dq = ParkTransform(current_ab);
 
-    arm_biquad_cascade_df2T_f32(&iir_id, &raw_current_dq.d, &current_dq.d, 1);
-    arm_biquad_cascade_df2T_f32(&iir_iq, &raw_current_dq.q, &current_dq.q, 1);
+//     arm_biquad_cascade_df2T_f32(&iir_id, &raw_current_dq.d, &current_dq.d, 1);
+//     arm_biquad_cascade_df2T_f32(&iir_iq, &raw_current_dq.q, &current_dq.q, 1);
 
-    // ref_current_dq.d = 0.0;
-    // ref_current_dq.q = arm_pid_f32(&pid_torque, ref_torque / Ktau - current_dq.q);
-    ref_current_dq.q = ref_torque / Ktau;
+//     // ref_current_dq.d = 0.0;
+//     // ref_current_dq.q = arm_pid_f32(&pid_torque, ref_torque / Ktau - current_dq.q);
+//     ref_current_dq.q = ref_torque / Ktau;
 
-    voltage_dq.d = arm_pid_f32(&pid_id, ref_current_dq.d - current_dq.d);
-    voltage_dq.q = arm_pid_f32(&pid_iq, ref_current_dq.q - current_dq.q);
+//     voltage_dq.d = arm_pid_f32(&pid_id, ref_current_dq.d - current_dq.d);
+//     voltage_dq.q = arm_pid_f32(&pid_iq, ref_current_dq.q - current_dq.q);
 
-    voltage_ab = InvParkTransform(voltage_dq);
-    // CalculateSVPWM(voltage_ab);
+//     voltage_ab = InvParkTransform(voltage_dq);
+//     // CalculateSVPWM(voltage_ab);
 
-    LimitCurrent();
-}
-
-void TorqueDriver::Reset()
-{
-    ResetBase();
-    // arm_pid_reset_f32(&pid_torque);
-    ref_torque = 0.0;
-}
+//     LimitCurrent();
+// }

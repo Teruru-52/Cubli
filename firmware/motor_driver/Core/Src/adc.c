@@ -192,7 +192,7 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
   cnt_30kHz = (cnt_30kHz + 1) % 30000;
 }
 
-void ADC_Get_Value(uint32_t *data)
+void GetAdcValue(uint32_t *data)
 {
   data[0] = ADC1->JDR1;
   data[1] = ADC1->JDR2;

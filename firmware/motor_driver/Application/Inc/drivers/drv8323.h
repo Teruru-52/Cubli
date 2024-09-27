@@ -9,7 +9,7 @@
 #define DRV8323_H_
 
 #include "main.h"
-#include "drivers/foc_driver.h"
+#include "common/base_classes/foc_driver.h"
 
 class DRV8323
 {

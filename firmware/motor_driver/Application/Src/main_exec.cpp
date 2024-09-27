@@ -32,6 +32,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 void InitializeDriver()
 {
+    driver_controller->torque_controller = TorqueControlType::foc_current;
+    // driver_controller->foc_modulation = FOCModulationType::SpaceVectorPWM;
+    driver_controller->foc_modulation = FOCModulationType::Trapezoid_120;
+    driver_controller->controller = MotionControlType::torque;
     driver_controller->Initialize();
     led_state = LEDState::inited;
 }
@@ -74,7 +78,7 @@ void AdcCpltCallback()
             driver_controller->Stop();
         else
         {
-            driver_controller->Control();
+            driver_controller->Update();
             driver_controller->SetPwm();
         }
     }
@@ -83,43 +87,43 @@ void AdcCpltCallback()
 void FDCANReceiveCallback(uint8_t *pRxData)
 {
     can_received = true;
-    switch (led_state)
-    {
-    case LEDState::not_inited:
-    {
-        MessageHeader header = static_cast<MessageHeader>(pRxData[0]);
-        if (header == MessageHeader::init)
-        {
-            driver_controller->Reset();
-            driver_controller->Initialize();
-            led_state = LEDState::inited;
-        }
-        return;
-    }
-    case LEDState::inited:
-    case LEDState::stop:
-    {
-        MessageHeader header = static_cast<MessageHeader>(pRxData[0]);
-        if (header == MessageHeader::tx)
-        {
-            float ref = static_cast<float>(pRxData[1]); // to do
-            driver_controller->UpdateReference(ref);
-            led_state = LEDState::inited;
-        }
-        else if (header == MessageHeader::stop)
-        {
-            driver_controller->Stop();
-            led_state = LEDState::stop;
-        }
-        else if (header == MessageHeader::free)
-        {
-            driver_controller->Free();
-            led_state = LEDState::stop;
-        }
-        else
-            driver_controller->Stop();
-    }
-    }
+    // switch (led_state)
+    // {
+    // case LEDState::not_inited:
+    // {
+    //     MessageHeader header = static_cast<MessageHeader>(pRxData[0]);
+    //     if (header == MessageHeader::init)
+    //     {
+    //         driver_controller->Reset();
+    //         driver_controller->Initialize();
+    //         led_state = LEDState::inited;
+    //     }
+    //     return;
+    // }
+    // case LEDState::inited:
+    // case LEDState::stop:
+    // {
+    //     MessageHeader header = static_cast<MessageHeader>(pRxData[0]);
+    //     if (header == MessageHeader::tx)
+    //     {
+    //         float ref = static_cast<float>(pRxData[1]); // to do
+    //         driver_controller->UpdateReference(ref);
+    //         led_state = LEDState::inited;
+    //     }
+    //     else if (header == MessageHeader::stop)
+    //     {
+    //         driver_controller->Stop();
+    //         led_state = LEDState::stop;
+    //     }
+    //     else if (header == MessageHeader::free)
+    //     {
+    //         driver_controller->Free();
+    //         led_state = LEDState::stop;
+    //     }
+    //     else
+    //         driver_controller->Stop();
+    // }
+    // }
 }
 
 void PrintLog()
