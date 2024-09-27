@@ -23,8 +23,7 @@ class A1333
 protected:
     SPI_HandleTypeDef *hspi;
     GPIO_Value SPI_CS_ENC;
-    // MovingAverageFilter vel_filt = MovingAverageFilter(100);
-    MedianFilter vel_filt = MedianFilter(7);
+    MedianFilter median_filt = MedianFilter(10);
 
     // float dt = 1.0f / static_cast<float>(PWM_FREQUENCY); // need to be changed
     const float dt = 0.001f; // need to be changed

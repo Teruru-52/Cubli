@@ -11,7 +11,11 @@
 #include "main.h"
 
 // default configuration values
-// change this file to optimal values for your application
+// change this file to optimal values
+
+#define calibration_rounds 5000
+#define align_rounds 500
+#define adc_resolution 4095.0f
 
 #define DEF_POWER_SUPPLY 12.0f //!< default power supply voltage
 
@@ -30,13 +34,11 @@
 // default angle velocity limit values
 #define DEF_VEL_LIM 150.0f //!< angle velocity limit by default
 
-// index search
-#define DEF_INDEX_SEARCH_TARGET_VELOCITY 1.0f //!< default index search velocity
 // align voltage
 #define DEF_VOLTAGE_SENSOR_ALIGN 3.0f //!< default voltage for sensor and motor zero alignemt
 
 // lowpass filter default parameters
-#define DEF_VEL_FILTER_Tf 0.005f  //!< default velocity filter time constant
+// #define DEF_VEL_FILTER_Tf 0.005f  //!< default velocity filter time constant
 #define DEF_CURR_FILTER_Tf 0.005f //!< default currnet filter time constant
 
 #endif // DEFAULTS_H_

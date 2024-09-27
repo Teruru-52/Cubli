@@ -208,7 +208,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   {
     cnt1kHz = (cnt1kHz + 1) % 1000;
     TimUpdate();
-    // ADCCpltCallback();
 
     // if (cnt1kHz == 0)
     //   Toggle_GPIO(LED_WHITE);

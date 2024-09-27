@@ -38,23 +38,25 @@ void InitializeDriver()
     // driver_controller.controller = MotionControlType::torque;
     driver_controller.controller = MotionControlType::velocity;
     driver_controller.Initialize();
-    led_state = LEDState::inited;
+    if (driver_controller.Initilized())
+        led_state = LEDState::inited;
 }
 
 void TimUpdate()
 {
-    LEDUpdate();
+    LedUpdate();
     encoder.Update();
 
     can_receive_interval++;
     if (can_receive_interval > FDCAN_RECEIVE_INTERVAL_TIMEOUT_VALUE)
     {
-        led_state = LEDState::stop;
+        driver_controller.Disable();
         can_received = false;
+        led_state = LEDState::stop;
     }
     else
     {
-        if (driver_controller.GetInitilizationFlag() == false)
+        if (!driver_controller.Initilized())
             return;
         else
         {
@@ -68,7 +70,7 @@ void AdcCpltCallback()
 {
     // Write_GPIO(LED_RED, GPIO_PIN_RESET);
     if (!can_received)
-        driver_controller.Stop();
+        driver_controller.Disable();
     else
     {
         driver_controller.Update();
@@ -76,46 +78,46 @@ void AdcCpltCallback()
     }
 }
 
-void FDCANReceiveCallback(uint8_t *pRxData)
+void FDCAN_ReceiveCallback(uint8_t *pRxData)
 {
     can_received = true;
-    // switch (led_state)
-    // {
-    // case LEDState::not_inited:
-    // {
-    //     MessageHeader header = static_cast<MessageHeader>(pRxData[0]);
-    //     if (header == MessageHeader::init)
-    //     {
-    //         driver_controller.Reset();
-    //         driver_controller.Initialize();
-    //         led_state = LEDState::inited;
-    //     }
-    //     return;
-    // }
-    // case LEDState::inited:
-    // case LEDState::stop:
-    // {
-    //     MessageHeader header = static_cast<MessageHeader>(pRxData[0]);
-    //     if (header == MessageHeader::tx)
-    //     {
-    //         float ref = static_cast<float>(pRxData[1]); // to do
-    //         driver_controller.UpdateTarget(ref);
-    //         led_state = LEDState::inited;
-    //     }
-    //     else if (header == MessageHeader::stop)
-    //     {
-    //         driver_controller.Stop();
-    //         led_state = LEDState::stop;
-    //     }
-    //     else if (header == MessageHeader::free)
-    //     {
-    //         driver_controller.Free();
-    //         led_state = LEDState::stop;
-    //     }
-    //     else
-    //         driver_controller.Stop();
-    // }
-    // }
+    switch (led_state)
+    {
+    case LEDState::not_inited:
+    {
+        MessageHeader header = static_cast<MessageHeader>(pRxData[0]);
+        if (header == MessageHeader::init)
+        {
+            driver_controller.Disable();
+            driver_controller.Initialize();
+            led_state = LEDState::inited;
+        }
+        return;
+    }
+    case LEDState::inited:
+    case LEDState::stop:
+    {
+        MessageHeader header = static_cast<MessageHeader>(pRxData[0]);
+        if (header == MessageHeader::tx)
+        {
+            float ref = static_cast<float>(pRxData[1]); // to do
+            driver_controller.UpdateTarget(ref);
+            led_state = LEDState::inited;
+        }
+        else if (header == MessageHeader::stop)
+        {
+            driver_controller.Disable(); // to do (stop)
+            led_state = LEDState::stop;
+        }
+        else if (header == MessageHeader::free)
+        {
+            driver_controller.Disable();
+            led_state = LEDState::stop;
+        }
+        else
+            driver_controller.Disable();
+    }
+    }
 }
 
 void PrintLog()
@@ -125,7 +127,7 @@ void PrintLog()
     driver_controller.PrintLog();
 }
 
-void LEDUpdate()
+void LedUpdate()
 {
     switch (led_state)
     {

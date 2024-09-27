@@ -21,7 +21,7 @@
 #include "fdcan.h"
 
 /* USER CODE BEGIN 0 */
-extern void FDCANReceiveCallback(uint8_t *pRxData);
+extern void FDCAN_ReceiveCallback(uint8_t *pRxData);
 /* USER CODE END 0 */
 
 FDCAN_HandleTypeDef hfdcan1;
@@ -222,7 +222,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
       {
       case CAN_ID_MB:
         // printf("id=%ld, data=%d\r\n", RxHeader.Identifier, RxData[0]);
-        FDCANReceiveCallback(RxData);
+        FDCAN_ReceiveCallback(RxData);
         BLMD_Access_Lamp.FDCAN_RX = ENABLE;
         break;
       default:

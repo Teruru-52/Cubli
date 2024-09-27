@@ -19,7 +19,7 @@ extern "C"
     void InitializeDriver();
     void TimUpdate();
     void AdcCpltCallback();
-    void FDCANReceiveCallback(uint8_t *pRxData);
+    void FDCAN_ReceiveCallback(uint8_t *pRxData);
     void PrintLog();
 
 #ifdef __cplusplus
@@ -31,6 +31,6 @@ extern uint32_t can_receive_interval;
 
 extern uint8_t TxData[8];
 
-void LEDUpdate(void);
+void LedUpdate(void);
 
 #endif // MAIN_EXEC_H_

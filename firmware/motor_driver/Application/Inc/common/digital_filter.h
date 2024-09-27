@@ -12,12 +12,20 @@
 #include <deque>
 #include <algorithm>
 
-class MovingAverageFilter
+class DigitalFilter
 {
 public:
-    explicit MovingAverageFilter(uint16_t win_size = 100) : win_size(win_size) {}
+    DigitalFilter() = default;
+    virtual ~DigitalFilter() = default;
+    virtual float Update(float cur_val) = 0;
+};
+
+class MovingAverageFilter : public DigitalFilter
+{
+public:
+    explicit MovingAverageFilter(uint16_t win_size = 10) : DigitalFilter(), win_size(win_size) {}
     ~MovingAverageFilter() = default;
-    float Update(float cur_val)
+    float Update(float cur_val) override
     {
         if (buffer.size() > win_size)
             buffer.pop_front();
@@ -33,12 +41,12 @@ private:
     std::deque<float> buffer;
 };
 
-class MedianFilter
+class MedianFilter : public DigitalFilter
 {
 public:
-    explicit MedianFilter(uint16_t win_size = 3) : win_size(win_size) {}
+    explicit MedianFilter(uint16_t win_size = 3) : DigitalFilter(), win_size(win_size) {}
     ~MedianFilter() = default;
-    float Update(float cur_val)
+    float Update(float cur_val) override
     {
         if (buffer.size() > win_size)
             buffer.pop_front();
@@ -53,11 +61,12 @@ private:
     std::deque<float> buffer;
 };
 
-class LowPassFilter
+class LowPassFilter : public DigitalFilter
 {
 public:
     explicit LowPassFilter(float Tf, float dt = 0.001f)
-        : Tf(Tf),
+        : DigitalFilter(),
+          Tf(Tf),
           dt(dt),
           prev_val(0.0f)
     {
@@ -65,7 +74,7 @@ public:
     }
     ~LowPassFilter() = default;
 
-    float Update(float cur_val)
+    float Update(float cur_val) override
     {
         float y = alpha * prev_val + (1.0f - alpha) * cur_val;
         prev_val = y;

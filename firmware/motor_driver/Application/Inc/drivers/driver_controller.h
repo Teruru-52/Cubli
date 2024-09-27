@@ -37,6 +37,7 @@ private:
     long open_loop_timestamp;
 
     void UpdateSensorAngle() override;
+    void SearchZeroElectricAngle();
     float GetElectricAngle() override;
     dq_t GetDQCurrents() override;
     uint8_t GetSector() override;
@@ -45,9 +46,6 @@ private:
     void Move() override;
     void SetPwm(float Vu, float Vv, float Vw) override;
 
-    void SearchZeroElectricAngle();
-    void AngleOpenLoop(float target_angle);
-
 public:
     DriverController(BLDC_PWM *bldc_pwm, A1333 *encoder, DRV8323 *drv, HallSensor *hall);
     void Initialize() override;
@@ -55,8 +53,6 @@ public:
     void Disable() override;
     void Update() override;
     void SetPwm() override;
-    void Stop() override;
-    void Free() override;
     void PrintLog() override;
 };
 

@@ -49,9 +49,8 @@ void A1333::Update()
     pre_angle_raw = angle_raw;
 
     // velocity calculation
-    float velocity_raw = (angle_full - pre_angle_full) * inv_dt; // differentiation by euler method
-    // velocity = vel_filt.Update(velocity_raw); // digital filter
-    velocity = velocity_raw; // no filter
+    velocity = (angle_full - pre_angle_full) * inv_dt; // differentiation by euler method
+    velocity = median_filt.Update(velocity);           // digital filter
     pre_angle_full = angle_full;
 }
 

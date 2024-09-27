@@ -10,10 +10,8 @@
 
 #include "main.h"
 #include "common/base_classes/foc_driver.h"
+#include "common/defaults.h"
 #include "common/foc_utils.h"
-
-#define max_cali_count 5000
-#define adc_resolution 4095
 
 class DRV8323
 {
@@ -53,8 +51,8 @@ public:
     uvw_t GetPhaseCurrents();
     void CheckFaultStatus();
     void SetPhaseState(PhaseState sa, PhaseState sb, PhaseState sc);
-    void Align();
-    void Free();
+    void Enable();
+    void Disable();
 };
 
 #endif // DRV8323_H_
