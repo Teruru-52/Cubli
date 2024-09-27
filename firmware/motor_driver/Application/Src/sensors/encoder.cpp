@@ -5,6 +5,7 @@
  *      Author: Reiji Terunuma
  */
 
+#include "common/foc_utils.h"
 #include "sensors/encoder.h"
 
 int16_t A1333::ReadByte(uint8_t reg1, uint8_t reg2)

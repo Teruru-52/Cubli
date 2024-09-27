@@ -1,5 +1,12 @@
 #include "common/foc_utils.h"
 
+// normalizing radian angle to [0,2PI]
+float NormalizeAngle(float angle)
+{
+  float a = fmod(angle, M_2PI);
+  return a >= 0 ? a : (a + M_2PI);
+}
+
 ab_t ClarkeTransform(const uvw_t &current_uvw)
 {
   ab_t current_ab_;

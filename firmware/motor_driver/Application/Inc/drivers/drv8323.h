@@ -10,6 +10,10 @@
 
 #include "main.h"
 #include "common/base_classes/foc_driver.h"
+#include "common/foc_utils.h"
+
+#define max_cali_count 5000
+#define adc_resolution 4095
 
 class DRV8323
 {
@@ -22,6 +26,15 @@ private:
     GPIO_Value INLA;
     GPIO_Value INLB;
     GPIO_Value INLC;
+
+    const float Vref = 3.3f;     // [V]
+    const float Rsense = 0.005f; // [Ω]
+    // const float Gcsa = 20.0f;
+    const float Gcsa = 40.0f;
+    const float Gcsa_calib = 40.0f;
+    const int phase_num = 3; // U, V, W
+    uint32_t adc_data[3] = {0, 0, 0};
+    uvw_t current_offset; // [A]
 
     uint16_t fault_status1;
     uint16_t fault_status2;
@@ -36,8 +49,8 @@ public:
     void WriteByte(uint8_t reg, uint16_t data);
 
     void Initialize();
-    void StartCalibration();
-    inline void FinishCalibration() { Write_GPIO(DRV_CAL, GPIO_PIN_RESET); }
+    int SetCurrentoffsets();
+    uvw_t GetPhaseCurrents();
     void CheckFaultStatus();
     void SetPhaseState(PhaseState sa, PhaseState sb, PhaseState sc);
     void Align();

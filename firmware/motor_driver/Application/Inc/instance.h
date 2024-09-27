@@ -15,8 +15,6 @@ extern DRV8323 drv;
 extern HallSensor hall;
 extern A1333 encoder;
 
-extern VelocityDriver velocity_driver;
-extern TorqueDriver torque_driver;
-extern DriverControllerBase *driver_controller;
+extern DriverController driver_controller;
 
 #endif // INSTANCE_H_

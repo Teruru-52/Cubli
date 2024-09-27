@@ -10,9 +10,14 @@
 
 #include "main.h"
 
+#define _sign(a) (((a) < 0) ? -1 : ((a) > 0))
 #define _constrain(amt, low, high) ((amt) < (low) ? (low) : ((amt) > (high) ? (high) : (amt)))
+#define _isset(a) ((a) != (NOT_SET))
 
+#define NOT_SET -12345.0f
 #define _HIGH_IMPEDANCE 0
+#define M_2PI 6.28318530717958647692
+#define M_PI_3 1.04719755119659774615
 
 // variables on u-v-w axis
 struct uvw_t
@@ -60,6 +65,8 @@ const float sq34 = sqrt(3.0f) / 2.0f;
 const float sq13 = 1.0f / sqrt(3.0f);
 const float sq32 = sqrt(3.0f / 2.0f);
 const float sq43 = 2.0f / sqrt(3.0f);
+
+float NormalizeAngle(float angle);
 
 ab_t ClarkeTransform(const uvw_t &current_uvw);
 dq_t ParkTransform(const ab_t &current_ab, float electrical_angle);

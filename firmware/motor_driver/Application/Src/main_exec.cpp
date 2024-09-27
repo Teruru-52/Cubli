@@ -32,11 +32,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 void InitializeDriver()
 {
-    driver_controller->torque_controller = TorqueControlType::foc_current;
-    // driver_controller->foc_modulation = FOCModulationType::SpaceVectorPWM;
-    driver_controller->foc_modulation = FOCModulationType::Trapezoid_120;
-    driver_controller->controller = MotionControlType::torque;
-    driver_controller->Initialize();
+    driver_controller.torque_controller = TorqueControlType::foc_current;
+    // driver_controller.foc_modulation = FOCModulationType::SpaceVectorPWM;
+    driver_controller.foc_modulation = FOCModulationType::Trapezoid_120;
+    // driver_controller.controller = MotionControlType::torque;
+    driver_controller.controller = MotionControlType::velocity;
+    driver_controller.Initialize();
     led_state = LEDState::inited;
 }
 
@@ -53,7 +54,7 @@ void TimUpdate()
     }
     else
     {
-        if (driver_controller == nullptr || driver_controller->GetInitilizationFlag() == false)
+        if (driver_controller.GetInitilizationFlag() == false)
             return;
         else
         {
@@ -65,22 +66,13 @@ void TimUpdate()
 
 void AdcCpltCallback()
 {
-    if (driver_controller == nullptr) // if driver_controller is not initialized
-    {
-        Write_GPIO(LED_RED, GPIO_PIN_SET);
-        driver_controller->Stop();
-        return;
-    }
+    // Write_GPIO(LED_RED, GPIO_PIN_RESET);
+    if (!can_received)
+        driver_controller.Stop();
     else
     {
-        // Write_GPIO(LED_RED, GPIO_PIN_RESET);
-        if (!can_received)
-            driver_controller->Stop();
-        else
-        {
-            driver_controller->Update();
-            driver_controller->SetPwm();
-        }
+        driver_controller.Update();
+        driver_controller.SetPwm();
     }
 }
 
@@ -94,8 +86,8 @@ void FDCANReceiveCallback(uint8_t *pRxData)
     //     MessageHeader header = static_cast<MessageHeader>(pRxData[0]);
     //     if (header == MessageHeader::init)
     //     {
-    //         driver_controller->Reset();
-    //         driver_controller->Initialize();
+    //         driver_controller.Reset();
+    //         driver_controller.Initialize();
     //         led_state = LEDState::inited;
     //     }
     //     return;
@@ -107,21 +99,21 @@ void FDCANReceiveCallback(uint8_t *pRxData)
     //     if (header == MessageHeader::tx)
     //     {
     //         float ref = static_cast<float>(pRxData[1]); // to do
-    //         driver_controller->UpdateReference(ref);
+    //         driver_controller.UpdateTarget(ref);
     //         led_state = LEDState::inited;
     //     }
     //     else if (header == MessageHeader::stop)
     //     {
-    //         driver_controller->Stop();
+    //         driver_controller.Stop();
     //         led_state = LEDState::stop;
     //     }
     //     else if (header == MessageHeader::free)
     //     {
-    //         driver_controller->Free();
+    //         driver_controller.Free();
     //         led_state = LEDState::stop;
     //     }
     //     else
-    //         driver_controller->Stop();
+    //         driver_controller.Stop();
     // }
     // }
 }
@@ -130,7 +122,7 @@ void PrintLog()
 {
     // encoder.PrintLog();
     // hall.PrintLog();
-    driver_controller->PrintLog();
+    driver_controller.PrintLog();
 }
 
 void LEDUpdate()

@@ -98,11 +98,51 @@ void DRV8323::Initialize()
     HAL_Delay(1);
 }
 
-void DRV8323::StartCalibration()
+int DRV8323::SetCurrentoffsets()
 {
+    uvw_t current_uvw;
+    uvw_t current_sum;
+
     Free();
     Write_GPIO(DRV_CAL, GPIO_PIN_SET); // Perform auto offset calbration (amplifier)
     HAL_Delay(1);
+
+    for (int j = 0; j < max_cali_count; j++)
+    {
+        current_uvw = GetPhaseCurrents();
+        current_sum.u += current_uvw.u;
+        current_sum.v += current_uvw.v;
+        current_sum.w += current_uvw.w;
+    }
+
+    current_offset.u = current_sum.u / static_cast<float>(max_cali_count);
+    current_offset.v = current_sum.v / static_cast<float>(max_cali_count);
+    current_offset.w = current_sum.w / static_cast<float>(max_cali_count);
+    printf("current_offset.u = %.3f, current_offset.v = %.3f, current_offset.w = %.3f\n", current_offset.u, current_offset.v, current_offset.w);
+
+    Write_GPIO(DRV_CAL, GPIO_PIN_RESET); // finish calibration
+    return 1;
+}
+
+uvw_t DRV8323::GetPhaseCurrents()
+{
+    float Vsox[phase_num] = {0.0, 0.0, 0.0}; // [V]
+    uvw_t current_uvw;
+    uint32_t adc_data[phase_num] = {0, 0, 0};
+    GetAdcValue(adc_data); // get digital current Data
+
+    for (int i = 0; i < phase_num; i++)
+        Vsox[i] = static_cast<float>(adc_data[i]) * Vref / static_cast<float>(adc_resolution);
+    current_uvw.u = (Vref * 0.5f - Vsox[0]) / (Gcsa * Rsense) - current_offset.u;
+    current_uvw.v = (Vref * 0.5f - Vsox[1]) / (Gcsa * Rsense) - current_offset.v;
+    current_uvw.w = (Vref * 0.5f - Vsox[2]) / (Gcsa * Rsense) - current_offset.w;
+
+    // current_uvw.u = (Vref * 0.5f - Vsox[2]) / (Gcsa * Rsense);
+    // current_uvw.v = (Vref * 0.5f - Vsox[1]) / (Gcsa * Rsense);
+    // current_uvw.w = (Vref * 0.5f - Vsox[0]) / (Gcsa * Rsense);
+    // printf("%.3f, %.3f, %.3f\n", Vsox[0], Vsox[1], Vsox[2]);
+
+    return current_uvw;
 }
 
 void DRV8323::CheckFaultStatus()

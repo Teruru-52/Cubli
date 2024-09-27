@@ -88,6 +88,7 @@ CPP_SOURCES = \
 $(wildcard Core/Src/*.cpp) \
 $(wildcard Application/Src/*.cpp) \
 $(wildcard Application/Src/*/*.cpp) \
+$(wildcard Application/Src/*/*/*.cpp) \
 
 # ASM sources
 ASM_SOURCES =  \
