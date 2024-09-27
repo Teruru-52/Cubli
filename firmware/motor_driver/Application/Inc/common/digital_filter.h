@@ -16,6 +16,7 @@ class MovingAverageFilter
 {
 public:
     explicit MovingAverageFilter(uint16_t win_size = 100) : win_size(win_size) {}
+    ~MovingAverageFilter() = default;
     float Update(float cur_val)
     {
         if (buffer.size() > win_size)
@@ -36,6 +37,7 @@ class MedianFilter
 {
 public:
     explicit MedianFilter(uint16_t win_size = 3) : win_size(win_size) {}
+    ~MedianFilter() = default;
     float Update(float cur_val)
     {
         if (buffer.size() > win_size)
@@ -49,6 +51,32 @@ public:
 private:
     uint16_t win_size; // window size
     std::deque<float> buffer;
+};
+
+class LowPassFilter
+{
+public:
+    explicit LowPassFilter(float Tf, float dt = 0.001f)
+        : Tf(Tf),
+          dt(dt),
+          prev_val(0.0f)
+    {
+        alpha = Tf / (Tf + dt);
+    }
+    ~LowPassFilter() = default;
+
+    float Update(float cur_val)
+    {
+        float y = alpha * prev_val + (1.0f - alpha) * cur_val;
+        prev_val = y;
+        return y;
+    }
+
+protected:
+    float Tf; //!< Low pass filter time constant
+    float dt;
+    float prev_val; //!< filtered value in previous execution step
+    float alpha;
 };
 
 #endif // DIGITAL_FILTER_H_
