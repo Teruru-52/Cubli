@@ -14,7 +14,7 @@
 // change this file to optimal values
 
 #define calibration_rounds 5000
-#define align_rounds 500
+#define align_rounds 1000
 #define adc_resolution 4095.0f
 
 #define DEF_POWER_SUPPLY 12.0f //!< default power supply voltage

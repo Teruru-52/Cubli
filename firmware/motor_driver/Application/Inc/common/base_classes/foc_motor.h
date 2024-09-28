@@ -64,7 +64,7 @@ public:
      */
     FOCMotor();
 
-    virtual void Initialize() = 0;
+    virtual int8_t Initialize() = 0;
     virtual void Enable() = 0;
     virtual void Disable() = 0;
     virtual void UpdateSensorAngle() = 0;
@@ -75,12 +75,11 @@ public:
     virtual void SetPhaseVoltage(float Uq, float Ud, float angle_el) = 0;
     virtual float GetElectricAngle() = 0;
     virtual dq_t GetDQCurrents() = 0;
-    virtual uint8_t GetSector() = 0;
 
     virtual void SetPwm() = 0;
     virtual void SetPwm(float Vu, float Vv, float Vw) = 0;
     int8_t Calibrated() { return adc_calibrated; };
-    int8_t Initilized() { return initialized; };
+    int8_t Initialized() { return initialized; };
     virtual void PrintLog() = 0;
 
     arm_pid_instance_f32 pid_id{0.0, 0.0, 0.0, {0.0}, 0.0, 0.0, 0.0};

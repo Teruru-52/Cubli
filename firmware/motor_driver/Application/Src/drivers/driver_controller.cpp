@@ -28,7 +28,7 @@ DriverController::DriverController(BLDC_PWM *bldc_pwm, A1333 *encoder, DRV8323 *
     torque_controller = TorqueControlType::foc_current;
 }
 
-void DriverController::Initialize()
+int8_t DriverController::Initialize()
 {
     // constrain voltage for sensor alignment
     if (voltage_sensor_align > voltage_limit)
@@ -39,6 +39,7 @@ void DriverController::Initialize()
     adc_calibrated = driver->SetCurrentoffsets();
 
     encoder->Initialize();
+    hall->Initialize();
     // _configure3PWM(bldc_pwm);
     SearchZeroElectricAngle();
 
@@ -50,6 +51,7 @@ void DriverController::Initialize()
 
     Enable();
     initialized = 1;
+    return initialized;
 }
 
 void DriverController::Enable()
@@ -79,27 +81,39 @@ void DriverController::SearchZeroElectricAngle()
 {
     // search the absolute zero with small velocity
     float voltage_align = voltage_sensor_align;
-    uint8_t pre_sector = GetSector();
+    int8_t pre_sector = hall->GetSector();
+    printf("%d\n", pre_sector);
     for (int i = 0; i <= align_rounds; i++)
     {
-        float angle = M_PI_2 * 3.0f + M_2PI * i / 500.0f;
+        float angle = M_3PI_2 + M_2PI * i / static_cast<float>(align_rounds);
         SetPhaseVoltage(voltage_align, 0, angle);
         SetPwm();
-        uint8_t sector = GetSector();
+        int8_t sector = hall->GetSector();
         encoder->Update();
-        if ((sector == 1 && pre_sector == 6) || (sector == 6 && pre_sector == 1))
+        if ((sector == 0 && pre_sector == 5) || (sector == 5 && pre_sector == 0))
         {
             zero_electric_angle = pole_pairs * encoder->GetMechanicalAngle();
             break;
         }
         pre_sector = sector;
+        HAL_Delay(1);
     }
     printf("zero_electric_angle = %.3f\n", zero_electric_angle);
-    // disable motor
+    if (!_isset(zero_electric_angle))
+    {
+        SetPhaseVoltage(voltage_align, 0, M_3PI_2);
+        SetPwm();
+        HAL_Delay(200);
+        encoder->Update();
+        zero_electric_angle = GetElectricAngle();
+    }
+    HAL_Delay(20);
     SetPhaseVoltage(0, 0, 0);
     SetPwm();
+    printf("zero_electric_angle = %.3f\n", zero_electric_angle);
 
-    // HAL_Delay(500);
+    HAL_Delay(200);
+    foc_modulation = FOCModulationType::Trapezoid_120;
 }
 
 void DriverController::UpdateSensorAngle()
@@ -114,8 +128,7 @@ float DriverController::GetElectricAngle()
     // [0, 2pi)
     if (_isset(zero_electric_angle))
         return NormalizeAngle(pole_pairs * encoder->GetMechanicalAngle() - zero_electric_angle);
-    else
-        return NormalizeAngle(pole_pairs * encoder->GetMechanicalAngle());
+    return NormalizeAngle(pole_pairs * encoder->GetMechanicalAngle());
 }
 
 dq_t DriverController::GetDQCurrents()
@@ -125,25 +138,6 @@ dq_t DriverController::GetDQCurrents()
     dq_t current_dq_ = ParkTransform(current_ab, electric_angle);
 
     return current_dq_;
-}
-
-uint8_t DriverController::GetSector()
-{
-    uint8_t hall_state = hall->GetHallValue();
-    uint8_t sector = 0;
-    if (hall_state == 0b00000110)
-        sector = 1;
-    else if (hall_state == 0b00000100)
-        sector = 2;
-    else if (hall_state == 0b00000101)
-        sector = 3;
-    else if (hall_state == 0b00000001)
-        sector = 4;
-    else if (hall_state == 0b00000011)
-        sector = 5;
-    else if (hall_state == 0b00000010)
-        sector = 6;
-    return sector;
 }
 
 void DriverController::Update()
@@ -186,7 +180,8 @@ void DriverController::UpdateFOC()
     }
 
     // set the phase voltage - FOC heart function :)
-    SetPhaseVoltage(voltage_dq.q, voltage_dq.d, electric_angle);
+    // SetPhaseVoltage(voltage_dq.q, voltage_dq.d, electric_angle);
+    SetPhaseVoltage(1.0, 0, electric_angle);
 }
 
 void DriverController::Move()
@@ -241,14 +236,17 @@ void DriverController::Move()
 void DriverController::SetPhaseVoltage(float Uq, float Ud, float angle_el)
 {
     float center;
-    uint8_t sector = GetSector() - 1;
-    if (sector < 0 || sector > 5)
-        return;
+    int8_t sector;
 
     switch (foc_modulation)
     {
     case FOCModulationType::Trapezoid_120:
-        center = modulation_centered ? (voltage_limit) * 0.5f : Uq;
+        sector = hall->GetSector();
+        if (sector == -1)
+            return;
+        // center = modulation_centered ? (voltage_limit) * 0.5f : Uq;
+        center = Uq;
+
         if (trap_120_map[sector][0] == _HIGH_IMPEDANCE)
         {
             voltage_uvw.u = center;
@@ -326,14 +324,14 @@ void DriverController::SetPwm(float Vu, float Vv, float Vw)
 
 void DriverController::PrintLog()
 {
-    // printf("electric_angle = %.3f, shaft_velocity = %.3f\n", electric_angle, shaft_velocity);
+    printf("electric_angle = %.3f, shaft_velocity = %.3f\n", electric_angle, shaft_velocity);
 
     // printf("cur_u = %.3f, cur_v = %.3f, cur_w = %.3f\n", current_uvw.u, current_uvw.v, current_uvw.w);
     // printf("cur_a = %.3f, cur_b = %.3f\n", current_ab.a, current_ab.b);
     // printf("cur_d = %.3f, cur_q = %.3f\n", current_dq.d, current_dq.q);
     // printf("vol_d = %.3f, vol_q = %.3f\n", voltage_dq.d, voltage_dq.q);
-    printf("vol_u = %.3f, vol_v = %.3f, vol_w = %.3f\n", voltage_uvw.u, voltage_uvw.v, voltage_uvw.w);
-    printf("input_u = %.3f, input_v = %.3f, input_w = %.3f\n", input_duty.u, input_duty.v, input_duty.w);
+    // printf("vol_u = %.3f, vol_v = %.3f, vol_w = %.3f\n", voltage_uvw.u, voltage_uvw.v, voltage_uvw.w);
+    // printf("input_u = %.3f, input_v = %.3f, input_w = %.3f\n", input_duty.u, input_duty.v, input_duty.w);
 
     // printf("input_trapezoidal = %.3f\n", input_trape);
 }

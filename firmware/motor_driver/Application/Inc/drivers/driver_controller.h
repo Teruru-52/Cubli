@@ -40,7 +40,6 @@ private:
     void SearchZeroElectricAngle();
     float GetElectricAngle() override;
     dq_t GetDQCurrents() override;
-    uint8_t GetSector() override;
     void SetPhaseVoltage(float Uq, float Ud, float angle_el) override;
     void UpdateFOC() override;
     void Move() override;
@@ -48,7 +47,7 @@ private:
 
 public:
     DriverController(BLDC_PWM *bldc_pwm, A1333 *encoder, DRV8323 *drv, HallSensor *hall);
-    void Initialize() override;
+    int8_t Initialize() override;
     void Enable() override;
     void Disable() override;
     void Update() override;

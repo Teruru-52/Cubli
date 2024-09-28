@@ -16,8 +16,10 @@
 
 #define NOT_SET -12345.0f
 #define _HIGH_IMPEDANCE 0
-#define M_2PI 6.28318530717958647692
-#define M_PI_3 1.04719755119659774615
+#define M_2PI 2.0f * M_PI
+#define M_PI_3 M_PI / 3.0f
+#define M_3PI_2 1.5f * M_PI
+#define M_PI_6 M_PI / 6.0f
 
 // variables on u-v-w axis
 struct uvw_t

@@ -12,11 +12,18 @@ HallSensor::HallSensor(GPIO_Value HALL_U, GPIO_Value HALL_V, GPIO_Value HALL_W)
       HALL_V(HALL_V),
       HALL_W(HALL_W) {}
 
+void HallSensor::Initialize()
+{
+    ReadHallValue();
+}
+
 void HallSensor::ReadHallValue()
 {
     SetHallValueU(Read_GPIO(HALL_U));
     SetHallValueV(Read_GPIO(HALL_V));
     SetHallValueW(Read_GPIO(HALL_W));
+    UpdateSector();
+    pre_hall_state = hall_state;
 }
 
 void HallSensor::HandleCallback(uint16_t GPIO_Pin)
@@ -27,6 +34,8 @@ void HallSensor::HandleCallback(uint16_t GPIO_Pin)
         SetHallValueV(Read_GPIO(HALL_V));
     if (GPIO_Pin == Hall_W_Pin)
         SetHallValueW(Read_GPIO(HALL_W));
+    UpdateSector();
+    pre_hall_state = hall_state;
     // FlashLED();
 }
 
@@ -52,6 +61,19 @@ void HallSensor::SetHallValueW(GPIO_PinState PinState)
         hall_state |= 0x01;
     else
         hall_state &= ~0x01;
+}
+
+void HallSensor::UpdateSector()
+{
+    if (hall_state == pre_hall_state)
+        return;
+
+    sector = sectors[hall_state];
+}
+
+float HallSensor::GetElectricAngle()
+{
+    return (float)(sector)*M_PI_3;
 }
 
 void HallSensor::FlashLED()
