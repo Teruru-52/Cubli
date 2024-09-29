@@ -21,10 +21,20 @@ private:
     uint8_t pre_hall_state = 0x00;
     int8_t sector = -1;
 
-    // adding PI/6 to align with other modes
     // 000 001 010 011 100 101 110 111
-    const int8_t sectors[8] = {-1, 3, 5, 4, 1, 2, 0, -1};
-    // const int8_t sectors[8] = {-1, 5, 4, 3, 1, 5, 2, -1};
+    const int8_t sectors[8] = {-1, 4, 2, 3, 0, 5, 1, -1}; // u:0
+    // const int8_t sectors[8] = {-1, 5, 3, 4, 1, 0, 2, -1};
+    // const int8_t sectors[8] = {-1, 0, 4, 5, 2, 1, 3, -1}; // w:0
+    // const int8_t sectors[8] = {-1, 1, 5, 0, 3, 2, 4, -1};
+    // const int8_t sectors[8] = {-1, 2, 0, 1, 4, 3, 5, -1}; // v:0
+    // const int8_t sectors[8] = {-1, 3, 1, 2, 5, 4, 0, -1};
+
+    // const int8_t sectors[8] = {-1, 2, 4, 3, 0, 1, 5, -1}; // u:0
+    // const int8_t sectors[8] = {-1, 3, 5, 4, 1, 2, 0, -1};
+    // const int8_t sectors[8] = {-1, 4, 0, 5, 2, 3, 1, -1}; // v:0
+    // const int8_t sectors[8] = {-1, 5, 1, 0, 3, 4, 2, -1};
+    // const int8_t sectors[8] = {-1, 0, 2, 1, 4, 5, 3, -1}; // w:0 (simpleFOC)
+    // const int8_t sectors[8] = {-1, 1, 3, 2, 5, 0, 4, -1};
 
 public:
     HallSensor(GPIO_Value HALL_U, GPIO_Value HALL_V, GPIO_Value HALL_W);
@@ -37,7 +47,6 @@ public:
     void SetHallValueV(GPIO_PinState PinState);
     void SetHallValueW(GPIO_PinState PinState);
     void UpdateSector();
-    float GetElectricAngle();
     int8_t GetSector() { return sector; }
     void FlashLED();
     void PrintLog();

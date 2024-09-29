@@ -7,6 +7,12 @@ float NormalizeAngle(float angle)
   return a >= 0 ? a : (a + M_2PI);
 }
 
+// int8_t NormalizeSector(int8_t sector)
+// {
+//   sector < 0 ? (sector + 6) : sector;
+//   return sector > 5 ? (sector - 6) : sector;
+// }
+
 ab_t ClarkeTransform(const uvw_t &current_uvw)
 {
   ab_t current_ab_;

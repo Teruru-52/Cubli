@@ -71,11 +71,6 @@ void HallSensor::UpdateSector()
     sector = sectors[hall_state];
 }
 
-float HallSensor::GetElectricAngle()
-{
-    return (float)(sector)*M_PI_3;
-}
-
 void HallSensor::FlashLED()
 {
     if ((hall_state >> 2) & 0x01) // check hall U
