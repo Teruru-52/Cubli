@@ -46,6 +46,47 @@
 #define FS2_SB_OC 0x01 << 9
 #define FS2_SA_OC 0x01 << 10
 
+// Driver Control
+#define DRV_CTRL_PWM_MODE_3x 0x01 << 5
+#define DRV_CTRL_DIS_CPUV 0x01 << 9
+
+// Gate Drive HS
+#define GATE_DRV_HS_UNLOCK 0x03 << 8
+#define GATE_DRV_HS_IDRIVEP_HS_10mA 0x00
+#define GATE_DRV_HS_IDRIVEP_HS_1000mA 0x0F << 4
+#define GATE_DRV_HS_IDRIVEN_HS_20mA 0x00
+#define GATE_DRV_HS_IDRIVEN_HS_2000mA 0x0F
+
+// Gate Drive LS
+#define GATE_DRV_LS_CBC 0x01 << 10
+#define GATE_DRV_LS_TDRIVE_4000ns 0x03 << 8
+#define GATE_DRV_LS_IDRIVEP_LS_10mA 0x00
+#define GATE_DRV_LS_IDRIVEP_LS_1000mA 0x0F << 4
+#define GATE_DRV_LS_IDRIVEN_LS_20mA 0x00
+#define GATE_DRV_LS_IDRIVEN_LS_2000mA 0x0F
+
+// OCP Control
+#define OCP_CTRL_TRETRY_50ms 0x01 << 10
+#define OCP_CTRL_DEAD_TIME_100ns 0x01 << 8
+#define OCP_CTRL_OCP_MODE_RETRY 0x01 << 6
+#define OCP_CTRL_OCP_DEG_4us 0x01 << 4
+#define OCP_CTRL_VDS_LVL_0_75V 0x09
+
+// CSA Control
+#define CSA_CTRL_VREF_DIV 0x01 << 9
+#define CSA_CTRL_CSA_GAIN_5VV 0x00 << 6
+#define CSA_CTRL_CSA_GAIN_10VV 0x01 << 6
+#define CSA_CTRL_CSA_GAIN_20VV 0x02 << 6
+#define CSA_CTRL_CSA_GAIN_40VV 0x03 << 6
+#define CSA_CTRL_DIS_SEN 0x01 << 5
+#define CSA_CTRL_CSA_CAL_A 0x01 << 4
+#define CSA_CTRL_CSA_CAL_B 0x01 << 3
+#define CSA_CTRL_CSA_CAL_C 0x01 << 2
+#define CSA_CTRL_SEN_LVL_0_25V 0x00
+#define CSA_CTRL_SEN_LVL_0_5V 0x01
+#define CSA_CTRL_SEN_LVL_0_75V 0x02
+#define CSA_CTRL_SEN_LVL_1V 0x03
+
 class DRV8323
 {
 private:
@@ -80,6 +121,11 @@ public:
     void WriteByte(uint8_t reg, uint16_t data);
 
     void Initialize();
+    void SetDriverControl();
+    void SetGateDriveHS();
+    void SetGateDriveLS();
+    void SetOCPControl();
+    void SetCSAControl();
     int SetCurrentoffsets();
     uvw_t GetPhaseCurrents();
     void CheckFaultStatus();

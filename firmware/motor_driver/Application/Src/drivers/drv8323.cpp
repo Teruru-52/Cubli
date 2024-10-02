@@ -63,18 +63,16 @@ void DRV8323::Initialize()
     __HAL_SPI_ENABLE(hspi); // clockが動かないように、あらかじめEnableにしておく
 
     HAL_Delay(1);
-    WriteByte(DRIVER_CONTROL, 0x0220); // 3x PWM Mode, DIS_CPUV = 1
-    // WriteByte(DRIVER_CONTROL, 0x0020); // 3x PWM Mode
+    SetDriverControl(); // set driver control register
     HAL_Delay(1);
-    WriteByte(GATE_DRIVE_HS, 0x3FF); // IDRIVEP_HS = 1000mA, IDRIVEN_HS = 2000mA
+    SetGateDriveHS(); // set gate drive HS register
     HAL_Delay(1);
-    WriteByte(GATE_DRIVE_LS, 0x7FF); // TDRIVE = 4000ns, IDRIVEP_LS = 1000mA, IDRIVEN_LS = 2000mA
+    SetGateDriveLS(); // set gate drive LS register
     HAL_Delay(1);
-    WriteByte(OCP_CONTROL, 0x159); // TRETRY = 4ms, DEAD_TIME = 100ns, OCP_MODE = automatic retrying fault, OCP_DEG = 4us, VDS_LVL = 0.75V
+    SetOCPControl(); // set OCP control register
     HAL_Delay(1);
-    // WriteByte(CSA_CONTROL, 0x283); // VREF_DIV = bidirectional mode, CSA_GAIN = 20, SEN_LVL = 1V
-    WriteByte(CSA_CONTROL, 0x2C3); // VREF_DIV = bidirectional mode, CSA_GAIN = 40, SEN_LVL = 1V
-    HAL_Delay(1);
+    SetCSAControl(); // set CSA control register
+    HAL_Delay(2);
 
     CheckFaultStatus();
     HAL_Delay(1);
@@ -90,6 +88,51 @@ void DRV8323::Initialize()
     // HAL_Delay(1);
     // ReadByte(CSA_CONTROL);
     // HAL_Delay(1);
+}
+
+void DRV8323::SetDriverControl()
+{
+    uint16_t reg = DRV_CTRL_PWM_MODE_3x;
+    reg |= DRV_CTRL_DIS_CPUV;
+    WriteByte(DRIVER_CONTROL, reg);
+}
+
+void DRV8323::SetGateDriveHS()
+{
+    uint16_t reg = GATE_DRV_HS_UNLOCK;
+    // reg |= GATE_DRV_HS_IDRIVEP_HS_1000mA;
+    // reg |= GATE_DRV_HS_IDRIVEN_HS_2000mA;
+    reg |= GATE_DRV_HS_IDRIVEP_HS_10mA;
+    reg |= GATE_DRV_HS_IDRIVEN_HS_20mA;
+    WriteByte(GATE_DRIVE_HS, reg);
+}
+
+void DRV8323::SetGateDriveLS()
+{
+    uint16_t reg = GATE_DRV_LS_CBC;
+    reg |= GATE_DRV_LS_TDRIVE_4000ns;
+    // reg |= GATE_DRV_LS_IDRIVEP_LS_1000mA;
+    // reg |= GATE_DRV_LS_IDRIVEN_LS_2000mA;
+    reg |= GATE_DRV_LS_IDRIVEP_LS_10mA;
+    reg |= GATE_DRV_LS_IDRIVEN_LS_20mA;
+    WriteByte(GATE_DRIVE_LS, reg);
+}
+
+void DRV8323::SetOCPControl()
+{
+    uint16_t reg = OCP_CTRL_DEAD_TIME_100ns;
+    reg |= OCP_CTRL_OCP_MODE_RETRY;
+    reg |= OCP_CTRL_OCP_DEG_4us;
+    reg |= OCP_CTRL_VDS_LVL_0_75V;
+    WriteByte(OCP_CONTROL, reg);
+}
+
+void DRV8323::SetCSAControl()
+{
+    uint16_t reg = CSA_CTRL_VREF_DIV;
+    reg |= CSA_CTRL_CSA_GAIN_40VV;
+    reg |= CSA_CTRL_SEN_LVL_1V;
+    WriteByte(CSA_CONTROL, reg);
 }
 
 int DRV8323::SetCurrentoffsets()
@@ -145,13 +188,13 @@ void DRV8323::CheckFaultStatus()
     fault_status2 = ReadByte(FAULT_STATUS_2); // Fault Status Register2
 
     if (fault_status1 & FS1_VDS_OCP)
-        printf("VDS Over Current Protection Error!\n");
+        printf("VDS Over Current Protection (VDS_OCP)\n");
     if (fault_status1 & FS1_GDF)
         printf("Gate Drive Fault error\n");
     if (fault_status1 & FS1_UVLO)
-        printf("UVLO error\n");
+        printf("VM undervoltage (UVLO)\n");
     if (fault_status1 & FS1_OTSD)
-        printf("Overtemp shutdown error\n");
+        printf("Overtemp shutdown (OTSD)\n");
     if (fault_status1 & FS1_VDS_HA)
         printf("VDS HA error\n");
     if (fault_status1 & FS1_VDS_LA)
@@ -165,15 +208,15 @@ void DRV8323::CheckFaultStatus()
     if (fault_status1 & FS1_VDS_LC)
         printf("VDS LC error\n");
     if (fault_status2 & FS2_SA_OC)
-        printf("overcurrent on phase A\n");
+        printf("overcurrent on phase A sense amp (SA_OC)\n");
     if (fault_status2 & FS2_SB_OC)
-        printf("overcurrent on phase B\n");
+        printf("overcurrent on phase B sense amp (SB_OC)\n");
     if (fault_status2 & FS2_SC_OC)
-        printf("overcurrent on phase C\n");
+        printf("overcurrent on phase C sense amp (SC_OC)\n");
     if (fault_status2 & FS2_OTW)
-        printf("overtemp warning\n");
+        printf("overtemp warning (OTW)\n");
     if (fault_status2 & FS2_CPUV)
-        printf("Charge pump undervoltage fault condition\n");
+        printf("Charge pump undervoltage fault condition (CPUV)\n");
     if (fault_status2 & FS2_VGS_HA)
         printf("VGS HA error\n");
     if (fault_status2 & FS2_VGS_LA)
