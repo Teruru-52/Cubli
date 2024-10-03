@@ -49,6 +49,7 @@
 // Driver Control
 #define DRV_CTRL_PWM_MODE_3x 0x01 << 5
 #define DRV_CTRL_DIS_CPUV 0x01 << 9
+#define DRV_CTRL_CLR_FLT 0x01
 
 // Gate Drive HS
 #define GATE_DRV_HS_UNLOCK 0x03 << 8
@@ -59,6 +60,9 @@
 
 // Gate Drive LS
 #define GATE_DRV_LS_CBC 0x01 << 10
+#define GATE_DRV_LS_TDRIVE_500ns 0x00
+#define GATE_DRV_LS_TDRIVE_1000ns 0x01 << 8
+#define GATE_DRV_LS_TDRIVE_2000ns 0x02 << 8
 #define GATE_DRV_LS_TDRIVE_4000ns 0x03 << 8
 #define GATE_DRV_LS_IDRIVEP_LS_10mA 0x00
 #define GATE_DRV_LS_IDRIVEP_LS_1000mA 0x0F << 4
@@ -66,11 +70,33 @@
 #define GATE_DRV_LS_IDRIVEN_LS_2000mA 0x0F
 
 // OCP Control
-#define OCP_CTRL_TRETRY_50ms 0x01 << 10
+#define OCP_CTRL_TRETRY_4ms 0x00 << 10
+#define OCP_CTRL_TRETRY_50us 0x01 << 10
 #define OCP_CTRL_DEAD_TIME_100ns 0x01 << 8
+#define OCP_CTRL_OCP_MODE_LATCH 0x00
 #define OCP_CTRL_OCP_MODE_RETRY 0x01 << 6
+#define OCP_CTRL_OCP_MODE_REPORT 0x02 << 6
+#define OCP_CTRL_OCP_MODE_NO_ACTION 0x03 << 6
+#define OCP_CTRL_OCP_DEG_2us 0x00
 #define OCP_CTRL_OCP_DEG_4us 0x01 << 4
+#define OCP_CTRL_OCP_DEG_6us 0x02 << 4
+#define OCP_CTRL_OCP_DEG_8us 0x03 << 4
+#define OCP_CTRL_VDS_LVL_0_06V 0x00
+#define OCP_CTRL_VDS_LVL_0_13V 0x01
+#define OCP_CTRL_VDS_LVL_0_20V 0x02
+#define OCP_CTRL_VDS_LVL_0_26V 0x03
+#define OCP_CTRL_VDS_LVL_0_31V 0x04
+#define OCP_CTRL_VDS_LVL_0_45V 0x05
+#define OCP_CTRL_VDS_LVL_0_53V 0x06
+#define OCP_CTRL_VDS_LVL_0_60V 0x07
+#define OCP_CTRL_VDS_LVL_0_68V 0x08
 #define OCP_CTRL_VDS_LVL_0_75V 0x09
+#define OCP_CTRL_VDS_LVL_0_94V 0x0A
+#define OCP_CTRL_VDS_LVL_1_13V 0x0B
+#define OCP_CTRL_VDS_LVL_1_30V 0x0C
+#define OCP_CTRL_VDS_LVL_1_50V 0x0D
+#define OCP_CTRL_VDS_LVL_1_70V 0x0E
+#define OCP_CTRL_VDS_LVL_1_88V 0x0F
 
 // CSA Control
 #define CSA_CTRL_VREF_DIV 0x01 << 9
@@ -129,6 +155,7 @@ public:
     int SetCurrentoffsets();
     uvw_t GetPhaseCurrents();
     void CheckFaultStatus();
+    void ClearFaultStatus();
     void SetPhaseState(PhaseState sa, PhaseState sb, PhaseState sc);
     void Enable();
     void Disable();

@@ -27,14 +27,14 @@ uint16_t DRV8323::ReadByte(uint8_t reg)
 
     tx_data[0] = (reg << 3) | 0x80; // MSB
     tx_data[1] = 0x00;              // LSB
-    // printf("read tx_data = %x\n", ((uint16_t)(tx_data[0] << 8) | tx_data[1]));
+    // printf("[LOG] read tx_data = %x\n", ((uint16_t)(tx_data[0] << 8) | tx_data[1]));
 
     ResetChipSelect();
     HAL_SPI_TransmitReceive(hspi, tx_data, rx_data, 2, 1);
     SetChipSelect();
 
     uint16_t data = ((rx_data[0] << 8) | rx_data[1]) & 0x7FF;
-    // printf("read data = %x\n", data);
+    // printf("[LOG] read data = %x\n", data);
     return data;
 }
 
@@ -42,11 +42,11 @@ void DRV8323::WriteByte(uint8_t reg, uint16_t data)
 {
     uint8_t rx_data[2];
     uint8_t tx_data[2];
-    // printf("write data = %x\n", data);
+    // printf("[LOG] write data = %x\n", data);
 
     tx_data[0] = (reg << 3) | (data >> 8); // MSB
     tx_data[1] = data & 0xFF;              // LSB
-    // printf("write tx_data = %x\n", ((uint16_t)(tx_data[0] << 8) | tx_data[1]));
+    // printf("[LOG] write tx_data = %x\n", ((uint16_t)(tx_data[0] << 8) | tx_data[1]));
 
     ResetChipSelect();
     HAL_SPI_TransmitReceive(hspi, tx_data, rx_data, 2, 1);
@@ -55,13 +55,11 @@ void DRV8323::WriteByte(uint8_t reg, uint16_t data)
 
 void DRV8323::Initialize()
 {
-    if (!Read_GPIO(nFault))
-        Write_GPIO(LED_RED, GPIO_PIN_SET);
+    Write_GPIO(SPI_CS_DRV, GPIO_PIN_SET);
     Write_GPIO(DRV_ENABLE, GPIO_PIN_SET); // Set gate driver enable
     HAL_Delay(1);
-    Write_GPIO(SPI_CS_DRV, GPIO_PIN_SET);
-    __HAL_SPI_ENABLE(hspi); // clockが動かないように、あらかじめEnableにしておく
 
+    ClearFaultStatus(); // clear fault status
     HAL_Delay(1);
     SetDriverControl(); // set driver control register
     HAL_Delay(1);
@@ -72,21 +70,21 @@ void DRV8323::Initialize()
     SetOCPControl(); // set OCP control register
     HAL_Delay(1);
     SetCSAControl(); // set CSA control register
-    HAL_Delay(2);
+    HAL_Delay(2);    // wait more than 1200us if you set Gcsa to 40V/V
 
     CheckFaultStatus();
     HAL_Delay(1);
 
     // check register value
-    // ReadByte(DRIVER_CONTROL);
+    // printf("[LOG] driver control register = %x\n", ReadByte(DRIVER_CONTROL));
     // HAL_Delay(1);
-    // ReadByte(GATE_DRIVE_HS);
+    // printf("[LOG] gate drive HS register = %x\n", ReadByte(GATE_DRIVE_HS));
     // HAL_Delay(1);
-    // ReadByte(GATE_DRIVE_LS);
+    // printf("[LOG] gate drive LS register = %x\n", ReadByte(GATE_DRIVE_LS));
     // HAL_Delay(1);
-    // ReadByte(OCP_CONTROL);
+    // printf("[LOG] OCP control register = %x\n", ReadByte(OCP_CONTROL));
     // HAL_Delay(1);
-    // ReadByte(CSA_CONTROL);
+    // printf("[LOG] CSA control register = %x\n", ReadByte(CSA_CONTROL));
     // HAL_Delay(1);
 }
 
@@ -111,6 +109,7 @@ void DRV8323::SetGateDriveLS()
 {
     uint16_t reg = GATE_DRV_LS_CBC;
     reg |= GATE_DRV_LS_TDRIVE_4000ns;
+    // reg |= GATE_DRV_LS_TDRIVE_2000ns; // Gate drive fault (GDF) error
     // reg |= GATE_DRV_LS_IDRIVEP_LS_1000mA;
     // reg |= GATE_DRV_LS_IDRIVEN_LS_2000mA;
     reg |= GATE_DRV_LS_IDRIVEP_LS_10mA;
@@ -120,9 +119,14 @@ void DRV8323::SetGateDriveLS()
 
 void DRV8323::SetOCPControl()
 {
-    uint16_t reg = OCP_CTRL_DEAD_TIME_100ns;
+    // uint16_t reg = OCP_CTRL_TRETRY_4ms;
+    uint16_t reg = OCP_CTRL_TRETRY_50us;
+    reg |= OCP_CTRL_DEAD_TIME_100ns;
     reg |= OCP_CTRL_OCP_MODE_RETRY;
+    // reg |= OCP_CTRL_OCP_MODE_REPORT;
+    // reg |= OCP_CTRL_OCP_MODE_NO_ACTION;
     reg |= OCP_CTRL_OCP_DEG_4us;
+    // reg |= OCP_CTRL_OCP_DEG_6us; // no VDS error at VDS_LVL = 0.75V
     reg |= OCP_CTRL_VDS_LVL_0_75V;
     WriteByte(OCP_CONTROL, reg);
 }
@@ -155,7 +159,7 @@ int DRV8323::SetCurrentoffsets()
     current_offset.u = current_sum.u / static_cast<float>(calibration_rounds);
     current_offset.v = current_sum.v / static_cast<float>(calibration_rounds);
     current_offset.w = current_sum.w / static_cast<float>(calibration_rounds);
-    printf("current_offset.u = %.3f, current_offset.v = %.3f, current_offset.w = %.3f\n", current_offset.u, current_offset.v, current_offset.w);
+    printf("[LOG] current_offset.u = %.3f, current_offset.v = %.3f, current_offset.w = %.3f\n", current_offset.u, current_offset.v, current_offset.w);
 
     Write_GPIO(DRV_CAL, GPIO_PIN_RESET); // finish calibration
     return 1;
@@ -188,50 +192,57 @@ void DRV8323::CheckFaultStatus()
     fault_status2 = ReadByte(FAULT_STATUS_2); // Fault Status Register2
 
     if (fault_status1 & FS1_VDS_OCP)
-        printf("VDS Over Current Protection (VDS_OCP)\n");
+        printf("[ERR] VDS_OCP: VDS overcurrent protection\n");
     if (fault_status1 & FS1_GDF)
-        printf("Gate Drive Fault error\n");
+        printf("[ERR] GDF: Gate drive fault condition\n");
     if (fault_status1 & FS1_UVLO)
-        printf("VM undervoltage (UVLO)\n");
+        printf("[ERR] UVLO: VM undervoltage lockout condition\n");
     if (fault_status1 & FS1_OTSD)
-        printf("Overtemp shutdown (OTSD)\n");
+        printf("[ERR] OTSD: Overtemperature shutdown\n");
     if (fault_status1 & FS1_VDS_HA)
-        printf("VDS HA error\n");
+        printf("[ERR] VDS_HA: VDS overcurrent fault on HA\n");
     if (fault_status1 & FS1_VDS_LA)
-        printf("VDS LA error\n");
+        printf("[ERR] VDS_LA: VDS overcurrent fault on LA\n");
     if (fault_status1 & FS1_VDS_HB)
-        printf("VDS HB error\n");
+        printf("[ERR] VDS_HB: VDS overcurrent fault on HB\n");
     if (fault_status1 & FS1_VDS_LB)
-        printf("VDS LB error\n");
+        printf("[ERR] VDS_LB: VDS overcurrent fault on LB\n");
     if (fault_status1 & FS1_VDS_HC)
-        printf("VDS HC error\n");
+        printf("[ERR] VDS_HC: VDS overcurrent fault on HC\n");
     if (fault_status1 & FS1_VDS_LC)
-        printf("VDS LC error\n");
+        printf("[ERR] VDS_LC: VDS overcurrent fault on LC\n");
     if (fault_status2 & FS2_SA_OC)
-        printf("overcurrent on phase A sense amp (SA_OC)\n");
+        printf("[ERR] SA_OC: Overcurrent on phase A sense amp\n");
     if (fault_status2 & FS2_SB_OC)
-        printf("overcurrent on phase B sense amp (SB_OC)\n");
+        printf("[ERR] SB_OC: Overcurrent on phase B sense amp\n");
     if (fault_status2 & FS2_SC_OC)
-        printf("overcurrent on phase C sense amp (SC_OC)\n");
+        printf("[ERR] SC_OC: Overcurrent on phase C sense amp\n");
     if (fault_status2 & FS2_OTW)
-        printf("overtemp warning (OTW)\n");
+        printf("[ERR] OTW: Overtemperature warning\n");
     if (fault_status2 & FS2_CPUV)
-        printf("Charge pump undervoltage fault condition (CPUV)\n");
+        printf("[ERR] CPUV: Charge pump undervoltage fault condition\n");
     if (fault_status2 & FS2_VGS_HA)
-        printf("VGS HA error\n");
+        printf("[ERR] VGS_HA: Gate drive fault on HA\n");
     if (fault_status2 & FS2_VGS_LA)
-        printf("VGS LA error\n");
+        printf("[ERR] VGS_LA: Gate drive fault on LA\n");
     if (fault_status2 & FS2_VGS_HB)
-        printf("VGS HB error\n");
+        printf("[ERR] VGS_HB: Gate drive fault on HB\n");
     if (fault_status2 & FS2_VGS_LB)
-        printf("VGS LB error\n");
+        printf("[ERR] VGS_LB: Gate drive fault on LB\n");
     if (fault_status2 & FS2_VGS_HC)
-        printf("VGS HC error\n");
+        printf("[ERR] VGS_HC: Gate drive fault on HC\n");
     if (fault_status2 & FS2_VGS_LC)
-        printf("VDS LC error\n");
+        printf("[ERR] VGS_LC: Gate drive fault on LC\n");
 
     if (!Read_GPIO(nFault)) // if (fault_status1 & FS1_FAULT)
         Write_GPIO(LED_RED, GPIO_PIN_SET);
+}
+
+void DRV8323::ClearFaultStatus()
+{
+    uint16_t reg = ReadByte(DRIVER_CONTROL);
+    reg |= DRV_CTRL_CLR_FLT;
+    WriteByte(DRIVER_CONTROL, reg);
 }
 
 void DRV8323::SetPhaseState(PhaseState sa, PhaseState sb, PhaseState sc)
