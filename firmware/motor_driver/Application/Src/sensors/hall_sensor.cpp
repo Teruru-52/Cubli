@@ -91,5 +91,5 @@ void HallSensor::FlashLED()
 
 void HallSensor::PrintLog()
 {
-    printf("hall = %d\n", hall_state);
+    printf("[LOG] hall = %d\n", hall_state);
 }

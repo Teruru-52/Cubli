@@ -139,12 +139,10 @@ public:
     float velocity_index_search; //!< target velocity for index search
 
     // motor physical parameters
-    // float phase_resistance = 64e-3f;  //!< motor phase resistance
-    float phase_resistance = NOT_SET; //!< motor phase resistance
-    float pole_pairs = 8.0f;          //!< motor pole pairs number
-    float KV_rating = NOT_SET;        //!< motor KV rating
-    // float phase_inductance = 0.5e-3f; //!< motor phase inductance
-    float phase_inductance = NOT_SET; //!< motor phase inductance
+    float phase_resistance = 1.2f;     //!< motor phase resistance
+    float pole_pairs = 8.0f;           //!< motor pole pairs number
+    float KV_rating = 374.0f;          //!< motor KV rating
+    float phase_inductance = 0.56e-3f; //!< motor phase inductance
 
     // limiting variables
     float voltage_limit;  //!< Voltage limiting variable - global limit
@@ -159,7 +157,7 @@ public:
 
     // pwm modulation related variables
     FOCModulationType foc_modulation; //!<  parameter determining modulation algorithm
-    int8_t modulation_centered = 1;   //!< flag (1) centered modulation around driver limit /2  or  (0) pulled to 0
+    int8_t modulation_centered = 0;   //!< flag (1) centered modulation around driver limit /2  or  (0) pulled to 0
 
     // configuration structures
     TorqueControlType torque_controller; //!< parameter determining the torque control type

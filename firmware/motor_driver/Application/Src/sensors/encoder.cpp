@@ -56,5 +56,5 @@ void A1333::Update()
 
 void A1333::PrintLog()
 {
-    printf("angle = %.3f, angle_raw = %.3f, velocity = %.3f\n", angle_full, angle_raw, velocity);
+    printf("[LOG] angle_full = %.3f, angle_raw = %.3f, velocity = %.3f\n", angle_full, angle_raw, velocity);
 }

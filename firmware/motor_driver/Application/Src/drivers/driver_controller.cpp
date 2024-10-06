@@ -41,7 +41,9 @@ int8_t DriverController::Initialize()
     encoder->Initialize();
     hall->Initialize();
     // _configure3PWM(bldc_pwm);
-    SearchZeroElectricAngle();
+    Enable();
+    // SearchZeroElectricAngle();
+    foc_modulation = FOCModulationType::Trapezoid_120;
 
     // arm_pid_init_f32(&pid_id, 0);
     // arm_pid_init_f32(&pid_iq, 0);
@@ -49,7 +51,6 @@ int8_t DriverController::Initialize()
     // arm_biquad_cascade_df2T_init_f32(&iir_id, 1, iir_coeff_d, iir_statebuff_d);
     // arm_biquad_cascade_df2T_init_f32(&iir_iq, 1, iir_coeff_q, iir_statebuff_q);
 
-    Enable();
     initialized = 1;
     return initialized;
 }
@@ -82,10 +83,10 @@ void DriverController::SearchZeroElectricAngle()
     // search the absolute zero with small velocity
     float voltage_align = voltage_sensor_align;
     int8_t pre_sector = hall->GetSector();
-    printf("%d\n", pre_sector);
+    // printf("[LOG] sector = %d\n", pre_sector);
     for (int i = 0; i <= align_rounds; i++)
     {
-        float angle = M_3PI_2 + M_2PI * i / static_cast<float>(align_rounds);
+        float angle = M_3PI_2 + M_2PI * static_cast<float>(i) / static_cast<float>(align_rounds);
         SetPhaseVoltage(voltage_align, 0, angle);
         SetPwm();
         int8_t sector = hall->GetSector();
@@ -98,7 +99,7 @@ void DriverController::SearchZeroElectricAngle()
         pre_sector = sector;
         HAL_Delay(1);
     }
-    printf("zero_electric_angle = %.3f\n", zero_electric_angle);
+    printf("[LOG] zero_electric_angle = %.3f\n", zero_electric_angle);
     if (!_isset(zero_electric_angle))
     {
         SetPhaseVoltage(voltage_align, 0, M_3PI_2);
@@ -110,10 +111,9 @@ void DriverController::SearchZeroElectricAngle()
     HAL_Delay(20);
     SetPhaseVoltage(0, 0, 0);
     SetPwm();
-    printf("zero_electric_angle = %.3f\n", zero_electric_angle);
+    printf("[LOG] zero_electric_angle = %.3f\n", zero_electric_angle);
 
     HAL_Delay(200);
-    foc_modulation = FOCModulationType::Trapezoid_120;
 }
 
 void DriverController::UpdateSensorAngle()
@@ -146,8 +146,9 @@ void DriverController::Update()
     if (!enabled)
         return;
 
-    UpdateFOC();
-    Move();
+    // UpdateFOC();
+    // Move();
+    SetPhaseVoltage(1.0f, 0.0f, electric_angle);
 }
 
 void DriverController::UpdateFOC()
@@ -179,9 +180,8 @@ void DriverController::UpdateFOC()
         break;
     }
 
-    // set the phase voltage - FOC heart function :)
-    // SetPhaseVoltage(voltage_dq.q, voltage_dq.d, electric_angle);
-    SetPhaseVoltage(1.0, 0, electric_angle);
+    // set the phase voltage
+    SetPhaseVoltage(voltage_dq.q, voltage_dq.d, electric_angle);
 }
 
 void DriverController::Move()
@@ -244,8 +244,7 @@ void DriverController::SetPhaseVoltage(float Uq, float Ud, float angle_el)
         sector = hall->GetSector();
         if (sector == -1)
             return;
-        // center = modulation_centered ? (voltage_limit) * 0.5f : Uq;
-        center = Uq;
+        center = modulation_centered ? (voltage_limit) * 0.5f : abs(Uq);
 
         if (trap_120_map[sector][0] == _HIGH_IMPEDANCE)
         {
@@ -324,14 +323,14 @@ void DriverController::SetPwm(float Vu, float Vv, float Vw)
 
 void DriverController::PrintLog()
 {
-    printf("electric_angle = %.3f, shaft_velocity = %.3f\n", electric_angle, shaft_velocity);
+    // printf("[LOG] electric_angle = %.3f, shaft_velocity = %.3f\n", electric_angle, shaft_velocity);
 
-    // printf("cur_u = %.3f, cur_v = %.3f, cur_w = %.3f\n", current_uvw.u, current_uvw.v, current_uvw.w);
-    // printf("cur_a = %.3f, cur_b = %.3f\n", current_ab.a, current_ab.b);
-    // printf("cur_d = %.3f, cur_q = %.3f\n", current_dq.d, current_dq.q);
-    // printf("vol_d = %.3f, vol_q = %.3f\n", voltage_dq.d, voltage_dq.q);
-    // printf("vol_u = %.3f, vol_v = %.3f, vol_w = %.3f\n", voltage_uvw.u, voltage_uvw.v, voltage_uvw.w);
-    // printf("input_u = %.3f, input_v = %.3f, input_w = %.3f\n", input_duty.u, input_duty.v, input_duty.w);
+    // printf("[LOG] cur_u = %.3f, cur_v = %.3f, cur_w = %.3f\n", current_uvw.u, current_uvw.v, current_uvw.w);
+    // printf("[LOG] cur_a = %.3f, cur_b = %.3f\n", current_ab.a, current_ab.b);
+    // printf("[LOG] cur_d = %.3f, cur_q = %.3f\n", current_dq.d, current_dq.q);
+    // printf("[LOG] vol_d = %.3f, vol_q = %.3f\n", voltage_dq.d, voltage_dq.q);
+    printf("[LOG] vol_u = %.3f, vol_v = %.3f, vol_w = %.3f\n", voltage_uvw.u, voltage_uvw.v, voltage_uvw.w);
+    // printf("[LOG] input_u = %.3f, input_v = %.3f, input_w = %.3f\n", input_duty.u, input_duty.v, input_duty.w);
 
-    // printf("input_trapezoidal = %.3f\n", input_trape);
+    // printf("[LOG] input_trapezoidal = %.3f\n", input_trape);
 }

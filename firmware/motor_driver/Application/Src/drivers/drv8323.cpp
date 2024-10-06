@@ -57,7 +57,7 @@ void DRV8323::Initialize()
 {
     Write_GPIO(SPI_CS_DRV, GPIO_PIN_SET);
     Write_GPIO(DRV_ENABLE, GPIO_PIN_SET); // Set gate driver enable
-    HAL_Delay(1);
+    HAL_Delay(2);
 
     ClearFaultStatus(); // clear fault status
     HAL_Delay(1);
@@ -70,7 +70,7 @@ void DRV8323::Initialize()
     SetOCPControl(); // set OCP control register
     HAL_Delay(1);
     SetCSAControl(); // set CSA control register
-    HAL_Delay(2);    // wait more than 1200us if you set Gcsa to 40V/V
+    HAL_Delay(1);
 
     CheckFaultStatus();
     HAL_Delay(1);
@@ -91,17 +91,17 @@ void DRV8323::Initialize()
 void DRV8323::SetDriverControl()
 {
     uint16_t reg = DRV_CTRL_PWM_MODE_3x;
-    reg |= DRV_CTRL_DIS_CPUV;
+    // reg |= DRV_CTRL_DIS_CPUV;
     WriteByte(DRIVER_CONTROL, reg);
 }
 
 void DRV8323::SetGateDriveHS()
 {
     uint16_t reg = GATE_DRV_HS_UNLOCK;
-    // reg |= GATE_DRV_HS_IDRIVEP_HS_1000mA;
-    // reg |= GATE_DRV_HS_IDRIVEN_HS_2000mA;
-    reg |= GATE_DRV_HS_IDRIVEP_HS_10mA;
-    reg |= GATE_DRV_HS_IDRIVEN_HS_20mA;
+    // reg |= GATE_DRV_IDRIVEP_1000mA;
+    // reg |= GATE_DRV_IDRIVEN_2000mA;
+    reg |= GATE_DRV_IDRIVEP_30mA;
+    reg |= GATE_DRV_IDRIVEN_60mA;
     WriteByte(GATE_DRIVE_HS, reg);
 }
 
@@ -110,23 +110,24 @@ void DRV8323::SetGateDriveLS()
     uint16_t reg = GATE_DRV_LS_CBC;
     reg |= GATE_DRV_LS_TDRIVE_4000ns;
     // reg |= GATE_DRV_LS_TDRIVE_2000ns; // Gate drive fault (GDF) error
-    // reg |= GATE_DRV_LS_IDRIVEP_LS_1000mA;
-    // reg |= GATE_DRV_LS_IDRIVEN_LS_2000mA;
-    reg |= GATE_DRV_LS_IDRIVEP_LS_10mA;
-    reg |= GATE_DRV_LS_IDRIVEN_LS_20mA;
+    // reg |= GATE_DRV_IDRIVEP_1000mA;
+    // reg |= GATE_DRV_IDRIVEN_2000mA;
+    reg |= GATE_DRV_IDRIVEP_60mA;
+    reg |= GATE_DRV_IDRIVEN_120mA;
     WriteByte(GATE_DRIVE_LS, reg);
 }
 
 void DRV8323::SetOCPControl()
 {
-    // uint16_t reg = OCP_CTRL_TRETRY_4ms;
-    uint16_t reg = OCP_CTRL_TRETRY_50us;
-    reg |= OCP_CTRL_DEAD_TIME_100ns;
+    uint16_t reg = OCP_CTRL_TRETRY_4ms;
+    // uint16_t reg = OCP_CTRL_TRETRY_50us;
+    reg |= OCP_CTRL_DEAD_TIME_200ns;
     reg |= OCP_CTRL_OCP_MODE_RETRY;
     // reg |= OCP_CTRL_OCP_MODE_REPORT;
     // reg |= OCP_CTRL_OCP_MODE_NO_ACTION;
-    reg |= OCP_CTRL_OCP_DEG_4us;
-    // reg |= OCP_CTRL_OCP_DEG_6us; // no VDS error at VDS_LVL = 0.75V
+    // reg |= OCP_CTRL_OCP_DEG_4us;
+    reg |= OCP_CTRL_OCP_DEG_6us;
+    // reg |= OCP_CTRL_VDS_LVL_0_31V;
     reg |= OCP_CTRL_VDS_LVL_0_75V;
     WriteByte(OCP_CONTROL, reg);
 }

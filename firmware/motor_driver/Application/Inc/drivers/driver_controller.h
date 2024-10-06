@@ -43,7 +43,6 @@ private:
     void SetPhaseVoltage(float Uq, float Ud, float angle_el) override;
     void UpdateFOC() override;
     void Move() override;
-    void SetPwm(float Vu, float Vv, float Vw) override;
 
 public:
     DriverController(BLDC_PWM *bldc_pwm, A1333 *encoder, DRV8323 *drv, HallSensor *hall);
@@ -52,6 +51,7 @@ public:
     void Disable() override;
     void Update() override;
     void SetPwm() override;
+    void SetPwm(float Vu, float Vv, float Vw) override;
     void PrintLog() override;
 };
 

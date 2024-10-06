@@ -70,12 +70,12 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define INLC_Pin GPIO_PIN_13
-#define INLC_GPIO_Port GPIOC
-#define INLB_Pin GPIO_PIN_14
-#define INLB_GPIO_Port GPIOC
-#define INLA_Pin GPIO_PIN_15
-#define INLA_GPIO_Port GPIOC
+#define INLU_Pin GPIO_PIN_13
+#define INLU_GPIO_Port GPIOC
+#define INLV_Pin GPIO_PIN_14
+#define INLV_GPIO_Port GPIOC
+#define INLW_Pin GPIO_PIN_15
+#define INLW_GPIO_Port GPIOC
 #define CAL_Pin GPIO_PIN_3
 #define CAL_GPIO_Port GPIOA
 #define ENABLE_Pin GPIO_PIN_4
